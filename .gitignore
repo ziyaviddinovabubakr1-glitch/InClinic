@@ -26,7 +26,8 @@ yarn-error.log*
 npm-err.log
 npm-install.log
 
-# local env files
+# local env files (never commit secrets)
+.env
 .env*.local
 
 # vercel
