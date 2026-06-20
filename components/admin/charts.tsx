@@ -1,0 +1,240 @@
+"use client";
+
+/**
+ * Dependency-free SVG charts for the owner panel.
+ * Bespoke, lightweight and styled to match the premium SaaS theme.
+ * All charts are responsive (viewBox-based) and theme-driven.
+ */
+import { useId } from "react";
+import type { CategoryPoint, TimeSeriesPoint } from "@/lib/admin/types";
+
+const ACCENT = "#1e40af";
+const ACCENT2 = "#2563eb";
+const GRID = "rgba(15, 23, 42, 0.06)";
+
+/* ───────────────────────────  Area chart  ──────────────────────────────── */
+export function AreaChart({
+  data, height = 220, format = (n) => `${n}`, color = ACCENT,
+}: {
+  data: TimeSeriesPoint[];
+  height?: number;
+  format?: (n: number) => string;
+  color?: string;
+}) {
+  const gid = useId().replace(/:/g, "");
+  const W = 720;
+  const H = height;
+  const padX = 8;
+  const padY = 18;
+  if (!data.length) return <ChartEmpty height={height} />;
+
+  const max = Math.max(...data.map((d) => d.value), 1);
+  const stepX = (W - padX * 2) / Math.max(1, data.length - 1);
+  const x = (i: number) => padX + i * stepX;
+  const y = (v: number) => padY + (1 - v / max) * (H - padY * 2);
+
+  const line = data.map((d, i) => `${i === 0 ? "M" : "L"} ${x(i)} ${y(d.value)}`).join(" ");
+  const area = `${line} L ${x(data.length - 1)} ${H - padY} L ${x(0)} ${H - padY} Z`;
+
+  const lastIdx = data.length - 1;
+  const showEvery = Math.ceil(data.length / 7);
+
+  return (
+    <div style={{ width: "100%" }}>
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={height} preserveAspectRatio="none" style={{ display: "block" }}>
+        <defs>
+          <linearGradient id={`fill-${gid}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity="0.28" />
+            <stop offset="100%" stopColor={color} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        {[0.25, 0.5, 0.75].map((g) => (
+          <line key={g} x1={padX} x2={W - padX} y1={padY + g * (H - padY * 2)} y2={padY + g * (H - padY * 2)}
+            stroke={GRID} strokeWidth="1" />
+        ))}
+        <path d={area} fill={`url(#fill-${gid})`} />
+        <path d={line} fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx={x(lastIdx)} cy={y(data[lastIdx].value)} r="4.5" fill={color} stroke="rgba(255,255,255,0.9)" strokeWidth="2" />
+      </svg>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "var(--oa-text-faint)" }}>
+        {data.map((d, i) => (
+          <span key={i} style={{ visibility: i % showEvery === 0 || i === lastIdx ? "visible" : "hidden" }}>
+            {d.label}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────────  Bar chart  ───────────────────────────────── */
+export function BarChart({
+  data, height = 220, color = ACCENT2, horizontal = false,
+}: {
+  data: CategoryPoint[];
+  height?: number;
+  color?: string;
+  horizontal?: boolean;
+}) {
+  if (!data.length) return <ChartEmpty height={height} />;
+  const max = Math.max(...data.map((d) => d.value), 1);
+
+  if (horizontal) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {data.map((d, i) => (
+          <div key={i}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, marginBottom: 5 }}>
+              <span style={{ color: "var(--oa-text-soft)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "78%" }}>{d.label}</span>
+              <span style={{ fontWeight: 700 }}>{d.value}</span>
+            </div>
+            <div className="oa-progress">
+              <div className="oa-progress-bar" style={{ width: `${(d.value / max) * 100}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  const W = 720;
+  const H = height;
+  const padY = 18;
+  const gap = 14;
+  const bw = (W - gap * (data.length + 1)) / data.length;
+  return (
+    <div style={{ width: "100%" }}>
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={height} preserveAspectRatio="none" style={{ display: "block" }}>
+        <defs>
+          <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={ACCENT} />
+            <stop offset="100%" stopColor={color} />
+          </linearGradient>
+        </defs>
+        {data.map((d, i) => {
+          const h = (d.value / max) * (H - padY * 2);
+          const xPos = gap + i * (bw + gap);
+          return (
+            <rect key={i} x={xPos} y={H - padY - h} width={bw} height={Math.max(2, h)} rx="7" fill="url(#barGrad)" opacity={0.95} />
+          );
+        })}
+      </svg>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "var(--oa-text-faint)", padding: "0 4px" }}>
+        {data.map((d, i) => {
+          const showEvery = Math.ceil(data.length / 8);
+          return (
+            <span key={i} style={{ visibility: i % showEvery === 0 || i === data.length - 1 ? "visible" : "hidden" }}>{d.label}</span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────────  Donut chart  ─────────────────────────────── */
+export function DonutChart({
+  segments, size = 168, thickness = 22, centerLabel, centerValue,
+}: {
+  segments: { label: string; value: number; color: string }[];
+  size?: number;
+  thickness?: number;
+  centerLabel?: string;
+  centerValue?: string;
+}) {
+  const total = segments.reduce((s, x) => s + x.value, 0) || 1;
+  const r = (size - thickness) / 2;
+  const c = 2 * Math.PI * r;
+  let offset = 0;
+
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap" }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
+          <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={GRID} strokeWidth={thickness} />
+          {segments.map((s, i) => {
+            const len = (s.value / total) * c;
+            const circle = (
+              <circle key={i} cx={size / 2} cy={size / 2} r={r} fill="none"
+                stroke={s.color} strokeWidth={thickness}
+                strokeDasharray={`${len} ${c - len}`} strokeDashoffset={-offset}
+                strokeLinecap="round" />
+            );
+            offset += len;
+            return circle;
+          })}
+        </g>
+        {(centerValue || centerLabel) && (
+          <text x="50%" y="47%" textAnchor="middle" fontSize="22" fontWeight="800" fill="var(--oa-text)">{centerValue}</text>
+        )}
+        {centerLabel && (
+          <text x="50%" y="60%" textAnchor="middle" fontSize="11" fill="var(--oa-text-faint)">{centerLabel}</text>
+        )}
+      </svg>
+      <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+        {segments.map((s, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5 }}>
+            <span style={{ width: 10, height: 10, borderRadius: 3, background: s.color }} />
+            <span style={{ color: "var(--oa-text-soft)" }}>{s.label}</span>
+            <span style={{ fontWeight: 700, marginLeft: "auto" }}>{s.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────────  Sparkline  ───────────────────────────────── */
+export function Sparkline({ data, color = ACCENT, width = 110, height = 36 }: {
+  data: number[]; color?: string; width?: number; height?: number;
+}) {
+  const gid = useId().replace(/:/g, "");
+  if (data.length < 2) return null;
+  const max = Math.max(...data, 1);
+  const min = Math.min(...data, 0);
+  const range = max - min || 1;
+  const stepX = width / (data.length - 1);
+  const pts = data.map((v, i) => `${i * stepX},${height - ((v - min) / range) * height}`).join(" ");
+  const areaPts = `0,${height} ${pts} ${width},${height}`;
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ opacity: 0.95 }}>
+      <defs>
+        <linearGradient id={`spark-${gid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.25" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <polygon points={areaPts} fill={`url(#spark-${gid})`} />
+      <polyline points={pts} fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/* ───────────────────────────  Gauge (radial)  ──────────────────────────── */
+export function Gauge({ value, size = 150, label }: { value: number; size?: number; label?: string }) {
+  const r = (size - 18) / 2;
+  const c = 2 * Math.PI * r;
+  const pct = Math.max(0, Math.min(100, value));
+  const dash = (pct / 100) * c;
+  const color = pct >= 75 ? "#22c55e" : pct >= 50 ? "#3b82f6" : pct >= 30 ? "#f59e0b" : "#ef4444";
+  const glow = pct >= 75 ? "rgba(34,197,94,0.35)" : pct >= 50 ? "rgba(59,130,246,0.35)" : "rgba(245,158,11,0.3)";
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="oa-gauge">
+      <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={GRID} strokeWidth="11" />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth="11"
+          strokeDasharray={`${dash} ${c - dash}`} strokeLinecap="round"
+          style={{ filter: `drop-shadow(0 0 10px ${glow})` }} />
+      </g>
+      <text x="50%" y="46%" textAnchor="middle" fontSize={size * 0.2} fontWeight="800" fill="var(--oa-text)" style={{ fontFamily: "var(--font-display), var(--font-inter), sans-serif" }}>{pct}</text>
+      <text x="50%" y="62%" textAnchor="middle" fontSize="11" fill="var(--oa-text-faint)">{label ?? "из 100"}</text>
+    </svg>
+  );
+}
+
+function ChartEmpty({ height }: { height: number }) {
+  return (
+    <div style={{ height, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--oa-text-faint)", fontSize: 13 }}>
+      Нет данных за период
+    </div>
+  );
+}

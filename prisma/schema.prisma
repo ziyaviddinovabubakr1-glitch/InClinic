@@ -1,0 +1,199 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum BookingStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  COMPLETED
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  DOCTOR
+}
+
+model Clinic {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users     User[]
+  services  Service[]
+  doctors   Doctor[]
+  bookings  Booking[]
+  auditLogs AuditLog[]
+}
+
+model User {
+  id           String   @id @default(cuid())
+  clinicId     String
+  username     String   @unique
+  passwordHash String
+  role         UserRole @default(OWNER)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  clinic   Clinic    @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  sessions Session[]
+  auditLogs AuditLog[]
+
+  @@index([clinicId])
+}
+
+model Session {
+  id               String    @id @default(cuid())
+  userId           String
+  jti              String    @unique
+  refreshTokenHash String?
+  ipHash           String?
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  createdAt        DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  clinicId  String?
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  ip        String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  clinic Clinic? @relation(fields: [clinicId], references: [id], onDelete: SetNull)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([clinicId, createdAt])
+  @@index([action, createdAt])
+}
+
+model TelegramActionToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  bookingId String
+  action    String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+}
+
+// Pending rejection reason after inline «Отклонить» (persists across serverless).
+model TelegramPendingReject {
+  id        String   @id @default(cuid())
+  chatId    String
+  userId    String
+  bookingId String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([chatId, userId])
+  @@index([expiresAt])
+}
+
+model Service {
+  id             String   @id @default(cuid())
+  clinicId       String
+  nameRu         String
+  nameTj         String
+  descriptionRu  String
+  descriptionTj  String
+  durationMin    Int      @default(30)
+  price          Int?
+  iconName       String?
+  indicationsRu  String?
+  indicationsTj  String?
+  advantagesRu   String?
+  advantagesTj   String?
+  preparationRu  String?
+  preparationTj  String?
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  clinic   Clinic          @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  doctors  DoctorService[]
+  bookings Booking[]
+
+  @@index([clinicId, active])
+}
+
+model Doctor {
+  id          String   @id @default(cuid())
+  clinicId    String
+  nameRu      String
+  nameTj      String
+  specialtyRu String
+  specialtyTj String
+  photoUrl    String?
+  workDays    Int[]
+  workStart   String
+  workEnd     String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  clinic   Clinic          @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  services DoctorService[]
+  bookings Booking[]
+
+  @@index([clinicId, active])
+}
+
+model DoctorService {
+  doctorId  String
+  serviceId String
+
+  doctor  Doctor  @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@id([doctorId, serviceId])
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  clinicId        String
+  serviceId       String
+  doctorId        String
+  firstName       String
+  lastName        String
+  phone           String
+  phoneHash       String
+  date            String
+  timeSlot        String
+  status          BookingStatus @default(PENDING)
+  rejectionReason String?
+  tgMessageId     Int?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  clinic  Clinic  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id])
+  doctor  Doctor  @relation(fields: [doctorId], references: [id])
+
+  @@index([clinicId, status])
+  @@index([clinicId, date])
+  @@index([doctorId, date, timeSlot])
+  @@index([phoneHash, createdAt])
+}

@@ -1,0 +1,134 @@
+"use client";
+
+import Link from "next/link";
+import {
+  IconShield, IconZap, IconLab, IconPhone, IconLocation, IconTelegram, IconCalendar,
+} from "@/components/ui/Icons";
+import ClientReceiptPanel from "@/components/ui/ClientReceiptPanel";
+import BrandLogo from "@/components/ui/BrandLogo";
+import { useLanguage } from "@/lib/i18n";
+
+const clinicPhone = process.env.NEXT_PUBLIC_CLINIC_PHONE ?? "+992 XX XXX XX XX";
+
+export default function HomePage() {
+  const { t } = useLanguage();
+
+  const ABOUT_LINES = [
+    { Icon: IconShield, text: t.aboutLine1 },
+    { Icon: IconZap,    text: t.aboutLine2 },
+    { Icon: IconLab,    text: t.aboutLine3 },
+  ];
+
+  const HOURS = [
+    { day: t.dayMonFri, time: "08:00 – 18:00" },
+    { day: t.daySat,    time: "09:00 – 14:00" },
+    { day: t.daySun,    time: t.closed },
+  ];
+
+  return (
+    <div className="flex flex-col min-h-screen px-6 py-8">
+
+      <div className="flex-1 flex flex-col items-center justify-center text-center max-w-2xl mx-auto w-full">
+        <div className="center-frost-panel w-full px-6 py-10 md:px-10 md:py-12">
+
+        <div className="mb-7">
+          <BrandLogo size="md" />
+        </div>
+
+        <h1
+          className="neon-title mb-2"
+          style={{ fontSize: "clamp(2.8rem, 6vw, 4.2rem)" }}
+        >
+          <span className="brand-in font-extrabold">In</span>
+          <span className="brand-clinic font-extrabold">Clinic</span>
+        </h1>
+        <p className="neon-subtitle text-theme-muted mb-10 tracking-[0.14em]">
+          {t.tagline}
+        </p>
+
+        <div className="w-full mb-10 space-y-5">
+          <h2 className="neon-subtitle neon-blue tracking-[0.18em] mb-1">
+            {t.aboutTitle}
+          </h2>
+          <p className="text-theme text-sm md:text-base leading-relaxed max-w-lg mx-auto">
+            {t.aboutText}
+          </p>
+          <div className="space-y-4 mt-6 max-w-md mx-auto w-full">
+            {ABOUT_LINES.map(({ Icon, text }) => (
+              <div key={text} className="flex items-center gap-4 text-left">
+                <div className="w-12 h-12 flex-shrink-0 rounded-xl flex items-center justify-center theme-icon-box">
+                  <Icon size={22} />
+                </div>
+                <p className="neon-white text-sm md:text-base leading-relaxed flex-1">
+                  {text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Link href="/booking" className="btn-primary px-10 py-3.5 text-base font-semibold inline-flex items-center gap-2">
+          <IconCalendar size={20} />
+          {t.bookCta}
+        </Link>
+
+        {/* Чек — между записью и контактами */}
+        <div className="w-full mt-10">
+          <ClientReceiptPanel variant="home" />
+        </div>
+        </div>
+      </div>
+
+      <div className="pt-8 pb-2 text-center max-w-xl mx-auto w-full">
+        <div className="center-frost-panel px-8 py-10 md:px-10 md:py-12">
+        <h2 className="neon-subtitle neon-blue tracking-[0.22em] mb-6">
+          {t.contactsTitle}
+        </h2>
+
+        <div className="space-y-4 mb-6">
+          <a
+            href={`tel:${clinicPhone.replace(/\s/g, "")}`}
+            className="flex items-center justify-center gap-3 group"
+          >
+            <IconPhone size={22} className="text-sky-300" />
+            <span className="neon-white text-lg font-semibold group-hover:neon-blue transition-all">
+              {clinicPhone}
+            </span>
+          </a>
+
+          <div className="flex items-center justify-center gap-3">
+            <IconLocation size={22} className="text-sky-300" />
+            <span className="neon-white text-sm md:text-base font-medium">
+              {t.address}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 mb-6">
+          {HOURS.map((h) => (
+            <div key={h.day} className="text-xs md:text-sm px-3 py-1.5 rounded-lg theme-pill">
+              <span className="neon-white font-semibold">{h.day}</span>
+              <span className="mx-2 text-theme-faint">·</span>
+              <span className={h.time === t.closed ? "text-theme-muted" : "neon-blue font-medium"}>
+                {h.time}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <a
+          href="https://t.me/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-105 theme-pill"
+          style={{ boxShadow: "0 0 24px rgba(14,165,233,0.28)" }}
+        >
+          <IconTelegram size={18} />
+          <span className="neon-white">{t.telegram}</span>
+        </a>
+        </div>
+      </div>
+
+    </div>
+  );
+}

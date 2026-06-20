@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "skills": {
+    "analyzing-api-gateway-access-logs": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-api-gateway-access-logs/SKILL.md",
+      "computedHash": "963d2718732af438176f0a9672a0e23b7c408d93a5a8be7e781d40c953287aff"
+    },
+    "analyzing-certificate-transparency-for-phishing": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-certificate-transparency-for-phishing/SKILL.md",
+      "computedHash": "183900a1896f8fefaff5c404b928ae6657bc1734a6f41f020b23f07bda401a76"
+    },
+    "analyzing-cloud-storage-access-patterns": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-cloud-storage-access-patterns/SKILL.md",
+      "computedHash": "d8e9ccf5fd1cd33744d3ee77ebf27dcdaa3bbddd62de602ba500e6d950a8abca"
+    },
+    "analyzing-command-and-control-communication": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-command-and-control-communication/SKILL.md",
+      "computedHash": "dff3fd8d41fd3194574e46d461ad7253a6ec56cd929e20318e6630a2d1323172"
+    },
+    "analyzing-cyber-kill-chain": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-cyber-kill-chain/SKILL.md",
+      "computedHash": "deee84ad5e512a2342c4f2483d5d19a342ba211b5afff4fa56d6af2817cdb732"
+    },
+    "analyzing-dns-logs-for-exfiltration": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-dns-logs-for-exfiltration/SKILL.md",
+      "computedHash": "32df2e6be01a35fff77e043213addbfa650d7b11a62187087d74a8ab2eb0dc52"
+    },
+    "analyzing-email-headers-for-phishing-investigation": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-email-headers-for-phishing-investigation/SKILL.md",
+      "computedHash": "95129710137e148f9ad6f788b6afbc519a9230903c6ee8164fdcc20ce239cee6"
+    },
+    "analyzing-indicators-of-compromise": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-indicators-of-compromise/SKILL.md",
+      "computedHash": "d3cc311a1ffe400d3d2aafaa5dac617699f7ba28d573bb1918ea8f056a4c6ce8"
+    },
+    "analyzing-kubernetes-audit-logs": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-kubernetes-audit-logs/SKILL.md",
+      "computedHash": "e47460baa921b062bb14b4d52796b2aaf24ec751dfa6a6125f0a5cf53bd280bf"
+    },
+    "analyzing-linux-audit-logs-for-intrusion": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-linux-audit-logs-for-intrusion/SKILL.md",
+      "computedHash": "dc6a8d976607a2c25e760dbb92305f7e0118c95359d1c2072275ddd6a780dc4b"
+    },
+    "analyzing-malicious-url-with-urlscan": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-malicious-url-with-urlscan/SKILL.md",
+      "computedHash": "dc9e9e2e7ea4886fc596913c49a8fbf258a001077f075e23bb779b31643050bd"
+    },
+    "analyzing-malware-behavior-with-cuckoo-sandbox": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-malware-behavior-with-cuckoo-sandbox/SKILL.md",
+      "computedHash": "d26d842b782b2dfe69467520f2899252a22bec98ea20e017ea21457ceb54a62f"
+    },
+    "analyzing-network-flow-data-with-netflow": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-network-flow-data-with-netflow/SKILL.md",
+      "computedHash": "84c60f161a1f6c4acb2528fb269068bc80d260c0a593b4f44cb078754c634e79"
+    },
+    "analyzing-network-packets-with-scapy": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-network-packets-with-scapy/SKILL.md",
+      "computedHash": "16d1958012ca2d0039934498ce74f66366b2468660d2865fb77b6b450b54ad6b"
+    },
+    "analyzing-network-traffic-for-incidents": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-network-traffic-for-incidents/SKILL.md",
+      "computedHash": "439337f74af8427ffdabfffc7cdb5785f5d1e094ce4bd9be97ed6c091d7fef90"
+    },
+    "analyzing-network-traffic-with-wireshark": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-network-traffic-with-wireshark/SKILL.md",
+      "computedHash": "eaca4d650732263ba800b09f7982904d20e0bbcb7370b06de7feaf63d693be16"
+    },
+    "analyzing-office365-audit-logs-for-compromise": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-office365-audit-logs-for-compromise/SKILL.md",
+      "computedHash": "15b42d399edc076a212fb487d73c006ec5b3b9488759404af72377ec2bc331bd"
+    },
+    "analyzing-sbom-for-supply-chain-vulnerabilities": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-sbom-for-supply-chain-vulnerabilities/SKILL.md",
+      "computedHash": "28b90517d120588b4dcbf9b12a2a0cb75c4be173bcf8d5f6e0637c9947e780d4"
+    },
+    "analyzing-security-logs-with-splunk": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-security-logs-with-splunk/SKILL.md",
+      "computedHash": "f6d2627ed64e94e75203917d087bb8c0d5a7131b355e85e12843043ebf08574c"
+    },
+    "auditing-cloud-with-cis-benchmarks": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/auditing-cloud-with-cis-benchmarks/SKILL.md",
+      "computedHash": "ce2273f9db89e2428d6d348979561565432a01676594514e1ae0829e67881c79"
+    },
+    "building-cloud-siem-with-sentinel": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/building-cloud-siem-with-sentinel/SKILL.md",
+      "computedHash": "c5d1df68abe15ec65a8ed18b26d63f3ef61ff12369dbab399bb94f01279966fd"
+    },
+    "building-identity-governance-lifecycle-process": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/building-identity-governance-lifecycle-process/SKILL.md",
+      "computedHash": "773408bc8560aa9352d32a04fd11d82fcf999935c827210f35b0678f773eeb08"
+    },
+    "performing-ssl-tls-security-assessment": {
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/performing-ssl-tls-security-assessment/SKILL.md",
+      "computedHash": "fcc1f02de7030dcd790514c8c4c249eb99535c283b45ecd294f76598e7d8b192"
+    }
+  }
+}

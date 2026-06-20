@@ -1,0 +1,119 @@
+import { prisma } from "@/lib/prisma";
+import { MOCK_SERVICES } from "@/lib/mockData";
+import { resolvePublicClinicId } from "@/lib/clinic-server";
+import { allowMockFallback } from "@/lib/env";
+import AnimatedSection from "@/components/ui/AnimatedSection";
+import TiltCard from "@/components/ui/TiltCard";
+
+const SERVICE_ICONS: Record<string, string> = {
+  heart:"🫀", brain:"🧠", bone:"🦴", eye:"👁️",
+  tooth:"🦷", skin:"🩹", lab:"🔬", default:"🩺",
+};
+
+const SERVICE_COLORS: Record<string, { bg:string; border:string; icon:string; accent:string }> = {
+  heart:   { bg:"rgba(225,29,72,0.22)",   border:"rgba(225,29,72,0.45)",   icon:"#fb7185", accent:"#fda4af" },
+  brain:   { bg:"rgba(147,51,234,0.22)",  border:"rgba(147,51,234,0.45)",  icon:"#a78bfa", accent:"#d8b4fe" },
+  bone:    { bg:"rgba(217,119,6,0.22)",   border:"rgba(217,119,6,0.45)",   icon:"#fbbf24", accent:"#fcd34d" },
+  eye:     { bg:"rgba(5,150,105,0.22)",   border:"rgba(5,150,105,0.45)",   icon:"#34d399", accent:"#6ee7b7" },
+  tooth:   { bg:"rgba(37,99,235,0.22)",   border:"rgba(37,99,235,0.45)",   icon:"#60a5fa", accent:"#93c5fd" },
+  skin:    { bg:"rgba(219,39,119,0.22)",  border:"rgba(219,39,119,0.45)",  icon:"#f472b6", accent:"#f9a8d4" },
+  lab:     { bg:"rgba(2,132,199,0.22)",   border:"rgba(2,132,199,0.45)",   icon:"#38bdf8", accent:"#7dd3fc" },
+  default: { bg:"rgba(2,132,199,0.22)",   border:"rgba(2,132,199,0.45)",   icon:"#38bdf8", accent:"#7dd3fc" },
+};
+
+function getColor(iconName: string | null) {
+  return SERVICE_COLORS[iconName ?? "default"] ?? SERVICE_COLORS.default;
+}
+
+async function getServices() {
+  try {
+    const clinicId = await resolvePublicClinicId();
+    if (!clinicId) throw new Error("no clinic");
+    const services = await prisma.service.findMany({
+      where: { clinicId, active: true }, orderBy: { nameRu: "asc" },
+      select: {
+        id:true, nameRu:true, descriptionRu:true, durationMin:true, price:true, iconName:true,
+        _count:{ select:{ doctors:true } },
+      },
+    });
+    return services.length ? services : MOCK_SERVICES;
+  } catch {
+    return allowMockFallback() ? MOCK_SERVICES : [];
+  }
+}
+
+export const metadata = { title:"Услуги", description:"Каталог медицинских услуг клиники InClinic" };
+
+export default async function ServicesPage() {
+  const services = await getServices();
+
+  return (
+    <div className="min-h-screen text-white p-6 lg:p-8">
+      <div className="max-w-6xl mx-auto">
+
+        {/* ── Header ───────────────────────────────────── */}
+        <div className="mb-7">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-sky-50 border border-sky-200 rounded-full px-3 py-1 text-sky-700 text-xs font-medium mb-3">
+                🩺 Все направления
+              </div>
+              <h1 className="text-2xl md:text-3xl font-bold neon-blue">
+                <span className="gradient-text">Каталог</span> услуг
+              </h1>
+            <div className="flex items-center gap-5 mt-2">
+              <span className="flex items-center gap-1.5 text-white/50 text-sm">
+                <span className="w-1.5 h-1.5 bg-sky-400 rounded-full" />
+                {services.length} услуг доступно
+              </span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Services grid ─────────────────────────────── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 mb-8">
+          {services.map((service, i) => {
+            const color = getColor(service.iconName ?? null);
+            return (
+              <AnimatedSection key={service.id} delay={i * 70} className="flex group">
+                <TiltCard className="glass-card flex flex-col w-full overflow-hidden cursor-default"
+                  glowColor={`${color.icon}44`} intensity={10}>
+                  <div className="h-1 w-full" style={{ background:`linear-gradient(90deg,${color.icon},${color.accent})` }} />
+                  <div className="p-6 flex flex-col flex-1">
+                    <div className="flex items-start justify-between mb-5">
+                      <div className="icon-box"
+                        style={{ background:color.bg, border:`1.5px solid ${color.border}`, color:color.icon }}>
+                        {SERVICE_ICONS[service.iconName ?? ""] ?? SERVICE_ICONS.default}
+                      </div>
+                      {service.price != null && (
+                        <div className="text-right">
+                          <div className="text-lg glass-card-price">
+                            {(service.price as number).toLocaleString()}
+                          </div>
+                          <div className="text-xs glass-card-meta">сомони</div>
+                        </div>
+                      )}
+                    </div>
+                    <h2 className="text-base glass-card-title mb-2 group-hover:text-sky-300 transition-colors">
+                      {service.nameRu}
+                    </h2>
+                    <p className="text-sm glass-card-desc flex-1 line-clamp-3">
+                      {service.descriptionRu}
+                    </p>
+                    <div className="mt-5 pt-4 border-t theme-border-b">
+                      <div className="flex items-center gap-3 text-xs glass-card-meta mb-0">
+                        <span>⏱ {service.durationMin} мин</span>
+                      </div>
+                    </div>
+                  </div>
+                </TiltCard>
+              </AnimatedSection>
+            );
+          })}
+        </div>
+
+      </div>
+    </div>
+  );
+}
