@@ -12,6 +12,52 @@ const ACCENT = "#1e40af";
 const ACCENT2 = "#2563eb";
 const GRID = "rgba(15, 23, 42, 0.06)";
 
+const MONTH_NUM: Record<string, string> = {
+  Янв: "01", Фев: "02", Мар: "03", Апр: "04", Май: "05", Июн: "06",
+  Июл: "07", Авг: "08", Сен: "09", Окт: "10", Ноя: "11", Дек: "12",
+};
+
+function pickTickIndices(count: number, maxTicks = 7): number[] {
+  if (count <= 0) return [];
+  if (count <= maxTicks) return Array.from({ length: count }, (_, i) => i);
+  const indices: number[] = [0];
+  const step = (count - 1) / (maxTicks - 1);
+  for (let i = 1; i < maxTicks - 1; i++) {
+    indices.push(Math.round(i * step));
+  }
+  indices.push(count - 1);
+  return [...new Set(indices)].sort((a, b) => a - b);
+}
+
+function formatTickLabel(label: string): string {
+  const m = label.match(/^(\d{1,2})\s+(\S+)/);
+  if (m) {
+    const mon = MONTH_NUM[m[2]] ?? m[2];
+    return `${m[1].padStart(2, "0")}.${mon}`;
+  }
+  return label;
+}
+
+function ChartAxis({ labels, maxTicks = 7 }: { labels: string[]; maxTicks?: number }) {
+  const count = labels.length;
+  const ticks = pickTickIndices(count, maxTicks);
+  if (!count) return null;
+
+  return (
+    <div className="oa-chart-axis">
+      {ticks.map((i) => (
+        <span
+          key={i}
+          className="oa-chart-axis-tick"
+          style={{ left: count <= 1 ? "50%" : `${(i / (count - 1)) * 100}%` }}
+        >
+          {formatTickLabel(labels[i] ?? "")}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 /* ───────────────────────────  Area chart  ──────────────────────────────── */
 export function AreaChart({
   data, height = 220, format = (n) => `${n}`, color = ACCENT,
@@ -37,10 +83,9 @@ export function AreaChart({
   const area = `${line} L ${x(data.length - 1)} ${H - padY} L ${x(0)} ${H - padY} Z`;
 
   const lastIdx = data.length - 1;
-  const showEvery = Math.ceil(data.length / 7);
 
   return (
-    <div style={{ width: "100%" }}>
+    <div className="oa-chart-block">
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={height} preserveAspectRatio="none" style={{ display: "block" }}>
         <defs>
           <linearGradient id={`fill-${gid}`} x1="0" y1="0" x2="0" y2="1">
@@ -56,13 +101,7 @@ export function AreaChart({
         <path d={line} fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
         <circle cx={x(lastIdx)} cy={y(data[lastIdx].value)} r="4.5" fill={color} stroke="rgba(255,255,255,0.9)" strokeWidth="2" />
       </svg>
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "var(--oa-text-faint)" }}>
-        {data.map((d, i) => (
-          <span key={i} style={{ visibility: i % showEvery === 0 || i === lastIdx ? "visible" : "hidden" }}>
-            {d.label}
-          </span>
-        ))}
-      </div>
+      <ChartAxis labels={data.map((d) => d.label)} />
     </div>
   );
 }
@@ -103,7 +142,7 @@ export function BarChart({
   const gap = 14;
   const bw = (W - gap * (data.length + 1)) / data.length;
   return (
-    <div style={{ width: "100%" }}>
+    <div className="oa-chart-block">
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={height} preserveAspectRatio="none" style={{ display: "block" }}>
         <defs>
           <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
@@ -119,14 +158,7 @@ export function BarChart({
           );
         })}
       </svg>
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "var(--oa-text-faint)", padding: "0 4px" }}>
-        {data.map((d, i) => {
-          const showEvery = Math.ceil(data.length / 8);
-          return (
-            <span key={i} style={{ visibility: i % showEvery === 0 || i === data.length - 1 ? "visible" : "hidden" }}>{d.label}</span>
-          );
-        })}
-      </div>
+      <ChartAxis labels={data.map((d) => d.label)} maxTicks={8} />
     </div>
   );
 }

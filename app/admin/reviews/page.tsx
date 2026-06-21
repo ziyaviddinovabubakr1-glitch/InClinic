@@ -95,7 +95,7 @@ export default function ReviewsPage() {
           </MotionItem>
 
           <MotionItem>
-            <div className="oa-card oa-card-pad">
+            <div className="oa-card oa-card-pad" style={{ height: "100%" }}>
               <SectionHeader title="Лучшие врачи" />
               <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
                 {analytics.bestDoctors.slice(0, 4).map((d) => (
@@ -110,7 +110,7 @@ export default function ReviewsPage() {
           </MotionItem>
 
           <MotionItem>
-            <div className="oa-card oa-card-pad">
+            <div className="oa-card oa-card-pad" style={{ height: "100%" }}>
               <SectionHeader title="Требуют внимания" />
               <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
                 {analytics.lowestDoctors.slice(0, 4).map((d) => (
@@ -145,30 +145,32 @@ export default function ReviewsPage() {
       ) : rows.length === 0 ? (
         <div className="oa-card"><EmptyState icon={<IReviews />} title="Отзывы не найдены" sub="Измените фильтры." /></div>
       ) : (
-        <MotionGrid style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <MotionGrid className="oa-review-list">
           {rows.map((r) => (
             <MotionItem key={r.id}>
-            <div className="oa-card oa-card-pad">
-              <div style={{ display: "flex", gap: 13 }}>
+            <div className="oa-card oa-card-pad oa-review-card">
+              <div className="oa-review-card-inner">
                 <Avatar name={r.patientName} size={42} tone="violet" />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                    <span style={{ fontWeight: 700, fontSize: 14 }}>{r.patientName}</span>
+                <div style={{ minWidth: 0 }}>
+                  <div className="oa-review-card-top">
+                    <span className="oa-review-card-name">{r.patientName}</span>
                     <Stars rating={r.rating} size={14} />
                     <VisibilityBadge visibility={r.visibility} />
-                    <span style={{ fontSize: 11.5, color: "var(--oa-text-faint)", marginLeft: "auto" }}>{new Date(r.date).toLocaleDateString("ru-RU")}</span>
+                    <span className="oa-review-card-date">
+                      {new Date(r.date).toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" })}
+                    </span>
                   </div>
-                  <div style={{ fontSize: 11.5, color: "var(--oa-text-faint)", marginTop: 2 }}>{r.doctorName} · {r.serviceName}</div>
-                  <p style={{ fontSize: 13.5, color: "var(--oa-text)", marginTop: 8, lineHeight: 1.5 }}>{r.comment}</p>
+                  <div className="oa-review-card-meta">{r.doctorName} · {r.serviceName}</div>
+                  <p className="oa-review-card-body">{r.comment}</p>
 
                   {r.reply && (
-                    <div style={{ marginTop: 10, padding: "10px 13px", background: "var(--oa-accent-soft)", borderRadius: 10, fontSize: 12.5 }}>
+                    <div className="oa-review-card-reply">
                       <div style={{ fontWeight: 700, color: "var(--oa-accent)", marginBottom: 2 }}>Ответ клиники</div>
                       <span style={{ color: "var(--oa-text-soft)" }}>{r.reply}</span>
                     </div>
                   )}
 
-                  <div style={{ display: "flex", gap: 7, marginTop: 12, flexWrap: "wrap" }}>
+                  <div className="oa-review-card-actions">
                     <button className="oa-btn oa-btn-soft oa-btn-sm" onClick={() => { setReplyFor(r); setReplyText(r.reply ?? ""); }}><IReply style={{ width: 14, height: 14 }} /> Ответить</button>
                     {r.visibility !== "PUBLISHED" && <button className="oa-btn oa-btn-success oa-btn-sm" onClick={() => moderate(r, "PUBLISHED")}><ICheck style={{ width: 14, height: 14 }} /> Опубликовать</button>}
                     {r.visibility !== "HIDDEN" ? (

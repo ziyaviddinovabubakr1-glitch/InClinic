@@ -17,6 +17,12 @@ const TRANSITION_LABEL: Record<AppointmentStatus, string> = {
   PENDING: "Ожидает", CONFIRMED: "Подтвердить", COMPLETED: "Завершить", CANCELLED: "Отменить",
 };
 
+function formatApptDate(iso: string): string {
+  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return iso;
+  return `${m[3]}.${m[2]}.${m[1]}`;
+}
+
 export default function AppointmentsPage() {
   const [rows, setRows] = useState<Appointment[] | null>(null);
   const [total, setTotal] = useState(0);
@@ -77,8 +83,13 @@ export default function AppointmentsPage() {
             <table className="oa-table">
               <thead>
                 <tr>
-                  <th>Пациент</th><th>Врач</th><th>Услуга</th>
-                  <th>Дата / время</th><th>Сумма</th><th>Статус</th><th style={{ textAlign: "right" }}>Действия</th>
+                  <th className="oa-table-col-patient">Пациент</th>
+                  <th className="oa-table-col-doctor">Врач</th>
+                  <th className="oa-table-col-service">Услуга</th>
+                  <th className="oa-table-col-datetime">Дата / время</th>
+                  <th className="oa-table-col-sum">Сумма</th>
+                  <th className="oa-table-col-status">Статус</th>
+                  <th className="oa-table-col-actions" style={{ textAlign: "right" }}>Действия</th>
                 </tr>
               </thead>
               <tbody>
@@ -86,19 +97,24 @@ export default function AppointmentsPage() {
                   const next = allowedTransitions(a.status);
                   return (
                     <tr key={a.id}>
-                      <td>
+                      <td className="oa-table-col-patient">
                         <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
                           <Avatar name={a.patientName} size={32} tone="violet" />
                           <span className="oa-cell-strong">{a.patientName}</span>
                         </div>
                       </td>
-                      <td className="oa-cell-soft">{a.doctorName}</td>
-                      <td className="oa-cell-soft">{a.serviceName}</td>
-                      <td className="oa-cell-soft">{a.date}<br /><span style={{ fontSize: 12 }}>{a.time}</span></td>
-                      <td className="oa-cell-strong">{money(a.price)}</td>
-                      <td><StatusBadge status={a.status} /></td>
-                      <td>
-                        <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                      <td className="oa-cell-soft oa-table-col-doctor">{a.doctorName}</td>
+                      <td className="oa-cell-soft oa-table-col-service">{a.serviceName}</td>
+                      <td className="oa-table-col-datetime">
+                        <div className="oa-datetime-cell">
+                          <span className="oa-datetime-date">{formatApptDate(a.date)}</span>
+                          <span className="oa-datetime-time">{a.time}</span>
+                        </div>
+                      </td>
+                      <td className="oa-cell-strong oa-table-col-sum">{money(a.price)}</td>
+                      <td className="oa-table-col-status"><StatusBadge status={a.status} /></td>
+                      <td className="oa-table-col-actions">
+                        <div className="oa-table-actions">
                           {next.length === 0 ? (
                             <span style={{ fontSize: 11.5, color: "var(--oa-text-faint)" }}>{a.status === "COMPLETED" ? "в архиве" : "—"}</span>
                           ) : next.map((n) => (

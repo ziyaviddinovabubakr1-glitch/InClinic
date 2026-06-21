@@ -860,12 +860,12 @@ body.admin-route {
 .oa-badge-hidden { background: var(--oa-bg-2); color: var(--oa-text-faint); }
 
 /* ── Tables ── */
-.oa-table-wrap { overflow-x: auto; border-radius: 0 0 var(--oa-radius) var(--oa-radius); }
-.oa-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.oa-table-wrap { overflow-x: auto; border-radius: 0 0 var(--oa-radius) var(--oa-radius); -webkit-overflow-scrolling: touch; }
+.oa-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; min-width: 920px; }
 .oa-table thead th {
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 5;
   text-align: left;
   font-size: 11px;
   font-weight: 700;
@@ -873,8 +873,9 @@ body.admin-route {
   text-transform: uppercase;
   color: var(--oa-text-faint);
   padding: 12px 18px;
-  border-bottom: 1px solid var(--oa-border);
-  background: var(--oa-surface-2);
+  border-bottom: 1px solid var(--oa-border-strong);
+  background: var(--oa-surface-solid);
+  box-shadow: 0 1px 0 var(--oa-border);
   white-space: nowrap;
 }
 .oa-table tbody td {
@@ -882,7 +883,19 @@ body.admin-route {
   border-bottom: 1px solid var(--oa-border);
   color: var(--oa-text);
   vertical-align: middle;
+  background: var(--oa-surface);
 }
+.oa-table-col-patient { min-width: 160px; }
+.oa-table-col-doctor { min-width: 140px; max-width: 180px; }
+.oa-table-col-service { min-width: 160px; max-width: 220px; }
+.oa-table-col-datetime { min-width: 108px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.oa-table-col-sum { min-width: 88px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.oa-table-col-status { min-width: 120px; }
+.oa-table-col-actions { min-width: 200px; }
+.oa-datetime-cell { display: flex; flex-direction: column; gap: 2px; line-height: 1.35; }
+.oa-datetime-date { font-weight: 600; color: var(--oa-text); font-size: 13px; }
+.oa-datetime-time { font-size: 12px; color: var(--oa-text-faint); }
+.oa-table-actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
 .oa-table tbody tr { transition: background 0.15s ease; }
 .oa-table tbody tr:hover { background: rgba(96, 165, 250, 0.06); }
 .oa-table tbody tr:last-child td { border-bottom: none; }
@@ -1088,11 +1101,109 @@ body.admin-route {
   padding: 24px;
   box-shadow: var(--oa-shadow-sm);
   transition: all 0.2s ease-out;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .oa-chart-card:hover {
   box-shadow: var(--oa-shadow-md);
   transform: translateY(-2px);
   border-color: var(--oa-border-strong);
+}
+
+.oa-chart-block {
+  width: 100%;
+  overflow: hidden;
+}
+
+.oa-chart-axis {
+  position: relative;
+  height: 24px;
+  margin-top: 10px;
+  padding: 0 6px;
+}
+
+.oa-chart-axis-tick {
+  position: absolute;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--oa-text-faint);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.oa-review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.oa-review-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.oa-review-card-inner {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.oa-review-card-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 4px;
+}
+
+.oa-review-card-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.oa-review-card-date {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 11.5px;
+  color: var(--oa-text-faint);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.oa-review-card-meta {
+  font-size: 11.5px;
+  color: var(--oa-text-faint);
+  margin-bottom: 8px;
+}
+
+.oa-review-card-body {
+  font-size: 13.5px;
+  color: var(--oa-text);
+  line-height: 1.55;
+  margin: 0;
+  min-height: 2.75rem;
+}
+
+.oa-review-card-reply {
+  margin-top: 10px;
+  padding: 10px 13px;
+  background: var(--oa-accent-soft);
+  border-radius: 10px;
+  font-size: 12.5px;
+}
+
+.oa-review-card-actions {
+  display: flex;
+  gap: 7px;
+  margin-top: 14px;
+  padding-top: 14px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--oa-border);
 }
 
 .oa-sidebar-overlay {
@@ -1247,7 +1358,7 @@ body.admin-route {
 .oa-doctor-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
 .oa-doctor-actions { display: flex; gap: 8px; margin-top: 16px; }
 
-.oa-analytics-hero { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.oa-analytics-hero { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; min-height: 160px; }
 .oa-analytics-hero-value {
   font-family: var(--oa-mono);
   font-size: 40px;
