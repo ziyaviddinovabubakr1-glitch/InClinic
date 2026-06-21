@@ -15,5 +15,5 @@ function run(cmd) {
 
 run("npx prisma generate");
 run("npx prisma db push");
-run("npx prisma db seed");
+run("node prisma/seed.mjs");
 run("npx next build");
