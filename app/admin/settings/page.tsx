@@ -89,8 +89,6 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <PasswordChangeCard />
-
       <div className="oa-card oa-card-pad">
         <SectionHeader title="Профиль клиники" sub="Основная информация и контакты" />
         <div style={{ display: "flex", alignItems: "center", gap: 18, marginBottom: 20, padding: 16, background: "var(--oa-surface-2)", borderRadius: 14, border: "1px solid var(--oa-border)" }}>
@@ -154,6 +152,8 @@ export default function SettingsPage() {
           })}
         </div>
       </div>
+
+      <PasswordChangeCard />
     </MotionPage>
   );
 }
@@ -170,12 +170,21 @@ function Field({ label, value, onChange, type = "text" }: {
 }
 
 function PasswordChangeCard() {
+  const [open, setOpen] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  function closeForm() {
+    setOpen(false);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setError("");
+  }
 
   async function changePassword() {
     setError("");
@@ -197,6 +206,7 @@ function PasswordChangeCard() {
       setNewPassword("");
       setConfirmPassword("");
       setMessage("Пароль успешно изменён ✓");
+      setTimeout(() => setMessage(""), 4000);
     } catch {
       setError("Ошибка сети. Попробуйте ещё раз.");
     } finally {
@@ -204,11 +214,37 @@ function PasswordChangeCard() {
     }
   }
 
+  if (!open) {
+    return (
+      <div className="oa-card oa-card-pad">
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 15, display: "flex", alignItems: "center", gap: 8 }}>
+              <IShield style={{ width: 18, height: 18, opacity: 0.85 }} />
+              Безопасность
+            </div>
+            <div style={{ fontSize: 12.5, color: "var(--oa-text-faint)", marginTop: 6 }}>
+              Смена пароля для входа в админку
+            </div>
+          </div>
+          <button type="button" className="oa-btn oa-btn-ghost" onClick={() => setOpen(true)}>
+            Сменить пароль
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="oa-card oa-card-pad">
       <SectionHeader
         title="Смена пароля"
-        sub="Меняйте пароль здесь — Render и сервер не нужны"
+        sub="Введите текущий и новый пароль"
+        action={
+          <button type="button" className="oa-btn oa-btn-ghost oa-btn-sm" onClick={closeForm}>
+            Скрыть
+          </button>
+        }
       />
       <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 14, maxWidth: 420 }}>
         <Field
@@ -240,7 +276,10 @@ function PasswordChangeCard() {
           onClick={changePassword}
           disabled={loading || !currentPassword || !newPassword || !confirmPassword}
         >
-          {loading ? "Сохранение…" : "Сменить пароль"}
+          {loading ? "Сохранение…" : "Сохранить новый пароль"}
+        </button>
+        <button type="button" className="oa-btn oa-btn-ghost" onClick={closeForm} disabled={loading}>
+          Отмена
         </button>
         {message && (
           <span style={{ fontSize: 13, color: "var(--oa-success)", fontWeight: 600 }}>{message}</span>
