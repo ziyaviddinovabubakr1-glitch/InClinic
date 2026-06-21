@@ -89,6 +89,8 @@ export default function SettingsPage() {
         </div>
       </div>
 
+      <PasswordChangeCard />
+
       <div className="oa-card oa-card-pad">
         <SectionHeader title="Профиль клиники" sub="Основная информация и контакты" />
         <div style={{ display: "flex", alignItems: "center", gap: 18, marginBottom: 20, padding: 16, background: "var(--oa-surface-2)", borderRadius: 14, border: "1px solid var(--oa-border)" }}>
@@ -163,6 +165,90 @@ function Field({ label, value, onChange, type = "text" }: {
     <div>
       <label className="oa-label">{label}</label>
       <input className="oa-input" type={type} value={value} onChange={(e) => onChange(e.target.value)} />
+    </div>
+  );
+}
+
+function PasswordChangeCard() {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  async function changePassword() {
+    setError("");
+    setMessage("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/password", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
+      });
+      const data = (await res.json()) as { error?: string; success?: boolean };
+      if (!res.ok) {
+        setError(data.error ?? "Не удалось сменить пароль");
+        return;
+      }
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setMessage("Пароль успешно изменён ✓");
+    } catch {
+      setError("Ошибка сети. Попробуйте ещё раз.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="oa-card oa-card-pad">
+      <SectionHeader
+        title="Смена пароля"
+        sub="Меняйте пароль здесь — Render и сервер не нужны"
+      />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 14, maxWidth: 420 }}>
+        <Field
+          label="Текущий пароль"
+          value={currentPassword}
+          onChange={setCurrentPassword}
+          type="password"
+        />
+        <Field
+          label="Новый пароль"
+          value={newPassword}
+          onChange={setNewPassword}
+          type="password"
+        />
+        <Field
+          label="Повторите новый пароль"
+          value={confirmPassword}
+          onChange={setConfirmPassword}
+          type="password"
+        />
+      </div>
+      <div style={{ fontSize: 12.5, color: "var(--oa-text-faint)", marginTop: 10 }}>
+        Минимум 8 символов. После смены вы останетесь в панели.
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 16, flexWrap: "wrap" }}>
+        <button
+          type="button"
+          className="oa-btn oa-btn-primary"
+          onClick={changePassword}
+          disabled={loading || !currentPassword || !newPassword || !confirmPassword}
+        >
+          {loading ? "Сохранение…" : "Сменить пароль"}
+        </button>
+        {message && (
+          <span style={{ fontSize: 13, color: "var(--oa-success)", fontWeight: 600 }}>{message}</span>
+        )}
+        {error && (
+          <span style={{ fontSize: 13, color: "var(--oa-danger, #ef4444)", fontWeight: 600 }}>{error}</span>
+        )}
+      </div>
     </div>
   );
 }
