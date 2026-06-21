@@ -25,6 +25,9 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "@types/node": "^20.17.6",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
     "autoprefixer": "^10.4.20",
@@ -43,10 +46,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^20.17.6",
     "@types/node-telegram-bot-api": "^0.64.7",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
     "embedded-postgres": "^18.4.0-beta.17",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.18",
