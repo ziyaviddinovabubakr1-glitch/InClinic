@@ -4,7 +4,6 @@ import { verifyAccessToken } from "@/lib/jwt";
 import { actionForAdminRoute, can, type AuthSubject } from "@/lib/rbac";
 import {
   gateCookieName,
-  getCanonicalHost,
   getSiteAccessKey,
   isApiPath,
   isBypassPath,
@@ -19,21 +18,6 @@ function withPrivacy(response: NextResponse): NextResponse {
     response.headers.set(key, value);
   }
   return response;
-}
-
-function redirectToCanonicalHost(request: NextRequest): NextResponse | null {
-  const { pathname } = request.nextUrl;
-  if (isApiPath(pathname)) return null;
-
-  const canonical = getCanonicalHost();
-  const host = request.headers.get("host")?.split(":")[0]?.toLowerCase();
-  if (!canonical || !host || host === canonical) return null;
-  if (!host.endsWith(".onrender.com")) return null;
-
-  const url = request.nextUrl.clone();
-  url.protocol = "https";
-  url.host = canonical;
-  return withPrivacy(NextResponse.redirect(url, 301));
 }
 
 function enforceAccessGate(request: NextRequest): NextResponse | null {
@@ -134,9 +118,6 @@ export async function middleware(request: NextRequest) {
     if (adminResponse) return adminResponse;
     return NextResponse.next();
   }
-
-  const canonicalRedirect = redirectToCanonicalHost(request);
-  if (canonicalRedirect) return canonicalRedirect;
 
   const gateResponse = enforceAccessGate(request);
   if (gateResponse) return gateResponse;

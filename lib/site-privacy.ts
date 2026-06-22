@@ -1,15 +1,9 @@
-/** Site privacy: no search indexing, optional invite link, canonical host. */
+/** Site privacy: no search indexing, optional invite link. */
 
 const GATE_COOKIE = "inclinic_gate";
 
 export function isIndexingBlocked(): boolean {
   return process.env.SITE_BLOCK_INDEXING !== "false";
-}
-
-export function getCanonicalHost(): string | null {
-  const raw = process.env.SITE_CANONICAL_HOST?.trim().toLowerCase();
-  if (!raw) return null;
-  return raw.replace(/^https?:\/\//, "").replace(/\/.*$/, "");
 }
 
 export function getSiteAccessKey(): string | null {
