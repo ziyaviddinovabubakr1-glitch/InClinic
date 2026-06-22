@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import {
-  IconShield, IconZap, IconLab, IconPhone, IconLocation, IconTelegram, IconCalendar,
+  IconShield, IconZap, IconLab, IconPhone, IconLocation, IconCalendar,
 } from "@/components/ui/Icons";
 import ClientReceiptPanel from "@/components/ui/ClientReceiptPanel";
 import BrandLogo from "@/components/ui/BrandLogo";
@@ -27,10 +27,10 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen px-4 sm:px-6 py-8 sm:py-10 md:py-12">
+    <div className="flex flex-col px-4 sm:px-6 py-6 sm:py-8 md:py-12 site-page">
 
       <div className="flex-1 flex flex-col items-center justify-center text-center max-w-2xl mx-auto w-full">
-        <AnimatedSection animate className="center-frost-panel w-full px-6 py-12 md:px-12 md:py-14">
+        <AnimatedSection animate className="center-frost-panel w-full px-5 py-10 sm:px-8 sm:py-12 md:px-12 md:py-14">
 
         <div className="mb-8">
           <BrandLogo size="md" />
@@ -38,16 +38,16 @@ export default function HomePage() {
 
         <h1
           className="neon-title mb-3 text-theme"
-          style={{ fontSize: "clamp(2.4rem, 5.5vw, 3.6rem)" }}
+          style={{ fontSize: "clamp(2.2rem, 5.5vw, 3.6rem)" }}
         >
           <span className="brand-in font-bold">In</span>
           <span className="brand-clinic font-bold">Clinic</span>
         </h1>
-        <p className="text-theme-muted mb-12 md:mb-14 tracking-wide text-sm md:text-base">
+        <p className="text-theme-muted mb-10 md:mb-14 tracking-wide text-sm md:text-base">
           {t.tagline}
         </p>
 
-        <div className="w-full mb-12 md:mb-14 space-y-6">
+        <div className="w-full mb-10 md:mb-14 space-y-6">
           <h2 className="neon-subtitle text-theme-muted mb-2">
             {t.aboutTitle}
           </h2>
@@ -73,14 +73,14 @@ export default function HomePage() {
           {t.bookCta}
         </Link>
 
-        <div className="w-full mt-12 md:mt-14">
+        <div className="w-full mt-10 md:mt-14">
           <ClientReceiptPanel variant="home" />
         </div>
         </AnimatedSection>
       </div>
 
-      <div className="pt-10 md:pt-14 pb-4 text-center max-w-xl mx-auto w-full">
-        <div className="center-frost-panel px-8 py-12 md:px-10 md:py-14">
+      <div className="pt-8 md:pt-14 pb-2 text-center max-w-xl mx-auto w-full">
+        <div className="center-frost-panel px-6 py-10 sm:px-8 sm:py-12 md:px-10 md:py-14">
         <h2 className="neon-subtitle text-theme-muted mb-8">
           {t.contactsTitle}
         </h2>
@@ -104,7 +104,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 mb-8">
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-3">
           {HOURS.map((h) => (
             <div key={h.day} className="text-xs md:text-sm px-3 py-1.5 rounded-lg theme-pill">
               <span className="text-theme font-medium">{h.day}</span>
@@ -115,16 +115,6 @@ export default function HomePage() {
             </div>
           ))}
         </div>
-
-        <a
-          href="https://t.me/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90 theme-pill"
-        >
-          <IconTelegram size={18} />
-          <span className="text-theme">{t.telegram}</span>
-        </a>
         </div>
       </div>
 

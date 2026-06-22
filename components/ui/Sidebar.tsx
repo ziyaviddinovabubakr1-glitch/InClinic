@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconHome, IconCalendar, IconTelegram } from "@/components/ui/Icons";
+import { IconHome, IconCalendar } from "@/components/ui/Icons";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 import BrandLogo from "@/components/ui/BrandLogo";
@@ -24,15 +24,15 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
 
   return (
     <aside className="theme-sidebar sidebar-neon h-full flex flex-col">
-      <div className="px-4 py-5 border-b theme-border-b sidebar-neon-header">
+      <div className="px-4 py-4 border-b theme-border-b sidebar-neon-header">
         <div className="flex items-start gap-3.5">
-          <BrandLogo size="xs" showGlow className="flex-shrink-0" />
+          <BrandLogo size="xs" className="flex-shrink-0" />
           <div className="flex-1 min-w-0 pt-0.5">
             <div className="neon-title text-lg leading-tight sidebar-neon-brand">
               <span className="brand-in font-extrabold">In</span>
               <span className="brand-clinic font-extrabold">Clinic</span>
             </div>
-            <p className="neon-subtitle neon-blue text-[11px] leading-snug tracking-[0.11em] mt-2 whitespace-normal">
+            <p className="text-[11px] leading-snug text-theme-muted mt-2 whitespace-normal">
               {t.tagline}
             </p>
           </div>
@@ -40,8 +40,9 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
             <ThemeSwitcher compact />
             {onClose && (
               <button
+                type="button"
                 onClick={onClose}
-                className="theme-toggle-btn p-1.5 rounded-lg md:hidden"
+                className="mobile-menu-btn mobile-menu-btn--compact md:hidden"
                 aria-label={t.closeMenu}
               >
                 ✕
@@ -52,7 +53,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
       </div>
 
       <div className="flex-1 overflow-y-auto px-3 py-4">
-        <div className="neon-subtitle neon-blue px-2 mb-3 tracking-widest opacity-80">
+        <div className="text-[10px] font-semibold uppercase tracking-widest text-theme-muted px-2 mb-3">
           {t.nav}
         </div>
         <nav className="space-y-1">
@@ -65,8 +66,8 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
                 href={item.href}
                 onClick={onClose}
                 className={`
-                  sidebar-nav-item flex items-center gap-3 px-3 py-3 rounded-xl text-sm
-                  transition-all duration-200
+                  sidebar-nav-item flex items-center gap-3 px-3 py-3.5 rounded-xl text-sm
+                  transition-colors duration-200
                   ${active ? "sidebar-nav-active font-semibold" : "theme-nav-link"}
                 `}
               >
@@ -79,20 +80,8 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
         </nav>
       </div>
 
-      <div className="px-0 py-4 border-t theme-border-b space-y-3">
+      <div className="px-0 py-4 border-t theme-border-b">
         <LanguageSwitcher />
-
-        <div className="px-3 space-y-1">
-          <a
-            href="https://t.me/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="sidebar-nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm theme-nav-link transition-colors"
-          >
-            <IconTelegram size={20} />
-            <span>{t.telegram}</span>
-          </a>
-        </div>
       </div>
     </aside>
   );

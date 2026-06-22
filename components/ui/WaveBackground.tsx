@@ -800,13 +800,14 @@ export default function WaveBackground({ fixed = false, intensity }: Props) {
           src={BASE_SCENE_SRC}
           alt=""
           draggable={false}
+          className="wave-bg-scene"
           style={{
             position: "absolute",
             inset: 0,
             width: "100%",
             height: "100%",
             objectFit: "cover",
-            objectPosition: "center center",
+            objectPosition: "center 42%",
             pointerEvents: "none",
             userSelect: "none",
           }}

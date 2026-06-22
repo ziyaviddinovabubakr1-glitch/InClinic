@@ -379,12 +379,12 @@ function BookingWizardInner() {
   ) : null;
 
   return (
-    <div className="min-h-screen page-pad">
+    <div className="page-pad site-page">
       <div className="max-w-2xl mx-auto">
 
         <div className="mb-7">
-          <h1 className="neon-title text-2xl neon-blue">{t.bookingTitle}</h1>
-          <p className="neon-white text-sm mt-1 opacity-80">{t.bookingSubtitle}</p>
+          <h1 className="neon-title text-2xl text-theme font-semibold">{t.bookingTitle}</h1>
+          <p className="text-theme-muted text-sm mt-1">{t.bookingSubtitle}</p>
         </div>
 
         {/* ── Progress indicator ───────────────────── */}
@@ -437,7 +437,7 @@ function BookingWizardInner() {
         {step === "service" && (
           <div>
             <div className="mb-7">
-              <h2 className="text-2xl font-bold neon-blue mb-1">{t.selectService}</h2>
+              <h2 className="text-2xl font-semibold text-theme mb-1">{t.selectService}</h2>
               <p className="text-theme-muted text-sm">{t.selectServiceSub}</p>
             </div>
             {loading ? (
@@ -494,7 +494,7 @@ function BookingWizardInner() {
           <div>
             <div className="flex items-start justify-between mb-7">
               <div>
-                <h2 className="text-2xl font-bold neon-blue mb-1">{t.selectDoctor}</h2>
+                <h2 className="text-2xl font-semibold text-theme mb-1">{t.selectDoctor}</h2>
                 <p className="text-theme-muted text-sm">{t.selectDoctorSub}</p>
               </div>
               <button onClick={() => setStep("service")} className="text-theme-faint hover:text-sky-600 text-sm transition-colors mt-1">
@@ -502,7 +502,7 @@ function BookingWizardInner() {
               </button>
             </div>
 
-            <div className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium mb-6 neon-blue theme-pill">
+            <div className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium mb-6 text-theme theme-pill">
               🩺 {serviceName(selectedService, lang)}
             </div>
 
@@ -570,7 +570,7 @@ function BookingWizardInner() {
           <div>
             <div className="flex items-start justify-between mb-7">
               <div>
-                <h2 className="text-2xl font-bold neon-blue mb-1">{t.stepSchedule}</h2>
+                <h2 className="text-2xl font-semibold text-theme mb-1">{t.stepSchedule}</h2>
                 <p className="text-theme-muted text-sm">{t.selectDateSub}</p>
               </div>
               <button onClick={() => setStep("doctor")} className="text-theme-faint hover:text-sky-600 text-sm transition-colors mt-1">
@@ -590,7 +590,7 @@ function BookingWizardInner() {
                 )}
               </div>
               <div>
-                <div className="text-sm font-semibold neon-white">{doctorName(selectedDoctor, lang)}</div>
+                <div className="text-sm font-semibold text-theme">{doctorName(selectedDoctor, lang)}</div>
                 <div className="text-xs text-theme-muted">
                   {t.doctorWorks}: {selectedDoctor.workDays.map((d) => DAY_NAMES[d]).join(", ")} · {selectedDoctor.workStart}–{selectedDoctor.workEnd}
                 </div>
@@ -651,7 +651,7 @@ function BookingWizardInner() {
           <div>
             <div className="flex items-start justify-between mb-7">
               <div>
-                <h2 className="text-2xl font-bold neon-blue mb-1">{t.yourData}</h2>
+                <h2 className="text-2xl font-semibold text-theme mb-1">{t.yourData}</h2>
                 <p className="text-theme-muted text-sm">{t.yourDataSub}</p>
               </div>
               <button onClick={() => setStep("date")} className="text-theme-faint hover:text-sky-600 text-sm transition-colors mt-1">
@@ -736,7 +736,7 @@ function BookingWizardInner() {
                     </svg>
                   </div>
                 </div>
-                <h2 className="text-3xl font-bold neon-blue mb-3">{t.pendingTitle}</h2>
+                <h2 className="text-3xl font-semibold text-theme mb-3">{t.pendingTitle}</h2>
                 <p className="text-theme-muted mb-8 text-lg max-w-md mx-auto">{t.pendingSub}</p>
               </>
             )}
@@ -756,9 +756,9 @@ function BookingWizardInner() {
                     </svg>
                   </div>
                 </div>
-                <h2 className="text-3xl font-bold neon-blue mb-3">{t.acceptedTitle}</h2>
-                <p className="text-theme-muted mb-4 text-lg">{t.acceptedSub}</p>
-                <p className="neon-subtitle neon-white text-[11px] tracking-widest mb-8 opacity-70">{t.successNote}</p>
+                <h2 className="text-3xl font-semibold text-theme mb-3">{t.acceptedTitle}</h2>
+                <p className="text-theme-muted text-lg mb-4">{t.acceptedSub}</p>
+                <p className="neon-subtitle text-theme-muted text-[11px] tracking-widest mb-8">{t.successNote}</p>
               </>
             )}
 
@@ -816,7 +816,7 @@ function BookingWizardInner() {
             <div
               className="glass-card p-6 text-left max-w-sm mx-auto mb-8"
             >
-              <div className="neon-subtitle neon-blue text-[10px] tracking-widest mb-4 text-center">
+              <div className="neon-subtitle text-theme-muted text-[10px] tracking-widest mb-4 text-center">
                 {t.receiptHeader}
               </div>
               {bookingStatus === "PENDING" && (

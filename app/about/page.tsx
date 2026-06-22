@@ -14,7 +14,7 @@ const VALUES = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen page-pad">
+    <div className="min-h-screen page-pad site-page">
       <div className="max-w-4xl mx-auto space-y-10 md:space-y-12">
 
         <AnimatedSection animate>

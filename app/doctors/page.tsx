@@ -33,7 +33,7 @@ export default async function DoctorsPage() {
   const specialties = Array.from(new Set(doctors.map((d) => d.specialtyRu)));
 
   return (
-    <div className="min-h-screen page-pad">
+    <div className="min-h-screen page-pad site-page">
       <div className="max-w-6xl mx-auto">
 
         <AnimatedSection animate className="mb-10 md:mb-12">

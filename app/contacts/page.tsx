@@ -13,7 +13,7 @@ const HOURS = [
 
 export default function ContactsPage() {
   return (
-    <div className="min-h-screen page-pad">
+    <div className="min-h-screen page-pad site-page">
       <div className="max-w-4xl mx-auto space-y-8 md:space-y-10">
 
         <AnimatedSection animate>

@@ -47,7 +47,7 @@ export default async function ServicesPage() {
   const services = await getServices();
 
   return (
-    <div className="min-h-screen text-white page-pad">
+    <div className="min-h-screen text-white page-pad site-page">
       <div className="max-w-6xl mx-auto">
 
         <AnimatedSection animate className="mb-10 md:mb-12">
