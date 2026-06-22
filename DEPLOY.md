@@ -130,6 +130,6 @@ npm run telegram:webhook
 
 **Админка не пускает** → проверь `ADMIN_USERNAME` / `ADMIN_PASSWORD` в Environment.
 
-**Telegram кнопки не работают** → проверь `TELEGRAM_WEBHOOK_PUBLIC_URL` (должен быть `https://inclinic.onrender.com`). После деплоя webhook регистрируется сам; или в Shell: `npm run telegram:webhook`.
+**Telegram кнопки не работают** → проверь `npm run telegram:status` (URL должен быть `https://inclinic.onrender.com`). Webhook регистрируется при каждом старте сервера. **Не запускай `npm run dev` с `TELEGRAM_FORCE_DEV_POLLING=true`** — это сбрасывает webhook. Локально кнопки работают только на деплое или через ngrok.
 
 **База пустая** → в Shell: `npx prisma db seed`
