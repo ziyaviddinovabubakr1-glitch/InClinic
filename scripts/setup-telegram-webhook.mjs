@@ -91,7 +91,7 @@ export async function registerTelegramWebhook(options = {}) {
     url: webhookUrl,
     secret_token: secret,
     allowed_updates: ["message", "callback_query"],
-    drop_pending_updates: true,
+    drop_pending_updates: false,
   };
 
   const res = await fetch(`https://api.telegram.org/bot${token}/setWebhook`, {

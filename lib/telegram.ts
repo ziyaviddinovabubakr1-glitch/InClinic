@@ -127,7 +127,7 @@ export async function setWebhook(
       url: webhookUrl,
       secret_token: secretToken,
       allowed_updates: ["message", "callback_query"],
-      drop_pending_updates: true,
+      drop_pending_updates: false,
     }),
   });
   const data = (await response.json()) as TelegramApiResponse;

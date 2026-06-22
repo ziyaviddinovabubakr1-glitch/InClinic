@@ -35,10 +35,11 @@ function escapeHtml(s: string): string {
     .replace(/>/g, "&gt;");
 }
 
-function devLog(msg: string) {
-  if (process.env.NODE_ENV !== "production") {
-    console.log("[telegram/webhook]", msg);
-  }
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+function logWebhook(msg: string) {
+  console.log("[telegram/webhook]", msg);
 }
 
 export async function POST(request: NextRequest) {
@@ -47,13 +48,13 @@ export async function POST(request: NextRequest) {
   const expected = getTelegramWebhookSecret();
 
   if (!expected || secret !== expected) {
-    devLog("403: secret mismatch or TELEGRAM_WEBHOOK_SECRET not set");
+    logWebhook(`403: secret mismatch (got ${secret ? "set" : "missing"}, expected configured)`);
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  /* Secret token is Telegram's official auth — do not block Render/proxy IPs */
   if (!isTelegramIp(ip)) {
-    devLog(`403: IP not in Telegram range: ${ip}`);
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    logWebhook(`note: client IP ${ip} not in Telegram ranges (secret ok, allowing)`);
   }
 
   let update: TelegramUpdate;
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
     const userId = String(msg.from.id);
 
     if (!verifyTelegramChat(chatId)) {
-      devLog(`ignored message from chat ${chatId} (expected TELEGRAM_CHAT_ID)`);
+      logWebhook(`ignored message from chat ${chatId} (expected TELEGRAM_CHAT_ID)`);
       return NextResponse.json({ ok: true });
     }
 
@@ -136,7 +137,7 @@ export async function POST(request: NextRequest) {
   const userId = String(cb.from.id);
 
   if (!verifyTelegramChat(chatId)) {
-    devLog(`ignored callback from chat ${chatId}`);
+    logWebhook(`ignored callback from chat ${chatId}`);
     return NextResponse.json({ ok: true });
   }
 

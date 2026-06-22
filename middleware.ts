@@ -6,6 +6,7 @@ import {
   gateCookieName,
   getCanonicalHost,
   getSiteAccessKey,
+  isApiPath,
   isBypassPath,
   isGateOpen,
   isIndexingBlocked,
@@ -21,6 +22,9 @@ function withPrivacy(response: NextResponse): NextResponse {
 }
 
 function redirectToCanonicalHost(request: NextRequest): NextResponse | null {
+  const { pathname } = request.nextUrl;
+  if (isApiPath(pathname)) return null;
+
   const canonical = getCanonicalHost();
   const host = request.headers.get("host")?.split(":")[0]?.toLowerCase();
   if (!canonical || !host || host === canonical) return null;
@@ -122,6 +126,15 @@ async function enforceAdminAuth(request: NextRequest): Promise<NextResponse | nu
 }
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  /* Telegram webhook + all API: no redirects, no access gate, no extra headers */
+  if (isApiPath(pathname)) {
+    const adminResponse = await enforceAdminAuth(request);
+    if (adminResponse) return adminResponse;
+    return NextResponse.next();
+  }
+
   const canonicalRedirect = redirectToCanonicalHost(request);
   if (canonicalRedirect) return canonicalRedirect;
 

@@ -130,6 +130,6 @@ npm run telegram:webhook
 
 **Админка не пускает** → проверь `ADMIN_USERNAME` / `ADMIN_PASSWORD` в Environment.
 
-**Telegram кнопки не работают** → проверь `TELEGRAM_WEBHOOK_PUBLIC_URL` (должен быть `https://...`) и снова `npm run telegram:webhook` в Shell.
+**Telegram кнопки не работают** → проверь `TELEGRAM_WEBHOOK_PUBLIC_URL` (должен быть `https://inclinic.onrender.com`, **не** inclinic.tj если домен не подключён). Убери `SITE_CANONICAL_HOST` с Render, если домен `.tj` ещё не куплен — редирект ломал webhook. После деплоя webhook регистрируется сам; или в Shell: `npm run telegram:webhook`.
 
 **База пустая** → в Shell: `npx prisma db seed`

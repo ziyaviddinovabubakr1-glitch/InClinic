@@ -37,6 +37,11 @@ export function isBypassPath(pathname: string): boolean {
   return false;
 }
 
+/** Telegram and other API hooks must never be redirected (Telegram rejects redirects). */
+export function isApiPath(pathname: string): boolean {
+  return pathname.startsWith("/api/");
+}
+
 export function privacyHeaders(): HeadersInit {
   if (!isIndexingBlocked()) return {};
   return {
