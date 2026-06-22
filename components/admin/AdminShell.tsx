@@ -116,8 +116,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             <div className="oa-brand-sub">Owner Panel</div>
           </div>
           <button
-            className="oa-btn oa-btn-icon oa-btn-ghost"
-            style={{ display: "none" }}
+            className="oa-btn oa-btn-icon oa-btn-ghost oa-sidebar-close"
             onClick={() => setOpen(false)}
             aria-label="Закрыть меню"
           >
@@ -169,7 +168,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           <div className="oa-topbar-actions">
             <Link href="/admin/appointments" className="oa-btn oa-btn-gold oa-btn-sm" style={{ textDecoration: "none" }}>
               <IPlus style={{ width: 16, height: 16 }} />
-              Новая запись
+              <span className="oa-btn-text-sm-hide">Новая запись</span>
             </Link>
             <AdminNotifyDropdown />
             <span className="oa-owner-badge">

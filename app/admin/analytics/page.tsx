@@ -34,12 +34,12 @@ export default function AnalyticsPage() {
       </div>
 
       {!data ? (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(340px,1fr))", gap: 20 }}>
+        <div className="oa-grid-charts">
           {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} height={280} />)}
         </div>
       ) : (
         <>
-          <MotionGrid style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(340px,1fr))", gap: 20 }}>
+          <MotionGrid className="oa-grid-charts">
             <MotionItem>
               <ChartCard title="Доход" sub={`Итого: ${money(data.revenue.reduce((s, p) => s + p.value, 0))}`}>
                 <AreaChart data={data.revenue} color="#22c55e" />
@@ -62,7 +62,7 @@ export default function AnalyticsPage() {
             </MotionItem>
           </MotionGrid>
 
-          <MotionGrid style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(340px,1fr))", gap: 20 }}>
+          <MotionGrid className="oa-grid-charts">
             <MotionItem>
               <ChartCard title="Загрузка врачей" sub="По количеству приёмов">
                 <BarChart data={data.doctorLoad} horizontal />
@@ -88,9 +88,9 @@ export default function AnalyticsPage() {
 
 function ChartCard({ title, sub, children }: { title: string; sub?: string; children: React.ReactNode }) {
   return (
-    <div className="oa-chart-card oa-card-hover">
+    <div className="oa-chart-card oa-card-hover" style={{ minWidth: 0, overflow: "hidden" }}>
       <SectionHeader title={title} sub={sub} />
-      {children}
+      <div style={{ minWidth: 0, maxWidth: "100%", overflow: "hidden" }}>{children}</div>
     </div>
   );
 }

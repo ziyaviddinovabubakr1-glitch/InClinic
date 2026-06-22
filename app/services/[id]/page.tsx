@@ -64,7 +64,7 @@ export default async function ServiceDetailPage({ params }: Props) {
   return (
     <main className="min-h-screen bg-[#f8faff] text-slate-900">
       {/* ── Header ─────────────────────────────────────── */}
-      <div className="relative py-20 px-6 overflow-hidden border-b border-slate-200/70 bg-white">
+      <div className="relative py-14 sm:py-20 px-4 sm:px-6 overflow-hidden border-b border-slate-200/70 bg-white">
         <div className="absolute inset-0 medical-grid-light" />
         <div
           className="absolute inset-0 pointer-events-none"
@@ -95,7 +95,7 @@ export default async function ServiceDetailPage({ params }: Props) {
         </div>
       </div>
 
-      <div className="py-12 px-6">
+      <div className="py-10 sm:py-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto space-y-6">
 
           {/* Description */}

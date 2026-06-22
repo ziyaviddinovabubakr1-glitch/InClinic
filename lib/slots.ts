@@ -1,6 +1,9 @@
 const SLOT_INTERVAL_MINUTES = 30;
 const PAST_BUFFER_MINUTES = 30;
 
+/** Обед у всех врачей: 12:00 и 12:30 не показываем (после 11:30 → 13:00). */
+const LUNCH_BREAK_SLOTS = new Set(["12:00", "12:30"]);
+
 function parseTime(time: string): { hours: number; minutes: number } {
   const [hours, minutes] = time.split(":").map(Number);
   return { hours, minutes };
@@ -27,7 +30,10 @@ export function generateTimeSlots(workStart: string, workEnd: string): string[] 
     current < endMinutes;
     current += SLOT_INTERVAL_MINUTES
   ) {
-    slots.push(minutesToTime(current));
+    const time = minutesToTime(current);
+    if (!LUNCH_BREAK_SLOTS.has(time)) {
+      slots.push(time);
+    }
   }
 
   return slots;

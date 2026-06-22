@@ -26,7 +26,7 @@ const EMPTY_FORM: DoctorInput = {
   education: "",
   languages: ["Русский"],
   consultationPrice: 150,
-  workSchedule: { days: [1, 2, 3, 4, 5], start: "09:00", end: "17:00" },
+  workSchedule: { days: [1, 2, 3, 4, 5, 6], start: "09:00", end: "17:00" },
   status: "ACTIVE",
 };
 
@@ -113,7 +113,7 @@ export default function DoctorsPage() {
       ) : doctors.length === 0 ? (
         <div className="oa-card"><EmptyState icon={<IDoctors />} title="Врачи не найдены" sub="Измените фильтры или добавьте нового врача." /></div>
       ) : (
-        <MotionGrid style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(320px,1fr))", gap: 18 }}>
+        <MotionGrid className="oa-grid-cards">
           {doctors.map((d) => {
             const score = doctorPerformanceScore(d);
             return (
@@ -181,7 +181,7 @@ export default function DoctorsPage() {
         title={analyticsFor?.fullName ?? ""} sub={analyticsFor?.specialty}>
         {!analytics ? <SkeletonRows rows={5} /> : (
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            <div className="oa-grid-2" style={{ gap: 10 }}>
               <StatTile label="Доход" value={money(analytics.revenue)} large />
               <StatTile label="Приёмы" value={String(analytics.appointments)} large />
               <StatTile label="Пациенты" value={String(analytics.patients)} large />
@@ -210,11 +210,11 @@ function DoctorForm({ form, setForm }: { form: DoctorInput; setForm: (f: DoctorI
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+      <div className="oa-grid-2">
         <div><label className="oa-label">ФИО</label><input className="oa-input" value={form.fullName} onChange={(e) => set({ fullName: e.target.value })} placeholder="Иванов Иван" /></div>
         <div><label className="oa-label">Специализация</label><input className="oa-input" value={form.specialty} onChange={(e) => set({ specialty: e.target.value })} placeholder="Кардиолог" /></div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+      <div className="oa-grid-2">
         <div><label className="oa-label">Опыт (лет)</label><input className="oa-input" type="number" min={0} value={form.experienceYears} onChange={(e) => set({ experienceYears: Number(e.target.value) })} /></div>
         <div><label className="oa-label">Стоимость приёма</label><input className="oa-input" type="number" min={0} value={form.consultationPrice} onChange={(e) => set({ consultationPrice: Number(e.target.value) })} /></div>
       </div>
@@ -235,6 +235,9 @@ function DoctorForm({ form, setForm }: { form: DoctorInput; setForm: (f: DoctorI
       </div>
       <div>
         <label className="oa-label">Рабочие дни</label>
+        <p style={{ fontSize: 12, color: "var(--oa-text-faint)", margin: "0 0 8px" }}>
+          Обычно 6 дней (Пн–Сб), один выходной. Дополнительные выходные — по согласованию с владельцем.
+        </p>
         <div className="oa-chips">
           {WEEKDAYS.map((d) => {
             const on = form.workSchedule.days.includes(d.n);
@@ -247,7 +250,7 @@ function DoctorForm({ form, setForm }: { form: DoctorInput; setForm: (f: DoctorI
           })}
         </div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, alignItems: "end" }}>
+      <div className="oa-grid-3" style={{ alignItems: "end" }}>
         <div><label className="oa-label">Начало</label><input className="oa-input" type="time" value={form.workSchedule.start} onChange={(e) => set({ workSchedule: { ...form.workSchedule, start: e.target.value } })} /></div>
         <div><label className="oa-label">Конец</label><input className="oa-input" type="time" value={form.workSchedule.end} onChange={(e) => set({ workSchedule: { ...form.workSchedule, end: e.target.value } })} /></div>
         <div>

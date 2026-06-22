@@ -15,7 +15,7 @@ const VALUES = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen p-6 lg:p-8">
+    <div className="min-h-screen page-pad">
       <div className="max-w-4xl mx-auto space-y-8">
 
         {/* Header */}
@@ -57,7 +57,7 @@ export default function AboutPage() {
 
         {/* Stats */}
         <AnimatedSection delay={120}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             {[
               { v:"5+",   l:"Лет работы" },
               { v:"15+",  l:"Специалистов" },

@@ -10,7 +10,7 @@ import type { CategoryPoint, TimeSeriesPoint } from "@/lib/admin/types";
 
 const ACCENT = "#1e40af";
 const ACCENT2 = "#2563eb";
-const GRID = "rgba(15, 23, 42, 0.06)";
+const GRID = "rgba(148, 163, 184, 0.12)";
 
 const MONTH_NUM: Record<string, string> = {
   Янв: "01", Фев: "02", Мар: "03", Апр: "04", Май: "05", Июн: "06",
@@ -38,24 +38,10 @@ function formatTickLabel(label: string): string {
   return label;
 }
 
-function ChartAxis({ labels, maxTicks = 7 }: { labels: string[]; maxTicks?: number }) {
-  const count = labels.length;
-  const ticks = pickTickIndices(count, maxTicks);
-  if (!count) return null;
-
-  return (
-    <div className="oa-chart-axis">
-      {ticks.map((i) => (
-        <span
-          key={i}
-          className="oa-chart-axis-tick"
-          style={{ left: count <= 1 ? "50%" : `${(i / (count - 1)) * 100}%` }}
-        >
-          {formatTickLabel(labels[i] ?? "")}
-        </span>
-      ))}
-    </div>
-  );
+function tickAnchor(index: number, count: number): "start" | "middle" | "end" {
+  if (index <= 0) return "start";
+  if (index >= count - 1) return "end";
+  return "middle";
 }
 
 /* ───────────────────────────  Area chart  ──────────────────────────────── */
@@ -69,24 +55,34 @@ export function AreaChart({
 }) {
   const gid = useId().replace(/:/g, "");
   const W = 720;
-  const H = height;
-  const padX = 8;
-  const padY = 18;
+  const axisBand = 30;
+  const plotH = height - axisBand;
+  const padX = 22;
+  const padY = 16;
   if (!data.length) return <ChartEmpty height={height} />;
 
   const max = Math.max(...data.map((d) => d.value), 1);
   const stepX = (W - padX * 2) / Math.max(1, data.length - 1);
   const x = (i: number) => padX + i * stepX;
-  const y = (v: number) => padY + (1 - v / max) * (H - padY * 2);
+  const y = (v: number) => padY + (1 - v / max) * (plotH - padY * 2);
 
   const line = data.map((d, i) => `${i === 0 ? "M" : "L"} ${x(i)} ${y(d.value)}`).join(" ");
-  const area = `${line} L ${x(data.length - 1)} ${H - padY} L ${x(0)} ${H - padY} Z`;
+  const area = `${line} L ${x(data.length - 1)} ${plotH - padY} L ${x(0)} ${plotH - padY} Z`;
 
   const lastIdx = data.length - 1;
+  const ticks = pickTickIndices(data.length, 7);
+  const labelY = height - 8;
 
   return (
     <div className="oa-chart-block">
-      <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={height} preserveAspectRatio="none" style={{ display: "block" }}>
+      <svg
+        viewBox={`0 0 ${W} ${height}`}
+        width="100%"
+        height={height}
+        preserveAspectRatio="none"
+        style={{ display: "block" }}
+        aria-hidden="true"
+      >
         <defs>
           <linearGradient id={`fill-${gid}`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={color} stopOpacity="0.28" />
@@ -94,14 +90,32 @@ export function AreaChart({
           </linearGradient>
         </defs>
         {[0.25, 0.5, 0.75].map((g) => (
-          <line key={g} x1={padX} x2={W - padX} y1={padY + g * (H - padY * 2)} y2={padY + g * (H - padY * 2)}
-            stroke={GRID} strokeWidth="1" />
+          <line
+            key={g}
+            x1={padX}
+            x2={W - padX}
+            y1={padY + g * (plotH - padY * 2)}
+            y2={padY + g * (plotH - padY * 2)}
+            stroke={GRID}
+            strokeWidth="1"
+          />
         ))}
         <path d={area} fill={`url(#fill-${gid})`} />
         <path d={line} fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
         <circle cx={x(lastIdx)} cy={y(data[lastIdx].value)} r="4.5" fill={color} stroke="rgba(255,255,255,0.9)" strokeWidth="2" />
+        <line x1={padX} x2={W - padX} y1={labelY - 14} y2={labelY - 14} stroke={GRID} strokeWidth="1" />
+        {ticks.map((i) => (
+          <text
+            key={i}
+            x={x(i)}
+            y={labelY}
+            textAnchor={tickAnchor(i, data.length)}
+            className="oa-chart-axis-svg-text"
+          >
+            {formatTickLabel(data[i]?.label ?? "")}
+          </text>
+        ))}
       </svg>
-      <ChartAxis labels={data.map((d) => d.label)} />
     </div>
   );
 }
@@ -137,13 +151,25 @@ export function BarChart({
   }
 
   const W = 720;
-  const H = height;
-  const padY = 18;
+  const axisBand = 30;
+  const plotH = height - axisBand;
+  const padY = 16;
   const gap = 14;
   const bw = (W - gap * (data.length + 1)) / data.length;
+  const ticks = pickTickIndices(data.length, 8);
+  const labelY = height - 8;
+  const barCenter = (i: number) => gap + i * (bw + gap) + bw / 2;
+
   return (
     <div className="oa-chart-block">
-      <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={height} preserveAspectRatio="none" style={{ display: "block" }}>
+      <svg
+        viewBox={`0 0 ${W} ${height}`}
+        width="100%"
+        height={height}
+        preserveAspectRatio="none"
+        style={{ display: "block" }}
+        aria-hidden="true"
+      >
         <defs>
           <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={ACCENT} />
@@ -151,14 +177,34 @@ export function BarChart({
           </linearGradient>
         </defs>
         {data.map((d, i) => {
-          const h = (d.value / max) * (H - padY * 2);
+          const h = (d.value / max) * (plotH - padY * 2);
           const xPos = gap + i * (bw + gap);
           return (
-            <rect key={i} x={xPos} y={H - padY - h} width={bw} height={Math.max(2, h)} rx="7" fill="url(#barGrad)" opacity={0.95} />
+            <rect
+              key={i}
+              x={xPos}
+              y={plotH - padY - h}
+              width={bw}
+              height={Math.max(2, h)}
+              rx="7"
+              fill="url(#barGrad)"
+              opacity={0.95}
+            />
           );
         })}
+        <line x1={gap} x2={W - gap} y1={labelY - 14} y2={labelY - 14} stroke={GRID} strokeWidth="1" />
+        {ticks.map((i) => (
+          <text
+            key={i}
+            x={barCenter(i)}
+            y={labelY}
+            textAnchor={tickAnchor(i, data.length)}
+            className="oa-chart-axis-svg-text"
+          >
+            {formatTickLabel(data[i]?.label ?? "")}
+          </text>
+        ))}
       </svg>
-      <ChartAxis labels={data.map((d) => d.label)} maxTicks={8} />
     </div>
   );
 }

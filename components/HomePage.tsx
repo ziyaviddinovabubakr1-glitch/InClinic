@@ -26,7 +26,7 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen px-6 py-8">
+    <div className="flex flex-col min-h-screen px-4 sm:px-6 py-6 sm:py-8">
 
       <div className="flex-1 flex flex-col items-center justify-center text-center max-w-2xl mx-auto w-full">
         <div className="center-frost-panel w-full px-6 py-10 md:px-10 md:py-12">

@@ -82,7 +82,7 @@ export default function DashboardPage() {
 
       <div>
         <SectionHeader title="Бизнес-обзор" sub="Ключевые лидеры и закономерности" />
-        <MotionGrid style={gridAuto(240)}>
+        <MotionGrid className="oa-grid-auto">
           <MotionItem><OverviewCard icon={IDoctors} tone="blue" title="Лучший врач" name={overview.bestDoctor.name} metric={overview.bestDoctor.metric} /></MotionItem>
           <MotionItem><OverviewCard icon={IServices} tone="green" title="Прибыльная услуга" name={overview.topService.name} metric={overview.topService.metric} /></MotionItem>
           <MotionItem><OverviewCard icon={IAppointments} tone="violet" title="Самый загруженный врач" name={overview.busiestDoctor.name} metric={overview.busiestDoctor.metric} /></MotionItem>
@@ -92,7 +92,7 @@ export default function DashboardPage() {
         </MotionGrid>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(340px,1fr))", gap: 20 }}>
+      <div className="oa-grid-charts">
         <MotionItem>
           <div className="oa-chart-card">
             <SectionHeader title="Доход" sub="Последние 14 дней" />
@@ -107,7 +107,7 @@ export default function DashboardPage() {
         </MotionItem>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(340px,1fr))", gap: 20 }}>
+      <div className="oa-grid-charts">
         <MotionItem>
           <div className="oa-card">
             <div className="oa-card-pad" style={{ paddingBottom: 4 }}>
@@ -164,9 +164,6 @@ export default function DashboardPage() {
   );
 }
 
-function gridAuto(min: number): React.CSSProperties {
-  return { display: "grid", gridTemplateColumns: `repeat(auto-fit,minmax(${min}px,1fr))`, gap: 16 };
-}
 
 function LifetimeStat({ label, value, tone }: { label: string; value: string; tone: string }) {
   return (
@@ -198,9 +195,9 @@ function DashboardSkeleton() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       <div className="oa-kpi-hero-grid">{Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} height={148} />)}</div>
-      <div style={gridAuto(220)}>{Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} height={120} />)}</div>
+      <div className="oa-grid-auto">{Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} height={120} />)}</div>
       <SkeletonCard height={220} />
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(340px,1fr))", gap: 20 }}>
+      <div className="oa-grid-charts">
         <SkeletonCard height={300} /><SkeletonCard height={300} />
       </div>
       <SkeletonRows rows={6} />

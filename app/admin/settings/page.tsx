@@ -99,7 +99,7 @@ export default function SettingsPage() {
           </div>
           <AdminBrandLogo variant="full" size="md" className="oa-settings-wordmark" />
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+        <div className="oa-grid-2" style={{ gap: 14 }}>
           <Field label="Название клиники" value={name} onChange={setName} />
           <Field label="Телефон" value={phone} onChange={setPhone} />
           <Field label="Email" value={email} onChange={setEmail} />
@@ -109,7 +109,7 @@ export default function SettingsPage() {
 
       <div className="oa-card oa-card-pad">
         <SectionHeader title="Параметры" sub="Рабочее время, язык и валюта" />
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+        <div className="oa-grid-2" style={{ gap: 14 }}>
           <Field label="Открытие" value={open} onChange={setOpen} type="time" />
           <Field label="Закрытие" value={close} onChange={setClose} type="time" />
           <div>
@@ -136,7 +136,7 @@ export default function SettingsPage() {
       {/* Backup Center */}
       <div className="oa-card oa-card-pad">
         <SectionHeader title="Центр резервных копий" sub="Создание и восстановление данных" action={<span className="oa-soon-pill">Скоро</span>} />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12 }}>
+        <div className="oa-grid-auto">
           {[
             { icon: IArchive, label: "Создать копию" },
             { icon: IDownload, label: "Скачать копию" },

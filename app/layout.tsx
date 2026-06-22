@@ -19,6 +19,16 @@ const exo2 = Exo_2({
 export const metadata: Metadata = {
   title:       { default: "InClinic", template: "%s | InClinic" },
   description: "Современная медицинская клиника. Онлайн запись к врачу.",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+    },
+  },
   icons: {
     icon:     [{ url: "/favicon.png",       sizes: "64x64",   type: "image/png" }],
     apple:    [{ url: "/logo-icon-512.png", sizes: "512x512", type: "image/png" }],
@@ -26,7 +36,11 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = { themeColor: "#0ea5e9" };
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#0ea5e9",
+};
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

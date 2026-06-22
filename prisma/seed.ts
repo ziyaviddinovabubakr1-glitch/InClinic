@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { hashPassword } from "../lib/password";
 
+const DEFAULT_WORK_DAYS = [1, 2, 3, 4, 5, 6];
+
 const prisma = new PrismaClient();
 
 const DEMO_SERVICES = [
@@ -48,7 +50,7 @@ const DEMO_DOCTORS = [
     nameTj: "Алиев Баҳром Содиқович",
     specialtyRu: "Терапевт",
     specialtyTj: "Терапевт",
-    workDays: [1, 2, 3, 4, 5],
+    workDays: DEFAULT_WORK_DAYS,
     workStart: "09:00",
     workEnd: "17:00",
     serviceIndexes: [0],
@@ -58,7 +60,7 @@ const DEMO_DOCTORS = [
     nameTj: "Раҳимова Зарина Камолевна",
     specialtyRu: "Кардиолог",
     specialtyTj: "Кардиолог",
-    workDays: [1, 2, 3, 4, 5],
+    workDays: DEFAULT_WORK_DAYS,
     workStart: "08:00",
     workEnd: "16:00",
     serviceIndexes: [1],
@@ -68,9 +70,9 @@ const DEMO_DOCTORS = [
     nameTj: "Исмоилов Давлат Ҳасанович",
     specialtyRu: "Невролог",
     specialtyTj: "Невролог",
-    workDays: [1, 3, 5],
-    workStart: "10:00",
-    workEnd: "18:00",
+    workDays: DEFAULT_WORK_DAYS,
+    workStart: "09:00",
+    workEnd: "17:00",
     serviceIndexes: [2],
   },
   {
@@ -78,7 +80,7 @@ const DEMO_DOCTORS = [
     nameTj: "Каримова Мадина Юсуфовна",
     specialtyRu: "Офтальмолог",
     specialtyTj: "Офтальмолог",
-    workDays: [2, 4],
+    workDays: DEFAULT_WORK_DAYS,
     workStart: "09:00",
     workEnd: "15:00",
     serviceIndexes: [3],
@@ -133,6 +135,21 @@ async function main() {
         });
       }
     }
+  }
+
+  const existingDoctors = await prisma.doctor.findMany({ where: { clinicId: clinic.id } });
+  let scheduleFixed = 0;
+  for (const doc of existingDoctors) {
+    if (doc.workDays.length < 6) {
+      await prisma.doctor.update({
+        where: { id: doc.id },
+        data: { workDays: DEFAULT_WORK_DAYS },
+      });
+      scheduleFixed++;
+    }
+  }
+  if (scheduleFixed > 0) {
+    console.log(`Updated workDays for ${scheduleFixed} doctor(s) → Mon–Sat`);
   }
 
   console.log(`Seeded clinic "${clinic.slug}", owner "${username}", demo doctors/services`);

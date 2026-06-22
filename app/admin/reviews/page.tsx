@@ -72,7 +72,7 @@ export default function ReviewsPage() {
           <SkeletonCard height={160} /><SkeletonCard height={160} /><SkeletonCard height={160} />
         </div>
       ) : (
-        <MotionGrid style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 18 }}>
+        <MotionGrid className="oa-grid-cards">
           <MotionItem>
             <div className="oa-card oa-card-pad oa-analytics-hero">
               <div style={{ textAlign: "center" }}>

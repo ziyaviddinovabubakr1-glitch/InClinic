@@ -1306,6 +1306,51 @@
     color: rgba(186, 230, 253, 0.75);
     margin-top: 0.15rem;
   }
+  .bk-time-head-count {
+    color: rgba(134, 239, 172, 0.9);
+    font-weight: 600;
+  }
+  .bk-time-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(56, 189, 248, 0.12);
+  }
+  .bk-time-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(186, 230, 253, 0.75);
+  }
+  .bk-time-legend-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+  .bk-time-legend-item--free .bk-time-legend-dot {
+    background: #38bdf8;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+  }
+  .bk-time-legend-item--busy .bk-time-legend-dot {
+    background: #f87171;
+    box-shadow: 0 0 8px rgba(248, 113, 113, 0.45);
+  }
+  .bk-time-legend-item--past .bk-time-legend-dot {
+    background: rgba(148, 163, 184, 0.45);
+  }
+  .bk-time-hint {
+    font-size: 0.72rem;
+    color: rgba(252, 165, 165, 0.9);
+    margin: 0 0 0.65rem;
+    font-weight: 500;
+  }
   .bk-time-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
@@ -1317,11 +1362,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 3.25rem;
+    min-height: 3.5rem;
     padding: 0.5rem 0.35rem;
     border-radius: 12px;
     border: 1px solid transparent;
     transition: all 0.2s ease;
+    touch-action: manipulation;
   }
   .bk-time-slot-time {
     font-size: 0.9rem;
@@ -1354,10 +1400,37 @@
   }
   .bk-time-slot--booked {
     cursor: not-allowed;
-    background: rgba(239, 68, 68, 0.12);
-    border-color: rgba(248, 113, 113, 0.28);
-    color: rgba(252, 165, 165, 0.85);
+    background: linear-gradient(145deg, rgba(239, 68, 68, 0.32), rgba(127, 29, 29, 0.22));
+    border-color: rgba(248, 113, 113, 0.55);
+    color: #fecaca;
+    opacity: 1;
+    box-shadow:
+      inset 0 0 0 1px rgba(239, 68, 68, 0.25),
+      0 2px 12px rgba(239, 68, 68, 0.15);
+  }
+  .bk-time-slot--booked .bk-time-slot-time {
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    text-decoration-color: rgba(254, 202, 202, 0.85);
+    opacity: 0.9;
+  }
+  .bk-time-slot-tag--booked {
+    color: #fff !important;
+    background: rgba(220, 38, 38, 0.75);
+    padding: 0.12rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.58rem !important;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .bk-time-slot-tag--free {
+    color: rgba(186, 230, 253, 0.75);
+    font-size: 0.52rem;
     opacity: 0.85;
+  }
+  .bk-time-slot-tag--past {
+    color: rgba(148, 163, 184, 0.65);
+    font-size: 0.52rem;
   }
   .bk-time-slot--past {
     cursor: not-allowed;
@@ -1452,9 +1525,28 @@
     box-shadow: 0 4px 18px rgba(14, 165, 233, 0.16);
   }
   [data-theme="light"] .bk-time-slot--booked {
+    color: #991b1b;
+    background: linear-gradient(145deg, rgba(254, 226, 226, 0.95), rgba(254, 202, 202, 0.85));
+    border-color: rgba(239, 68, 68, 0.55);
+    box-shadow:
+      inset 0 0 0 1px rgba(239, 68, 68, 0.2),
+      0 2px 10px rgba(239, 68, 68, 0.12);
+  }
+  [data-theme="light"] .bk-time-slot--booked .bk-time-slot-time {
+    text-decoration-color: rgba(185, 28, 28, 0.75);
+  }
+  [data-theme="light"] .bk-time-slot-tag--booked {
+    background: #dc2626;
+    color: #fff !important;
+  }
+  [data-theme="light"] .bk-time-legend-item {
+    color: rgba(12, 74, 110, 0.72);
+  }
+  [data-theme="light"] .bk-time-hint {
     color: #b91c1c;
-    background: rgba(254, 226, 226, 0.65);
-    border-color: rgba(248, 113, 113, 0.32);
+  }
+  [data-theme="light"] .bk-time-head-count {
+    color: #059669;
   }
   [data-theme="light"] .bk-time-slot--past {
     background: rgba(241, 245, 249, 0.75);
@@ -1494,4 +1586,129 @@
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* ─── Responsive: phones, tablets, desktops ─────────────────────── */
+@layer utilities {
+  .page-pad {
+    padding: 1rem;
+  }
+  @media (min-width: 640px) {
+    .page-pad { padding: 1.5rem; }
+  }
+  @media (min-width: 1024px) {
+    .page-pad { padding: 2rem; }
+  }
+}
+
+@media (max-width: 639px) {
+  .center-frost-panel {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+
+  .neon-title {
+    word-break: break-word;
+  }
+
+  .bk-week {
+    padding: 1rem 0.75rem 0.85rem;
+  }
+
+  .bk-week-head {
+    margin-bottom: 0.75rem;
+  }
+
+  .bk-week-nav {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+
+  .bk-week-title-main {
+    font-size: 0.8rem;
+  }
+
+  .bk-week-grid-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -0.25rem;
+    padding: 0 0.25rem 0.15rem;
+    scrollbar-width: none;
+  }
+
+  .bk-week-grid-wrap::-webkit-scrollbar {
+    display: none;
+  }
+
+  .bk-week-grid {
+    grid-template-columns: repeat(7, 4.35rem);
+    min-width: max-content;
+    gap: 0.35rem;
+  }
+
+  .bk-week-day {
+    min-height: 4.75rem;
+    padding: 0.35rem 0.2rem;
+  }
+
+  .bk-week-day-name {
+    font-size: 0.58rem;
+  }
+
+  .bk-week-day-num {
+    font-size: 1.15rem;
+  }
+
+  .bk-week-day-month,
+  .bk-week-day-badge {
+    display: none;
+  }
+
+  .bk-time {
+    padding: 1rem;
+  }
+
+  .bk-time-grid {
+    grid-template-columns: repeat(auto-fill, minmax(4.75rem, 1fr));
+    gap: 0.45rem;
+  }
+
+  .bk-time-slot {
+    min-height: 3.15rem;
+    padding: 0.4rem 0.25rem;
+  }
+
+  .bk-time-slot-time {
+    font-size: 0.82rem;
+  }
+
+  .bk-time-slot-tag--booked {
+    font-size: 0.54rem !important;
+    padding: 0.1rem 0.35rem;
+  }
+
+  .bk-time-legend {
+    gap: 0.4rem 0.75rem;
+  }
+
+  .bk-time-legend-item {
+    font-size: 0.62rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .bk-week-grid-wrap {
+    overflow: visible;
+  }
+}
+
+@media (max-width: 480px) {
+  .step-dot-current,
+  .step-dot-done,
+  .step-dot-pending {
+    width: 2rem !important;
+    height: 2rem !important;
+    font-size: 0.75rem !important;
+  }
 }

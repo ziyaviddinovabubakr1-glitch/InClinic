@@ -48,7 +48,7 @@ export default async function ServicesPage() {
   const services = await getServices();
 
   return (
-    <div className="min-h-screen text-white p-6 lg:p-8">
+    <div className="min-h-screen text-white page-pad">
       <div className="max-w-6xl mx-auto">
 
         {/* ── Header ───────────────────────────────────── */}

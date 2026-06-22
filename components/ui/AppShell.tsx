@@ -41,7 +41,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <Sidebar onClose={() => setSidebarOpen(false)} />
       </div>
 
-      <div className="flex-1 h-screen overflow-y-auto min-w-0 relative flex flex-col">
+      <div className="flex-1 h-screen overflow-y-auto overflow-x-hidden min-w-0 relative flex flex-col">
 
         <div className="md:hidden sticky top-0 z-30 flex items-center gap-3 px-4 py-3 border-b theme-border-b theme-surface-bar">
           <button

@@ -34,7 +34,7 @@ export default async function DoctorsPage() {
   const specialties = Array.from(new Set(doctors.map((d) => d.specialtyRu)));
 
   return (
-    <div className="min-h-screen p-6 lg:p-8">
+    <div className="min-h-screen page-pad">
       <div className="max-w-6xl mx-auto">
 
         <AnimatedSection className="mb-8">
@@ -61,7 +61,7 @@ export default async function DoctorsPage() {
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {doctors.map((doctor, i) => (
             <AnimatedSection key={doctor.id} delay={i * 60} className="flex">
               <TiltCard className="glass-card overflow-hidden flex flex-col w-full group"

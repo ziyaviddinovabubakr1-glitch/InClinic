@@ -69,6 +69,7 @@ export default function BookingWeekCalendar({
         </button>
       </div>
 
+      <div className="bk-week-grid-wrap">
       <div className="bk-week-grid">
         {loading
           ? [...Array(7)].map((_, i) => <div key={i} className="bk-week-day bk-week-day--shimmer" />)
@@ -102,6 +103,7 @@ export default function BookingWeekCalendar({
                 </button>
               );
             })}
+      </div>
       </div>
     </div>
   );

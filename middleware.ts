@@ -2,13 +2,69 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyAccessToken } from "@/lib/jwt";
 import { actionForAdminRoute, can, type AuthSubject } from "@/lib/rbac";
+import {
+  gateCookieName,
+  getCanonicalHost,
+  getSiteAccessKey,
+  isBypassPath,
+  isGateOpen,
+  isIndexingBlocked,
+  privacyHeaders,
+} from "@/lib/site-privacy";
+
+function withPrivacy(response: NextResponse): NextResponse {
+  if (!isIndexingBlocked()) return response;
+  for (const [key, value] of Object.entries(privacyHeaders())) {
+    response.headers.set(key, value);
+  }
+  return response;
+}
+
+function redirectToCanonicalHost(request: NextRequest): NextResponse | null {
+  const canonical = getCanonicalHost();
+  const host = request.headers.get("host")?.split(":")[0]?.toLowerCase();
+  if (!canonical || !host || host === canonical) return null;
+  if (!host.endsWith(".onrender.com")) return null;
+
+  const url = request.nextUrl.clone();
+  url.protocol = "https";
+  url.host = canonical;
+  return withPrivacy(NextResponse.redirect(url, 301));
+}
+
+function enforceAccessGate(request: NextRequest): NextResponse | null {
+  const accessKey = getSiteAccessKey();
+  if (!accessKey) return null;
+
+  const { pathname } = request.nextUrl;
+  if (isBypassPath(pathname)) return null;
+
+  const queryKey = request.nextUrl.searchParams.get("access");
+  if (queryKey === accessKey) {
+    const clean = request.nextUrl.clone();
+    clean.searchParams.delete("access");
+    const response = NextResponse.redirect(clean);
+    response.cookies.set(gateCookieName(), accessKey, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+    });
+    return withPrivacy(response);
+  }
+
+  if (isGateOpen(request)) return null;
+
+  return withPrivacy(new NextResponse(null, { status: 404 }));
+}
 
 /** Edge-safe: JWT signature + claims only. Session revocation checked in API handlers. */
-export async function middleware(request: NextRequest) {
+async function enforceAdminAuth(request: NextRequest): Promise<NextResponse | null> {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith("/admin/") || pathname === "/admin") {
-    if (pathname === "/admin") return NextResponse.next();
+    if (pathname === "/admin") return null;
 
     const token = request.cookies.get("admin_token")?.value;
     if (!token) {
@@ -26,9 +82,7 @@ export async function middleware(request: NextRequest) {
 
   if (pathname.startsWith("/api/admin/")) {
     const publicPaths = ["/api/admin/login", "/api/admin/refresh"];
-    if (publicPaths.includes(pathname)) {
-      return NextResponse.next();
-    }
+    if (publicPaths.includes(pathname)) return null;
 
     const token =
       request.cookies.get("admin_token")?.value ??
@@ -64,9 +118,24 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
-  return NextResponse.next();
+  return null;
+}
+
+export async function middleware(request: NextRequest) {
+  const canonicalRedirect = redirectToCanonicalHost(request);
+  if (canonicalRedirect) return canonicalRedirect;
+
+  const gateResponse = enforceAccessGate(request);
+  if (gateResponse) return gateResponse;
+
+  const adminResponse = await enforceAdminAuth(request);
+  if (adminResponse) return withPrivacy(adminResponse);
+
+  return withPrivacy(NextResponse.next());
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
+  matcher: [
+    "/((?!_next/static|_next/image).*)",
+  ],
 };

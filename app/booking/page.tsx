@@ -228,21 +228,30 @@ function BookingWizardInner() {
   }, [selectedDoctor, weekStart, t.errLoadSlots]);
 
   /* ── Load slots ─────────────────────────────────── */
-  const loadSlots = useCallback(async () => {
+  const loadSlots = useCallback(async (opts?: { silent?: boolean }) => {
     if (!selectedDoctor || !selectedDate) return;
-    setSlotsLoading(true);
-    setSlots([]);
-    setSlotTimeline([]);
-    setSelectedTime("");
+    const silent = opts?.silent ?? false;
+    if (!silent) {
+      setSlotsLoading(true);
+      setSlots([]);
+      setSlotTimeline([]);
+      setSelectedTime("");
+    }
     try {
       const res  = await fetch(`/api/slots?doctorId=${selectedDoctor.id}&date=${selectedDate}`);
       const data = (await res.json()) as { slots?: string[]; timeline?: SlotEntry[] };
       setSlots(data.slots ?? []);
       setSlotTimeline(data.timeline ?? []);
+      if (silent) {
+        setSelectedTime((prev) => {
+          if (!prev) return prev;
+          return (data.slots ?? []).includes(prev) ? prev : "";
+        });
+      }
     } catch {
-      setError(t.errLoadSlots);
+      if (!silent) setError(t.errLoadSlots);
     } finally {
-      setSlotsLoading(false);
+      if (!silent) setSlotsLoading(false);
     }
   }, [selectedDoctor, selectedDate, t.errLoadSlots]);
 
@@ -253,6 +262,16 @@ function BookingWizardInner() {
   useEffect(() => {
     if (step === "date" && selectedDoctor && selectedDate) loadSlots();
   }, [step, selectedDate, selectedDoctor, loadSlots]);
+
+  /* Обновляем занятость слотов, пока клиент выбирает время */
+  useEffect(() => {
+    if (step !== "date" || !selectedDoctor || !selectedDate) return;
+    const id = setInterval(() => {
+      loadSlots({ silent: true });
+      loadWeek();
+    }, 20_000);
+    return () => clearInterval(id);
+  }, [step, selectedDoctor, selectedDate, loadSlots, loadWeek]);
 
   const stepIndex = STEPS.findIndex((s) => s.id === step);
 
@@ -360,7 +379,7 @@ function BookingWizardInner() {
   ) : null;
 
   return (
-    <div className="min-h-screen p-6 lg:p-8">
+    <div className="min-h-screen page-pad">
       <div className="max-w-2xl mx-auto">
 
         <div className="mb-7">
@@ -608,6 +627,7 @@ function BookingWizardInner() {
                   labels={{
                     slotBooked: t.slotBooked,
                     slotPast: t.slotPast,
+                    slotAvailable: t.slotAvailable,
                     pickTime: t.selectTime,
                     workHours: t.workHours,
                   }}
@@ -662,7 +682,7 @@ function BookingWizardInner() {
 
             {/* Form */}
             <div className="glass-card p-6 mb-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="form-label">{t.firstName} *</label>
                   <input type="text" className="form-input" placeholder={t.firstNamePh} value={firstName} onChange={(e) => setFirstName(e.target.value)} />

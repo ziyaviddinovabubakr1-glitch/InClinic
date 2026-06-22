@@ -116,9 +116,9 @@ function build(): Dataset {
       languages: langs,
       consultationPrice: rngInt(rng, 12, 30) * 10,
       workSchedule: {
-        days: rng() > 0.4 ? [1, 2, 3, 4, 5] : [1, 2, 3, 4, 5, 6],
-        start: rng() > 0.5 ? "08:00" : "09:00",
-        end: rng() > 0.5 ? "17:00" : "18:00",
+        days: [1, 2, 3, 4, 5, 6],
+        start: "09:00",
+        end: "17:00",
       },
       status: i === 8 ? "HIDDEN" : "ACTIVE",
       rating: 0,
