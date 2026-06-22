@@ -41,7 +41,11 @@ async function main() {
   console.log("TELEGRAM_WEBHOOK_SECRET:", process.env.TELEGRAM_WEBHOOK_SECRET ? "задан" : "НЕ задан");
   console.log(
     "TELEGRAM_WEBHOOK_PUBLIC_URL:",
-    process.env.TELEGRAM_WEBHOOK_PUBLIC_URL || "(не задан — dev использует polling)"
+    process.env.TELEGRAM_WEBHOOK_PUBLIC_URL || "(не задан — OK на Render)"
+  );
+  console.log(
+    "RENDER_EXTERNAL_URL:",
+    process.env.RENDER_EXTERNAL_URL || "(только на Render)"
   );
 }
 

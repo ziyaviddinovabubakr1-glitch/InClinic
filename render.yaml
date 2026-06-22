@@ -50,5 +50,5 @@ services:
       - key: TELEGRAM_WEBHOOK_PUBLIC_URL
         sync: false
       - key: NEXT_PUBLIC_BASE_URL
-        sync: false
-      # RENDER_EXTERNAL_URL is set automatically by Render — used for Telegram webhook if URLs above are empty
+        value: https://inclinic.onrender.com
+      # RENDER_EXTERNAL_URL задаёт Render автоматически — webhook работает и без NEXT_PUBLIC_BASE_URL

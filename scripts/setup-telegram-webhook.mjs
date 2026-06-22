@@ -84,13 +84,16 @@ export async function registerTelegramWebhook(options = {}) {
 
   if (!publicBase) {
     warn("→ Публичный HTTPS URL не найден — webhook не регистрируется.");
-    warn("  Локально: npm run dev автоматически включит Telegram polling.");
-    warn("  Продакшен: задайте TELEGRAM_WEBHOOK_PUBLIC_URL и выполните npm run telegram:webhook");
+    warn("  Render: RENDER_EXTERNAL_URL подставляется сам при старте сервера.");
+    warn("  Или задайте TELEGRAM_WEBHOOK_PUBLIC_URL=https://inclinic.onrender.com");
     return false;
   }
 
   const webhookUrl = `${publicBase}/api/telegram/webhook`;
   log(`→ Регистрация webhook: ${webhookUrl}`);
+  if (process.env.RENDER_EXTERNAL_URL && !process.env.TELEGRAM_WEBHOOK_PUBLIC_URL) {
+    log(`  (URL из RENDER_EXTERNAL_URL: ${process.env.RENDER_EXTERNAL_URL})`);
+  }
 
   const body = {
     url: webhookUrl,

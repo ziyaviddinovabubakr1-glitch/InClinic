@@ -66,8 +66,8 @@ git push -u origin main
 | `TELEGRAM_BOT_TOKEN` | Токен от @BotFather |
 | `TELEGRAM_CHAT_ID` | Твой chat id (число) |
 | `TELEGRAM_WEBHOOK_SECRET` | Любая строка 8+ символов (латиница/цифры) |
-| `TELEGRAM_WEBHOOK_PUBLIC_URL` | Пока оставь пустым — заполнишь после деплоя |
-| `NEXT_PUBLIC_BASE_URL` | То же — после деплоя |
+| `TELEGRAM_WEBHOOK_PUBLIC_URL` | **Не обязательно** — Render подставит URL сам |
+| `NEXT_PUBLIC_BASE_URL` | **Не обязательно** — то же самое |
 
 `JWT_SECRET` Render сгенерирует сам.
 
@@ -78,22 +78,11 @@ git push -u origin main
 
 ---
 
-## ШАГ 3 — Дописать URL и Telegram (ты)
+## ШАГ 3 — Telegram (опционально)
 
-### 3.1 Обнови переменные на Render
+Webhook регистрируется **автоматически** при каждом старте сервера. Render сам задаёт `RENDER_EXTERNAL_URL` — **добавлять `NEXT_PUBLIC_BASE_URL` не нужно**.
 
-Render → сервис **inclinic** → **Environment**:
-
-```
-TELEGRAM_WEBHOOK_PUBLIC_URL = https://inclinic-xxxx.onrender.com
-NEXT_PUBLIC_BASE_URL          = https://inclinic-xxxx.onrender.com
-```
-
-Сохрани → Render перезапустит сайт.
-
-### 3.2 Подключи Telegram webhook
-
-Render → **inclinic** → вкладка **Shell** → выполни:
+Если кнопки не работают, в Shell:
 
 ```bash
 npm run telegram:webhook
