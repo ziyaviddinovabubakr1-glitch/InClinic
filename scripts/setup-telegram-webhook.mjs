@@ -31,11 +31,16 @@ async function detectNgrokHttpsUrl() {
 }
 
 function resolvePublicBaseUrl() {
-  const fromEnv =
-    process.env.TELEGRAM_WEBHOOK_PUBLIC_URL ??
-    process.env.NEXT_PUBLIC_BASE_URL;
-  if (fromEnv && fromEnv.startsWith("https://")) {
-    return fromEnv.replace(/\/$/, "");
+  const candidates = [
+    process.env.TELEGRAM_WEBHOOK_PUBLIC_URL,
+    process.env.NEXT_PUBLIC_BASE_URL,
+    process.env.RENDER_EXTERNAL_URL,
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+  ];
+  for (const raw of candidates) {
+    if (raw && raw.startsWith("https://")) {
+      return raw.replace(/\/$/, "");
+    }
   }
   return null;
 }

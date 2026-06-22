@@ -60,11 +60,15 @@ export function isTelegramConfigured(): boolean {
 }
 
 export function getTelegramWebhookPublicUrl(): string | null {
-  const url =
-    process.env.TELEGRAM_WEBHOOK_PUBLIC_URL ??
-    process.env.NEXT_PUBLIC_BASE_URL ??
-    "";
-  if (url.startsWith("https://")) return url.replace(/\/$/, "");
+  const candidates = [
+    process.env.TELEGRAM_WEBHOOK_PUBLIC_URL,
+    process.env.NEXT_PUBLIC_BASE_URL,
+    process.env.RENDER_EXTERNAL_URL,
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+  ];
+  for (const raw of candidates) {
+    if (raw?.startsWith("https://")) return raw.replace(/\/$/, "");
+  }
   return null;
 }
 

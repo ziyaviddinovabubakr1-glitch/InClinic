@@ -29,6 +29,11 @@ async function setupTelegramAfterServerReady() {
 
   if (!webhookOk) {
     stopPolling = startTelegramDevPolling(port);
+    if (!stopPolling) {
+      console.log(
+        "→ Telegram: кнопки работают на деплое (inclinic.onrender.com) или через TELEGRAM_FORCE_DEV_POLLING=true"
+      );
+    }
   } else {
     console.log("→ Telegram: webhook режим (кнопки через HTTPS)");
   }

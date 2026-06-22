@@ -11,7 +11,7 @@ const token = process.env.TELEGRAM_BOT_TOKEN;
 const secret = process.env.TELEGRAM_WEBHOOK_SECRET;
 
 export function startTelegramDevPolling(port = "3001", options = {}) {
-  const { waitForReady = false } = options;
+  const { waitForReady = false, force = false } = options;
 
   if (!token || token.includes("your-telegram")) {
     console.warn("→ Telegram polling: TELEGRAM_BOT_TOKEN не задан");
@@ -19,6 +19,19 @@ export function startTelegramDevPolling(port = "3001", options = {}) {
   }
   if (!secret || secret.length < 8) {
     console.warn("→ Telegram polling: TELEGRAM_WEBHOOK_SECRET не задан (мин. 8 символов)");
+    return null;
+  }
+
+  if (!force && process.env.TELEGRAM_FORCE_DEV_POLLING !== "true") {
+    console.warn(
+      "→ Telegram dev polling отключён (удаляет production webhook)."
+    );
+    console.warn(
+      "  Для локальной отладки кнопок: TELEGRAM_FORCE_DEV_POLLING=true npm run dev"
+    );
+    console.warn(
+      "  Или задайте TELEGRAM_WEBHOOK_PUBLIC_URL=https://... и npm run telegram:webhook"
+    );
     return null;
   }
 

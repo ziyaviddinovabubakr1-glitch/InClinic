@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
   const secret = request.headers.get("x-telegram-bot-api-secret-token");
   const expected = getTelegramWebhookSecret();
 
-  if (!expected || secret !== expected) {
+  if (!expected || secret?.trim() !== expected.trim()) {
     logWebhook(`403: secret mismatch (got ${secret ? "set" : "missing"}, expected configured)`);
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
@@ -137,7 +137,8 @@ export async function POST(request: NextRequest) {
   const userId = String(cb.from.id);
 
   if (!verifyTelegramChat(chatId)) {
-    logWebhook(`ignored callback from chat ${chatId}`);
+    logWebhook(`ignored callback from chat ${chatId} (expected TELEGRAM_CHAT_ID)`);
+    await answerCallbackQuery(cb.id, "Чат не авторизован");
     return NextResponse.json({ ok: true });
   }
 

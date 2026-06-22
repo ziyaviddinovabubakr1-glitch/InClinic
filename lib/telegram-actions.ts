@@ -100,7 +100,7 @@ export function isTelegramIp(ip: string): boolean {
 }
 
 export function verifyTelegramChat(chatId: string): boolean {
-  const expected = process.env.TELEGRAM_CHAT_ID;
+  const expected = process.env.TELEGRAM_CHAT_ID?.trim();
   if (!expected) return false;
-  return String(chatId) === String(expected);
+  return String(chatId).trim() === expected;
 }

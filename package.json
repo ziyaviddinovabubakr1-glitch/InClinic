@@ -16,7 +16,7 @@
     "telegram:status": "node scripts/telegram-status.mjs",
     "build": "prisma generate && next build",
     "build:deploy": "node scripts/deploy-build.mjs",
-    "start": "next start -p ${PORT:-3000}",
+    "start": "node scripts/start-production.mjs",
     "postinstall": "prisma generate",
     "lint": "next lint"
   },
