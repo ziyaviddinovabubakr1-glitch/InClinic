@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/Icons";
 import ClientReceiptPanel from "@/components/ui/ClientReceiptPanel";
 import BrandLogo from "@/components/ui/BrandLogo";
+import AnimatedSection from "@/components/ui/AnimatedSection";
 import { useLanguage } from "@/lib/i18n";
 
 const clinicPhone = process.env.NEXT_PUBLIC_CLINIC_PHONE ?? "+992 XX XXX XX XX";
@@ -26,40 +27,40 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen px-4 sm:px-6 py-6 sm:py-8">
+    <div className="flex flex-col min-h-screen px-4 sm:px-6 py-8 sm:py-10 md:py-12">
 
       <div className="flex-1 flex flex-col items-center justify-center text-center max-w-2xl mx-auto w-full">
-        <div className="center-frost-panel w-full px-6 py-10 md:px-10 md:py-12">
+        <AnimatedSection animate className="center-frost-panel w-full px-6 py-12 md:px-12 md:py-14">
 
-        <div className="mb-7">
+        <div className="mb-8">
           <BrandLogo size="md" />
         </div>
 
         <h1
-          className="neon-title mb-2"
-          style={{ fontSize: "clamp(2.8rem, 6vw, 4.2rem)" }}
+          className="neon-title mb-3 text-theme"
+          style={{ fontSize: "clamp(2.4rem, 5.5vw, 3.6rem)" }}
         >
-          <span className="brand-in font-extrabold">In</span>
-          <span className="brand-clinic font-extrabold">Clinic</span>
+          <span className="brand-in font-bold">In</span>
+          <span className="brand-clinic font-bold">Clinic</span>
         </h1>
-        <p className="neon-subtitle text-theme-muted mb-10 tracking-[0.14em]">
+        <p className="text-theme-muted mb-12 md:mb-14 tracking-wide text-sm md:text-base">
           {t.tagline}
         </p>
 
-        <div className="w-full mb-10 space-y-5">
-          <h2 className="neon-subtitle neon-blue tracking-[0.18em] mb-1">
+        <div className="w-full mb-12 md:mb-14 space-y-6">
+          <h2 className="neon-subtitle text-theme-muted mb-2">
             {t.aboutTitle}
           </h2>
           <p className="text-theme text-sm md:text-base leading-relaxed max-w-lg mx-auto">
             {t.aboutText}
           </p>
-          <div className="space-y-4 mt-6 max-w-md mx-auto w-full">
+          <div className="space-y-5 mt-8 max-w-md mx-auto w-full">
             {ABOUT_LINES.map(({ Icon, text }) => (
               <div key={text} className="flex items-center gap-4 text-left">
-                <div className="w-12 h-12 flex-shrink-0 rounded-xl flex items-center justify-center theme-icon-box">
-                  <Icon size={22} />
+                <div className="w-11 h-11 flex-shrink-0 rounded-xl flex items-center justify-center theme-icon-box">
+                  <Icon size={20} />
                 </div>
-                <p className="neon-white text-sm md:text-base leading-relaxed flex-1">
+                <p className="text-theme text-sm md:text-base leading-relaxed flex-1">
                   {text}
                 </p>
               </div>
@@ -72,44 +73,43 @@ export default function HomePage() {
           {t.bookCta}
         </Link>
 
-        {/* Чек — между записью и контактами */}
-        <div className="w-full mt-10">
+        <div className="w-full mt-12 md:mt-14">
           <ClientReceiptPanel variant="home" />
         </div>
-        </div>
+        </AnimatedSection>
       </div>
 
-      <div className="pt-8 pb-2 text-center max-w-xl mx-auto w-full">
-        <div className="center-frost-panel px-8 py-10 md:px-10 md:py-12">
-        <h2 className="neon-subtitle neon-blue tracking-[0.22em] mb-6">
+      <div className="pt-10 md:pt-14 pb-4 text-center max-w-xl mx-auto w-full">
+        <div className="center-frost-panel px-8 py-12 md:px-10 md:py-14">
+        <h2 className="neon-subtitle text-theme-muted mb-8">
           {t.contactsTitle}
         </h2>
 
-        <div className="space-y-4 mb-6">
+        <div className="space-y-5 mb-8">
           <a
             href={`tel:${clinicPhone.replace(/\s/g, "")}`}
             className="flex items-center justify-center gap-3 group"
           >
-            <IconPhone size={22} className="text-sky-300" />
-            <span className="neon-white text-lg font-semibold group-hover:neon-blue transition-all">
+            <IconPhone size={22} className="text-sky-400 opacity-90" />
+            <span className="text-theme text-lg font-semibold group-hover:opacity-90 transition-opacity">
               {clinicPhone}
             </span>
           </a>
 
           <div className="flex items-center justify-center gap-3">
-            <IconLocation size={22} className="text-sky-300" />
-            <span className="neon-white text-sm md:text-base font-medium">
+            <IconLocation size={22} className="text-sky-400 opacity-90" />
+            <span className="text-theme text-sm md:text-base">
               {t.address}
             </span>
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 mb-6">
+        <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 mb-8">
           {HOURS.map((h) => (
             <div key={h.day} className="text-xs md:text-sm px-3 py-1.5 rounded-lg theme-pill">
-              <span className="neon-white font-semibold">{h.day}</span>
+              <span className="text-theme font-medium">{h.day}</span>
               <span className="mx-2 text-theme-faint">·</span>
-              <span className={h.time === t.closed ? "text-theme-muted" : "neon-blue font-medium"}>
+              <span className={h.time === t.closed ? "text-theme-muted" : "text-theme"}>
                 {h.time}
               </span>
             </div>
@@ -120,11 +120,10 @@ export default function HomePage() {
           href="https://t.me/"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-105 theme-pill"
-          style={{ boxShadow: "0 0 24px rgba(14,165,233,0.28)" }}
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90 theme-pill"
         >
           <IconTelegram size={18} />
-          <span className="neon-white">{t.telegram}</span>
+          <span className="text-theme">{t.telegram}</span>
         </a>
         </div>
       </div>

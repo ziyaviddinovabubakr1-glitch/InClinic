@@ -6,75 +6,66 @@ interface AnimatedSectionProps {
   children:   React.ReactNode;
   className?: string;
   delay?:     number;
-  animation?: "fade-in-up" | "fade-in" | "scale-in";
+  /** Scroll-in animation — use only for hero / key sections */
+  animate?:   boolean;
+  animation?: "fade-in-up" | "fade-in";
   threshold?: number;
 }
 
 const KEYFRAME: Record<string, string> = {
   "fade-in-up": "fadeInUp",
   "fade-in":    "fadeIn",
-  "scale-in":   "scaleIn",
-};
-const DURATION: Record<string, string> = {
-  "fade-in-up": "0.65s",
-  "fade-in":    "0.5s",
-  "scale-in":   "0.45s",
 };
 
 export default function AnimatedSection({
   children,
   className = "",
   delay     = 0,
+  animate   = false,
   animation = "fade-in-up",
-  threshold = 0.01,
+  threshold = 0.08,
 }: AnimatedSectionProps) {
   const ref = useRef<HTMLDivElement>(null);
-
-  // "idle"     = SSR / pre-mount  → content fully visible (no JS needed)
-  // "waiting"  = JS loaded, not yet in view → opacity 0
-  // "animated" = in view or fallback fired   → play animation
-  const [state, setState] = useState<"idle" | "waiting" | "animated">("idle");
+  const [visible, setVisible] = useState(!animate);
 
   useEffect(() => {
+    if (!animate) return;
     const el = ref.current;
     if (!el) return;
 
-    // Transition to "waiting" only after mount so SSR always shows content
-    setState("waiting");
-
-    // Fallback: show after 500 ms regardless of scroll position
-    const fallback = setTimeout(() => setState("animated"), 500);
-
+    const fallback = setTimeout(() => setVisible(true), 400);
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           clearTimeout(fallback);
-          setState("animated");
+          setVisible(true);
           observer.disconnect();
         }
       },
-      { threshold, rootMargin: "0px 0px -40px 0px" }
+      { threshold, rootMargin: "0px 0px -24px 0px" }
     );
 
     observer.observe(el);
-
     return () => {
       observer.disconnect();
       clearTimeout(fallback);
     };
-  }, [threshold]);
+  }, [animate, threshold]);
+
+  if (!animate) {
+    return <div className={className}>{children}</div>;
+  }
 
   const keyframe = KEYFRAME[animation] ?? "fadeInUp";
-  const dur      = DURATION[animation]  ?? "0.65s";
 
   return (
     <div
       ref={ref}
       className={className}
       style={
-        state === "idle"     ? {}                                                                // visible, no style
-          : state === "waiting"  ? { opacity: 0, willChange: "opacity, transform" }            // briefly hidden
-          : { animation: `${keyframe} ${dur} ease-out ${delay}ms both` }                       // play anim
+        visible
+          ? { animation: `${keyframe} 0.55s ease-out ${delay}ms both` }
+          : { opacity: 0, transform: "translateY(12px)" }
       }
     >
       {children}

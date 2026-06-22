@@ -66,17 +66,16 @@ export default function SplashScreen() {
           opacity: exiting ? 0 : 1,
           transform: exiting ? "scale(1.02)" : "scale(1)",
           transition: `opacity ${FADE_OUT_MS}ms ease, transform ${FADE_OUT_MS}ms ease`,
-          animation: "fadeInUp 0.5s ease-out both",
         }}
       >
-        <BrandLogo size="hero" animate />
+        <BrandLogo size="hero" />
 
         <h1 className="neon-title mt-6 mb-2" style={{ fontSize: "clamp(2.4rem, 5.5vw, 3.6rem)" }}>
           <span className="brand-in font-extrabold">In</span>
           <span className="brand-clinic font-extrabold">Clinic</span>
         </h1>
 
-        <p className="neon-subtitle neon-white tracking-[0.18em] mb-8">{t.tagline}</p>
+        <p className="neon-subtitle text-theme-muted tracking-wide mb-8">{t.tagline}</p>
 
         <MedicalLoader variant="site" />
       </div>

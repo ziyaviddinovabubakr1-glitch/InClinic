@@ -3,7 +3,6 @@ import { MOCK_SERVICES } from "@/lib/mockData";
 import { resolvePublicClinicId } from "@/lib/clinic-server";
 import { allowMockFallback } from "@/lib/env";
 import AnimatedSection from "@/components/ui/AnimatedSection";
-import TiltCard from "@/components/ui/TiltCard";
 
 const SERVICE_ICONS: Record<string, string> = {
   heart:"🫀", brain:"🧠", bone:"🦴", eye:"👁️",
@@ -51,64 +50,52 @@ export default async function ServicesPage() {
     <div className="min-h-screen text-white page-pad">
       <div className="max-w-6xl mx-auto">
 
-        {/* ── Header ───────────────────────────────────── */}
-        <div className="mb-7">
+        <AnimatedSection animate className="mb-10 md:mb-12">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div>
-              <div className="inline-flex items-center gap-2 bg-sky-50 border border-sky-200 rounded-full px-3 py-1 text-sky-700 text-xs font-medium mb-3">
-                🩺 Все направления
-              </div>
-              <h1 className="text-2xl md:text-3xl font-bold neon-blue">
-                <span className="gradient-text">Каталог</span> услуг
+              <p className="neon-subtitle neon-blue mb-3">Все направления</p>
+              <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-theme">
+                Каталог услуг
               </h1>
-            <div className="flex items-center gap-5 mt-2">
-              <span className="flex items-center gap-1.5 text-white/50 text-sm">
-                <span className="w-1.5 h-1.5 bg-sky-400 rounded-full" />
+              <p className="text-theme-muted text-sm mt-3">
                 {services.length} услуг доступно
-              </span>
-            </div>
+              </p>
             </div>
           </div>
-        </div>
+        </AnimatedSection>
 
-        {/* ── Services grid ─────────────────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 mb-8">
-          {services.map((service, i) => {
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8 mb-12">
+          {services.map((service) => {
             const color = getColor(service.iconName ?? null);
             return (
-              <AnimatedSection key={service.id} delay={i * 70} className="flex group">
-                <TiltCard className="glass-card flex flex-col w-full overflow-hidden cursor-default"
-                  glowColor={`${color.icon}44`} intensity={10}>
-                  <div className="h-1 w-full" style={{ background:`linear-gradient(90deg,${color.icon},${color.accent})` }} />
-                  <div className="p-6 flex flex-col flex-1">
-                    <div className="flex items-start justify-between mb-5">
-                      <div className="icon-box"
-                        style={{ background:color.bg, border:`1.5px solid ${color.border}`, color:color.icon }}>
-                        {SERVICE_ICONS[service.iconName ?? ""] ?? SERVICE_ICONS.default}
-                      </div>
-                      {service.price != null && (
-                        <div className="text-right">
-                          <div className="text-lg glass-card-price">
-                            {(service.price as number).toLocaleString()}
-                          </div>
-                          <div className="text-xs glass-card-meta">сомони</div>
+              <div key={service.id} className="glass-card flex flex-col w-full overflow-hidden">
+                <div className="h-1 w-full" style={{ background:`linear-gradient(90deg,${color.icon},${color.accent})` }} />
+                <div className="p-6 md:p-7 flex flex-col flex-1">
+                  <div className="flex items-start justify-between mb-5">
+                    <div className="icon-box"
+                      style={{ background:color.bg, border:`1.5px solid ${color.border}`, color:color.icon }}>
+                      {SERVICE_ICONS[service.iconName ?? ""] ?? SERVICE_ICONS.default}
+                    </div>
+                    {service.price != null && (
+                      <div className="text-right">
+                        <div className="text-lg glass-card-price">
+                          {(service.price as number).toLocaleString()}
                         </div>
-                      )}
-                    </div>
-                    <h2 className="text-base glass-card-title mb-2 group-hover:text-sky-300 transition-colors">
-                      {service.nameRu}
-                    </h2>
-                    <p className="text-sm glass-card-desc flex-1 line-clamp-3">
-                      {service.descriptionRu}
-                    </p>
-                    <div className="mt-5 pt-4 border-t theme-border-b">
-                      <div className="flex items-center gap-3 text-xs glass-card-meta mb-0">
-                        <span>⏱ {service.durationMin} мин</span>
+                        <div className="text-xs glass-card-meta">сомони</div>
                       </div>
-                    </div>
+                    )}
                   </div>
-                </TiltCard>
-              </AnimatedSection>
+                  <h2 className="text-base glass-card-title mb-2">
+                    {service.nameRu}
+                  </h2>
+                  <p className="text-sm glass-card-desc flex-1 line-clamp-3 leading-relaxed">
+                    {service.descriptionRu}
+                  </p>
+                  <div className="mt-6 pt-4 border-t theme-border-b">
+                    <span className="text-xs glass-card-meta">⏱ {service.durationMin} мин</span>
+                  </div>
+                </div>
+              </div>
             );
           })}
         </div>

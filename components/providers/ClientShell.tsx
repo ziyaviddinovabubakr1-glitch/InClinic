@@ -10,7 +10,7 @@ export default function ClientShell({ children }: { children: React.ReactNode })
 
   return (
     <ThemeProvider>
-      {!isAdmin && <WaveBackground fixed />}
+      {!isAdmin && <WaveBackground fixed intensity="subtle" />}
       {children}
     </ThemeProvider>
   );

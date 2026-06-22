@@ -21,7 +21,7 @@ interface Props {
 
 export default function BrandLogo({
   size = "md",
-  showGlow = true,
+  showGlow = false,
   animate = false,
   className = "",
 }: Props) {

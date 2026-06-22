@@ -69,24 +69,11 @@ interface Meteor {
 
 /* ── Scene data ──────────────────────────────────────────────────── */
 
-/* Ten orbs in three tiers: deep-blue base · mid-blue · cyan accent.
-   Very slow orbital motion (periods 65–160 s) — the user will never
-   perceive a repeating loop.                                        */
+/* Three soft orbs — calm medical atmosphere */
 const ORBS: Orb[] = [
-  // tier 1 — deep base fills (large, very slow)
-  { ox: 0.00, oy: 0.00, ax: 0.33, ay: 0.33, fx: 0.028, fy: 0.032, px: 0.52, py: 5.00, radius: 0.90, r:  2, g:  9, b:  52, baseAlpha: 0.10 },
-  { ox: 0.05, oy:-0.05, ax: 0.32, ay: 0.30, fx: 0.030, fy: 0.026, px: 3.66, py: 2.80, radius: 0.85, r:  3, g: 13, b:  68, baseAlpha: 0.10 },
-  // tier 2 — atmospheric volume
-  { ox:-0.14, oy:-0.09, ax: 0.30, ay: 0.28, fx: 0.055, fy: 0.070, px: 0.00, py: 1.57, radius: 0.74, r:  3, g: 15, b:  80, baseAlpha: 0.11 },
-  { ox: 0.14, oy: 0.11, ax: 0.25, ay: 0.32, fx: 0.042, fy: 0.055, px: 1.05, py: 0.52, radius: 0.67, r:  2, g: 11, b:  63, baseAlpha: 0.12 },
-  { ox:-0.09, oy: 0.17, ax: 0.28, ay: 0.22, fx: 0.068, fy: 0.048, px: 2.10, py: 2.51, radius: 0.59, r:  4, g: 21, b:  93, baseAlpha: 0.10 },
-  { ox: 0.07, oy:-0.17, ax: 0.22, ay: 0.26, fx: 0.050, fy: 0.062, px: 3.14, py: 0.78, radius: 0.64, r:  3, g: 17, b:  74, baseAlpha: 0.11 },
-  // tier 3 — mid-blue depth
-  { ox: 0.00, oy: 0.02, ax: 0.20, ay: 0.18, fx: 0.038, fy: 0.045, px: 4.52, py: 3.20, radius: 0.54, r:  0, g: 52, b: 128, baseAlpha: 0.08 },
-  { ox:-0.18, oy: 0.02, ax: 0.24, ay: 0.20, fx: 0.062, fy: 0.055, px: 5.24, py: 1.25, radius: 0.49, r:  0, g: 68, b: 148, baseAlpha: 0.07 },
-  // tier 4 — cyan accent (smallest, most visible)
-  { ox: 0.18, oy:-0.07, ax: 0.18, ay: 0.22, fx: 0.080, fy: 0.065, px: 1.57, py: 4.00, radius: 0.39, r:  0, g:108, b: 188, baseAlpha: 0.06 },
-  { ox:-0.04, oy: 0.20, ax: 0.20, ay: 0.16, fx: 0.072, fy: 0.088, px: 2.83, py: 2.00, radius: 0.41, r:  0, g: 92, b: 173, baseAlpha: 0.07 },
+  { ox: 0.00, oy: 0.00, ax: 0.22, ay: 0.22, fx: 0.028, fy: 0.032, px: 0.52, py: 5.00, radius: 0.72, r:  2, g:  9, b:  52, baseAlpha: 0.07 },
+  { ox:-0.10, oy:-0.06, ax: 0.18, ay: 0.20, fx: 0.042, fy: 0.055, px: 1.05, py: 0.52, radius: 0.58, r:  3, g: 15, b:  80, baseAlpha: 0.06 },
+  { ox: 0.08, oy: 0.12, ax: 0.16, ay: 0.18, fx: 0.050, fy: 0.062, px: 3.14, py: 0.78, radius: 0.48, r:  0, g: 68, b: 148, baseAlpha: 0.05 },
 ];
 
 /* Four drifting clinical light focuses (periods 50–100 s) */
@@ -125,11 +112,11 @@ export default function WaveBackground({ fixed = false, intensity }: Props) {
     const ctx = ctxRaw;
 
     /* intensity scale factor */
-    const IM = preset === "subtle" ? 0.40 : preset === "medium" ? 0.65 : 1.0;
+    const IM = preset === "subtle" ? 0.35 : preset === "medium" ? 0.55 : 0.75;
 
-    /* particle count */
+    /* particle count — capped for performance */
     const pCount = Math.floor(
-      (preset === "subtle" ? 65 : preset === "medium" ? 110 : 160) * (isLight ? 0.35 : 1),
+      (preset === "subtle" ? 18 : preset === "medium" ? 24 : 30) * (isLight ? 0.45 : 1),
     );
 
     /* ── Initialise scene objects ──────────────────────────────── */
@@ -143,7 +130,7 @@ export default function WaveBackground({ fixed = false, intensity }: Props) {
       };
     });
 
-    const stars: Star[] = Array.from({ length: isLight ? 175 : 200 }, () => {
+    const stars: Star[] = Array.from({ length: isLight ? 24 : 30 }, () => {
       const tier = Math.random();
       if (isLight) {
         return {
@@ -157,7 +144,7 @@ export default function WaveBackground({ fixed = false, intensity }: Props) {
           phase: Math.random() * Math.PI * 2,
           speed: 0.55 + Math.random() * 1.6,
           bright: 0.62 + Math.random() * 0.38,
-          rays: tier > 0.35,
+          rays: tier > 0.55,
         };
       }
       return {
@@ -176,8 +163,9 @@ export default function WaveBackground({ fixed = false, intensity }: Props) {
     });
 
     const meteors: Meteor[] = [];
-    let spawnTimer = isLight ? 0.25 + Math.random() * 0.75 : 0.6 + Math.random() * 1.4;
-    let showerCooldown = isLight ? 12 + Math.random() * 10 : 18 + Math.random() * 14;
+    const enableMeteors = false;
+    let spawnTimer = 999;
+    let showerCooldown = 999;
 
     /* ── Canvas sizing ─────────────────────────────────────────── */
     let w = 0, h = 0;
@@ -237,18 +225,12 @@ export default function WaveBackground({ fixed = false, intensity }: Props) {
     function drawWaves(t: number) {
       const layers = isLight
         ? [
-            { amp: 28, freq: 0.0042, speed: 0.55, yOff: 0.62, alpha: 0.16, color: "14,165,233" },
-            { amp: 22, freq: 0.0055, speed: 0.42, yOff: 0.68, alpha: 0.12, color: "56,189,248" },
-            { amp: 35, freq: 0.0035, speed: 0.38, yOff: 0.74, alpha: 0.20, color: "2,132,199" },
-            { amp: 18, freq: 0.0068, speed: 0.62, yOff: 0.80, alpha: 0.10, color: "14,165,233" },
-            { amp: 42, freq: 0.0028, speed: 0.30, yOff: 0.88, alpha: 0.14, color: "3,105,161" },
+            { amp: 22, freq: 0.0042, speed: 0.42, yOff: 0.68, alpha: 0.10, color: "56,189,248" },
+            { amp: 28, freq: 0.0035, speed: 0.32, yOff: 0.82, alpha: 0.12, color: "14,165,233" },
           ]
         : [
-            { amp: 28, freq: 0.0042, speed: 0.55, yOff: 0.62, alpha: 0.14, color: "255,255,255" },
-            { amp: 22, freq: 0.0055, speed: 0.42, yOff: 0.68, alpha: 0.10, color: "186,230,253" },
-            { amp: 35, freq: 0.0035, speed: 0.38, yOff: 0.74, alpha: 0.18, color: "56,189,248" },
-            { amp: 18, freq: 0.0068, speed: 0.62, yOff: 0.80, alpha: 0.08, color: "255,255,255" },
-            { amp: 42, freq: 0.0028, speed: 0.30, yOff: 0.88, alpha: 0.12, color: "14,165,233" },
+            { amp: 22, freq: 0.0042, speed: 0.42, yOff: 0.68, alpha: 0.08, color: "186,230,253" },
+            { amp: 28, freq: 0.0035, speed: 0.32, yOff: 0.82, alpha: 0.10, color: "56,189,248" },
           ];
 
       for (const layer of layers) {
@@ -270,21 +252,16 @@ export default function WaveBackground({ fixed = false, intensity }: Props) {
         ctx.fill();
       }
 
-      if (!isLight) {
-        ctx.lineWidth = 1.2;
-        for (let i = 0; i < 3; i++) {
-          const amp = 20 + i * 8;
-          const freq = 0.004 + i * 0.001;
-          const speed = 0.45 + i * 0.1;
-          const baseY = h * (0.55 + i * 0.1);
-          ctx.beginPath();
-          for (let x = 0; x <= w; x += 3) {
-            const y = baseY + Math.sin(x * freq + t * speed + i) * amp;
-            if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-          }
-          ctx.strokeStyle = `rgba(255,255,255,${0.06 + i * 0.02})`;
-          ctx.stroke();
+      if (!isLight && preset !== "subtle") {
+        ctx.lineWidth = 1;
+        const baseY = h * 0.62;
+        ctx.beginPath();
+        for (let x = 0; x <= w; x += 4) {
+          const y = baseY + Math.sin(x * 0.004 + t * 0.35) * 16;
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
+        ctx.strokeStyle = "rgba(255,255,255,0.04)";
+        ctx.stroke();
       }
     }
 
@@ -449,33 +426,8 @@ export default function WaveBackground({ fixed = false, intensity }: Props) {
        fills — inspired by cellular cross-sections and bio-
        energy fields without literally drawing them.
     ══════════════════════════════════════════════════════════ */
-    function drawEnergyForms(t: number) {
-      if (isLight) return;
-      for (let i = 0; i < 6; i++) {
-        const phi = t * 0.055 + i * 1.047;   // 1.047 ≈ π/3
-        const fx  = (0.5 + Math.sin(phi + i * 0.82) * 0.27) * w;
-        const fy  = (0.5 + Math.cos(phi * 1.13 + i * 0.55) * 0.27) * h;
-        const rx  = (0.17 + Math.sin(phi * 0.73) * 0.055) * Math.min(w, h);
-        const ry  = rx * (0.48 + Math.sin(phi * 0.52 + 1.1) * 0.22);
-        const rot = phi * 0.28;
-        const a   = 0.030 * IM * (0.70 + 0.30 * Math.sin(phi * 1.2)) * (isLight ? 0.35 : 1);
-        const hue = 205 + i * 9 + Math.sin(t * 0.038 + i) * 14;
-
-        ctx.save();
-        ctx.translate(fx, fy);
-        ctx.rotate(rot);
-
-        const g = ctx.createRadialGradient(0, 0, 0, 0, 0, rx * 1.1);
-        g.addColorStop(0.00, `hsla(${hue},80%,44%,${a * 2.2})`);
-        g.addColorStop(0.45, `hsla(${hue},75%,36%,${a})`);
-        g.addColorStop(1.00, `hsla(${hue},70%,28%,0)`);
-
-        ctx.beginPath();
-        ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
-        ctx.fillStyle = g;
-        ctx.fill();
-        ctx.restore();
-      }
+    function drawEnergyForms(_t: number) {
+      /* disabled — calm UI */
     }
 
     /* ══════════════════════════════════════════════════════════
@@ -645,6 +597,7 @@ export default function WaveBackground({ fixed = false, intensity }: Props) {
     }
 
     function updateMeteors(dt: number) {
+      if (!enableMeteors) return;
       spawnTimer -= dt;
       showerCooldown -= dt;
 
@@ -804,26 +757,15 @@ export default function WaveBackground({ fixed = false, intensity }: Props) {
 
       if (isLight) {
         drawBase();
-        drawOrbs(t, breathe);
-        drawEnergyForms(t);
+        if (preset !== "subtle") drawOrbs(t, breathe);
         drawFlowParticles(t);
         drawWaves(t);
-        drawGlowFocus(t, breathe);
-        updateMeteors(dt);
-        drawStars(t);
-        drawMeteors();
+        if (preset === "hero") drawStars(t);
         drawVignette();
       } else {
-        /* Transparent FX canvas over static hero-scene-base.png */
         ctx.clearRect(0, 0, w, h);
-
         drawFlowParticles(t);
-        drawGlowFocus(t, breathe);
-        drawHorizonMist(t);
-
-        updateMeteors(dt);
-        drawStars(t);
-        drawMeteors();
+        if (preset !== "subtle") drawGlowFocus(t, breathe);
       }
 
       rafRef.current = requestAnimationFrame(loop);

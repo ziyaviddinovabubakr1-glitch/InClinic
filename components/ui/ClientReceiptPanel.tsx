@@ -185,7 +185,7 @@ export default function ClientReceiptPanel({ variant }: Props) {
 
   if (variant === "home") {
     return (
-      <div className="w-full text-center" style={{ animation: "fadeInUp 0.4s ease-out both" }}>
+      <div className="w-full text-center">
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
@@ -203,7 +203,7 @@ export default function ClientReceiptPanel({ variant }: Props) {
         </button>
 
         {expanded && (
-          <div className="space-y-4 max-w-md mx-auto" style={{ animation: "fadeInUp 0.35s ease-out both" }}>
+          <div className="space-y-4 max-w-md mx-auto">
             {receipts.map((r) => (
               <ReceiptCard key={r.id} receipt={r} />
             ))}

@@ -435,7 +435,7 @@ function BookingWizardInner() {
 
         {/* ════════════════ STEP: SERVICE ═══════════ */}
         {step === "service" && (
-          <div style={{ animation: "fadeInUp 0.4s ease-out both" }}>
+          <div>
             <div className="mb-7">
               <h2 className="text-2xl font-bold neon-blue mb-1">{t.selectService}</h2>
               <p className="text-theme-muted text-sm">{t.selectServiceSub}</p>
@@ -491,7 +491,7 @@ function BookingWizardInner() {
 
         {/* ════════════════ STEP: DOCTOR ═══════════ */}
         {step === "doctor" && selectedService && (
-          <div style={{ animation: "fadeInUp 0.4s ease-out both" }}>
+          <div>
             <div className="flex items-start justify-between mb-7">
               <div>
                 <h2 className="text-2xl font-bold neon-blue mb-1">{t.selectDoctor}</h2>
@@ -567,7 +567,7 @@ function BookingWizardInner() {
 
         {/* ════════════════ STEP: SCHEDULE (date + time) ═ */}
         {step === "date" && selectedDoctor && (
-          <div style={{ animation: "fadeInUp 0.4s ease-out both" }}>
+          <div>
             <div className="flex items-start justify-between mb-7">
               <div>
                 <h2 className="text-2xl font-bold neon-blue mb-1">{t.stepSchedule}</h2>
@@ -648,7 +648,7 @@ function BookingWizardInner() {
 
         {/* ════════════════ STEP: CONTACT ══════════ */}
         {step === "contact" && (
-          <div style={{ animation: "fadeInUp 0.4s ease-out both" }}>
+          <div>
             <div className="flex items-start justify-between mb-7">
               <div>
                 <h2 className="text-2xl font-bold neon-blue mb-1">{t.yourData}</h2>
@@ -720,7 +720,7 @@ function BookingWizardInner() {
 
         {/* ════════════════ STEP: CONFIRM ══════════ */}
         {step === "confirm" && result && (
-          <div className="text-center py-8" style={{ animation: "fadeInUp 0.5s ease-out both" }}>
+          <div className="text-center py-8">
             {bookingStatus === "PENDING" && (
               <>
                 <div className="relative inline-block mb-8">
@@ -748,18 +748,13 @@ function BookingWizardInner() {
                     className="w-28 h-28 rounded-full flex items-center justify-center"
                     style={{
                       background: "linear-gradient(135deg, #0284c7, #0ea5e9)",
-                      boxShadow: "0 8px 32px rgba(14,165,233,0.4)",
-                      animation: "scaleIn 0.5s ease-out both",
+                      boxShadow: "0 8px 24px rgba(14,165,233,0.25)",
                     }}
                   >
                     <svg className="w-14 h-14 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <div
-                    className="absolute inset-0 rounded-full border-4 border-sky-300"
-                    style={{ animation: "pulse-ring 1.5s ease-out 0.5s both" }}
-                  />
                 </div>
                 <h2 className="text-3xl font-bold neon-blue mb-3">{t.acceptedTitle}</h2>
                 <p className="text-theme-muted mb-4 text-lg">{t.acceptedSub}</p>
@@ -820,7 +815,6 @@ function BookingWizardInner() {
             {(bookingStatus === "PENDING" || bookingStatus === "ACCEPTED") && (
             <div
               className="glass-card p-6 text-left max-w-sm mx-auto mb-8"
-              style={{ animation: "fadeInUp 0.5s ease-out 0.5s both" }}
             >
               <div className="neon-subtitle neon-blue text-[10px] tracking-widest mb-4 text-center">
                 {t.receiptHeader}
@@ -871,7 +865,6 @@ function BookingWizardInner() {
 
             <div
               className="flex flex-col sm:flex-row items-center justify-center gap-3"
-              style={{ animation: "fadeInUp 0.5s ease-out 0.6s both" }}
             >
               {bookingStatus !== "REJECTED" && (
                 <Link href="/" className="btn-primary">{t.toHome}</Link>
