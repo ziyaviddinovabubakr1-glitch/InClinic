@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import {
-  IconShield, IconZap, IconLab, IconPhone, IconLocation, IconCalendar,
+  IconShield, IconZap, IconLab, IconPhone, IconLocation, IconCalendar, IconClipboard,
 } from "@/components/ui/Icons";
-import ClientReceiptPanel from "@/components/ui/ClientReceiptPanel";
 import BrandLogo from "@/components/ui/BrandLogo";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import { useLanguage } from "@/lib/i18n";
@@ -73,9 +72,13 @@ export default function HomePage() {
           {t.bookCta}
         </Link>
 
-        <div className="w-full mt-10 md:mt-14">
-          <ClientReceiptPanel variant="home" />
-        </div>
+        <Link
+          href="/my"
+          className="mt-4 inline-flex items-center gap-2 text-sm text-theme-muted hover:text-sky-400 transition-colors"
+        >
+          <IconClipboard size={16} />
+          {t.myRecords}
+        </Link>
         </AnimatedSection>
       </div>
 

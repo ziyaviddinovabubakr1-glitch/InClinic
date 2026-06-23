@@ -183,13 +183,9 @@
     50%       { opacity: 0.7; transform: scale(1.05); }
   }
   @keyframes ecgDraw {
-    0%   { stroke-dashoffset: 480; opacity: 0.55; }
+    0%   { stroke-dashoffset: 300; opacity: 0.55; }
     35%  { opacity: 1; }
     100% { stroke-dashoffset: 0;   opacity: 1; }
-  }
-  @keyframes ecgGlowBreath {
-    0%, 100% { opacity: 0.55; transform: translateX(-50%) scaleX(0.94); }
-    50%      { opacity: 0.9;  transform: translateX(-50%) scaleX(1.04); }
   }
   html {
     scroll-behavior: smooth;
@@ -1181,23 +1177,17 @@
   .logo-neon-breathe { animation: neonBreathe 3s ease-in-out infinite; }
 
   .ecg-trace {
-    stroke-dasharray: 480;
+    stroke-dasharray: 300;
     animation: ecgDraw 1.8s ease-in-out infinite;
     filter: drop-shadow(0 0 8px rgba(186, 230, 253, 0.75));
-  }
-  .ecg-trace-glow {
-    opacity: 0.65;
   }
   [data-theme="dark"] .ecg-trace {
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.45))
             drop-shadow(0 0 18px rgba(56, 189, 248, 0.55));
   }
-  [data-theme="light"] .medical-loader--site .ecg-trace:not(.ecg-trace-glow) {
+  [data-theme="light"] .medical-loader--site .ecg-trace {
     stroke: #0ea5e9;
     filter: drop-shadow(0 0 10px rgba(14, 165, 233, 0.5));
-  }
-  [data-theme="light"] .medical-loader--site .ecg-trace-glow {
-    stroke: rgba(14, 165, 233, 0.2);
   }
 
   .medical-loader {
@@ -1214,17 +1204,6 @@
     overflow: visible;
     position: relative;
     z-index: 1;
-  }
-  .medical-loader-glow {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 220px;
-    height: 40px;
-    pointer-events: none;
-    z-index: 0;
-    animation: ecgGlowBreath 1.8s ease-in-out infinite;
   }
 
   .splash-screen {

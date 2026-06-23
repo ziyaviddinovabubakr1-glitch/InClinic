@@ -10,6 +10,7 @@ import {
   IconClipboard, IconCheck, IconClock,
 } from "@/components/ui/Icons";
 import { saveReceipt, updateReceiptStatus, removeReceipt, type ReceiptStatus } from "@/lib/clientReceipt";
+import { loadPatientProfile, savePatientProfile } from "@/lib/patientProfile";
 import { isSlotConflictRejection } from "@/lib/booking-rejection";
 import BookingLoading from "@/components/ui/BookingLoading";
 import BookingWeekCalendar from "@/components/booking/BookingWeekCalendar";
@@ -104,6 +105,7 @@ function BookingWizardInner() {
   const [bookingStatus,   setBookingStatus]   = useState<ReceiptStatus>("PENDING");
   const [rejectionReason, setRejectionReason] = useState<string | null>(null);
   const [rescheduleNotice, setRescheduleNotice] = useState<string | null>(null);
+  const [profilePrefilled, setProfilePrefilled] = useState(false);
 
   const STEPS = [
     { id: "service" as Step, label: t.stepService, Icon: IconStethoscope },
@@ -129,6 +131,18 @@ function BookingWizardInner() {
       .catch(() => setError(t.errLoadServices))
       .finally(() => setLoading(false));
   }, [presetServiceId]);
+
+  useEffect(() => {
+    const profile = loadPatientProfile();
+    if (!profile) return;
+    if (!firstName.trim()) setFirstName(profile.firstName);
+    if (!lastName.trim()) setLastName(profile.lastName);
+    if (!phone.trim()) setPhone(profile.phone);
+    if (profile.firstName || profile.lastName || profile.phone) {
+      setProfilePrefilled(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fill once on mount
+  }, []);
 
   /* ── Load doctors for selected service ────────────── */
   useEffect(() => {
@@ -330,6 +344,11 @@ function BookingWizardInner() {
           paid: booking.paid ?? false,
           status,
           createdAt: new Date().toISOString(),
+        });
+        savePatientProfile({
+          firstName: booking.firstName ?? firstName.trim(),
+          lastName: booking.lastName ?? lastName.trim(),
+          phone: booking.phone ?? phone.trim(),
         });
         setBookingStatus(status);
         setRejectionReason(null);
@@ -686,6 +705,9 @@ function BookingWizardInner() {
             </div>
 
             {/* Form */}
+            {profilePrefilled && (
+              <p className="text-xs text-sky-400/90 mb-4 px-1 leading-relaxed">{t.profileAutofillHint}</p>
+            )}
             <div className="glass-card p-6 mb-6 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -872,7 +894,10 @@ function BookingWizardInner() {
               className="flex flex-col sm:flex-row items-center justify-center gap-3"
             >
               {bookingStatus !== "REJECTED" && (
-                <Link href="/" className="btn-primary">{t.toHome}</Link>
+                <>
+                  <Link href="/my" className="btn-primary">{t.myRecords}</Link>
+                  <Link href="/" className="text-sm text-theme-muted hover:text-sky-400 transition-colors">{t.toHome}</Link>
+                </>
               )}
             </div>
           </div>

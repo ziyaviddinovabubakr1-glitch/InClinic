@@ -2,19 +2,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconHome, IconCalendar } from "@/components/ui/Icons";
+import { IconHome, IconCalendar, IconClipboard } from "@/components/ui/Icons";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 import BrandLogo from "@/components/ui/BrandLogo";
 import { useLanguage } from "@/lib/i18n";
+import { useUpcomingReceiptCount } from "@/components/patient/PatientRecordsPage";
 
 export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const { t } = useLanguage();
+  const upcomingCount = useUpcomingReceiptCount();
 
   const NAV_MAIN = [
-    { href: "/",        label: t.home,    Icon: IconHome,     exact: true },
-    { href: "/booking", label: t.booking, Icon: IconCalendar },
+    { href: "/",        label: t.home,       Icon: IconHome,      exact: true },
+    { href: "/booking", label: t.booking,    Icon: IconCalendar },
+    { href: "/my",      label: t.myRecords,  Icon: IconClipboard, badge: upcomingCount },
   ];
 
   function isActive(href: string, exact?: boolean) {
@@ -59,7 +62,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
         <nav className="space-y-1">
           {NAV_MAIN.map((item) => {
             const active = isActive(item.href, item.exact);
-            const { Icon } = item;
+            const { Icon, badge } = item;
             return (
               <Link
                 key={item.href}
@@ -73,6 +76,11 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
               >
                 <Icon size={20} />
                 <span className="flex-1">{item.label}</span>
+                {badge != null && badge > 0 && (
+                  <span className="min-w-[1.25rem] h-5 px-1.5 rounded-full text-[10px] font-bold flex items-center justify-center bg-sky-500/25 text-sky-300">
+                    {badge}
+                  </span>
+                )}
                 {active && <span className="sidebar-nav-dot w-1.5 h-1.5 rounded-full flex-shrink-0" />}
               </Link>
             );
