@@ -2,7 +2,7 @@ import { getDoctorAvatarAsset } from "@/lib/doctor-gender";
 
 type Size = "sm" | "md" | "lg" | "xl";
 
-const DIM: Record<Size, number> = { sm: 44, md: 56, lg: 72, xl: 80 };
+const DIM: Record<Size, number> = { sm: 48, md: 60, lg: 76, xl: 88 };
 
 interface DoctorAvatarProps {
   photoUrl?: string | null;
@@ -38,6 +38,7 @@ export default function DoctorAvatar({
   }
 
   const src = getDoctorAvatarAsset(name);
+  const imgH = Math.round(dim * 1.18);
 
   return (
     <div
@@ -47,9 +48,10 @@ export default function DoctorAvatar({
         height: dim,
         flexShrink: 0,
         display: "flex",
-        alignItems: "center",
+        alignItems: "flex-end",
         justifyContent: "center",
         background: "transparent",
+        overflow: "visible",
       }}
       title={name || undefined}
     >
@@ -60,9 +62,11 @@ export default function DoctorAvatar({
         className="doctor-avatar-3d-img"
         style={{
           width: dim,
-          height: dim,
+          height: imgH,
+          maxWidth: "none",
           objectFit: "contain",
-          filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.25))",
+          objectPosition: "center bottom",
+          filter: "drop-shadow(0 6px 14px rgba(0,0,0,0.32))",
         }}
       />
     </div>

@@ -16,9 +16,6 @@ const ECG_FULL =
   `L 222,${BASELINE_Y} L 225,${BASELINE_Y - 4} L 228,${BASELINE_Y} L 231,${BASELINE_Y + 4} L 234,${BASELINE_Y} L 252,${BASELINE_Y} ` +
   `L 300,${BASELINE_Y}`;
 
-const ECG_CENTER =
-  `M 136,${BASELINE_Y} L 140,${BASELINE_Y} L 144,${BASELINE_Y - 30} L 148,${BASELINE_Y + 32} L 152,${BASELINE_Y - 6} L 156,${BASELINE_Y}`;
-
 const PATH_LEN = 520;
 
 export default function MedicalLoader({ variant = "site" }: { variant?: LoaderVariant }) {
@@ -36,20 +33,13 @@ export default function MedicalLoader({ variant = "site" }: { variant?: LoaderVa
         <defs>
           <linearGradient id={`${id}-scan`} x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor={scan} stopOpacity="0" />
-            <stop offset="35%" stopColor={core} stopOpacity="0.85" />
-            <stop offset="50%" stopColor="#ffffff" stopOpacity="1" />
-            <stop offset="65%" stopColor={core} stopOpacity="0.85" />
+            <stop offset="40%" stopColor={core} stopOpacity="0.75" />
+            <stop offset="50%" stopColor={core} stopOpacity="1" />
+            <stop offset="60%" stopColor={core} stopOpacity="0.75" />
             <stop offset="100%" stopColor={scan} stopOpacity="0" />
           </linearGradient>
           <filter id={`${id}-blur`} x="-40%" y="-40%" width="180%" height="180%">
             <feGaussianBlur stdDeviation="3.5" result="b" />
-            <feMerge>
-              <feMergeNode in="b" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-          <filter id={`${id}-center`} x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur stdDeviation="2" result="b" />
             <feMerge>
               <feMergeNode in="b" />
               <feMergeNode in="SourceGraphic" />
@@ -92,21 +82,6 @@ export default function MedicalLoader({ variant = "site" }: { variant?: LoaderVa
           pathLength={PATH_LEN}
           className="ecg-trace-core"
         />
-
-        {/* Акцент на центральном QRS — пульс в такт */}
-        <path
-          d={ECG_CENTER}
-          fill="none"
-          stroke={core}
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          filter={`url(#${id}-center)`}
-          className="ecg-trace-center"
-        />
-
-        {/* Точка-сканер в центре */}
-        <circle cx="148" cy={BASELINE_Y - 8} r="2.5" fill="#ffffff" className="ecg-scan-dot" />
       </svg>
     </div>
   );
