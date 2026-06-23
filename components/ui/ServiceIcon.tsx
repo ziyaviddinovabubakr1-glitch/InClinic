@@ -1,16 +1,18 @@
 import {
   getServiceIconPalette,
-  resolveServiceIconName,
+  inferServiceIconName,
   type ServiceIconName,
 } from "@/lib/service-icons";
 
 type Size = "sm" | "md" | "lg";
 
-const DIM: Record<Size, number> = { sm: 40, md: 48, lg: 56 };
-const GLYPH: Record<Size, number> = { sm: 20, md: 24, lg: 28 };
+const DIM: Record<Size, number> = { sm: 44, md: 52, lg: 60 };
+const GLYPH: Record<Size, number> = { sm: 22, md: 26, lg: 30 };
 
 interface ServiceIconProps {
   name?: string | null;
+  nameRu?: string | null;
+  nameTj?: string | null;
   size?: Size;
   className?: string;
 }
@@ -116,11 +118,18 @@ function Glyph({ name, size, color }: { name: ServiceIconName; size: number; col
 }
 
 /** iOS-style tinted squircle icon for medical services. */
-export default function ServiceIcon({ name, size = "md", className = "" }: ServiceIconProps) {
-  const key = resolveServiceIconName(name);
-  const palette = getServiceIconPalette(key);
+export default function ServiceIcon({
+  name,
+  nameRu,
+  nameTj,
+  size = "md",
+  className = "",
+}: ServiceIconProps) {
+  const key = inferServiceIconName(name, nameRu, nameTj);
+  const palette = getServiceIconPalette(name, nameRu, nameTj);
   const dim = DIM[size];
   const glyph = GLYPH[size];
+  const radius = Math.round(dim * 0.26);
 
   return (
     <div
@@ -128,10 +137,10 @@ export default function ServiceIcon({ name, size = "md", className = "" }: Servi
       style={{
         width: dim,
         height: dim,
-        borderRadius: Math.round(dim * 0.28),
-        background: `linear-gradient(145deg, ${palette.bg} 0%, ${palette.icon}18 100%)`,
+        borderRadius: radius,
+        background: `linear-gradient(160deg, ${palette.bg} 0%, ${palette.icon}28 55%, ${palette.icon}12 100%)`,
         border: `1px solid ${palette.border}`,
-        boxShadow: `inset 0 1px 0 rgba(255,255,255,0.12), 0 4px 14px ${palette.icon}22`,
+        boxShadow: `inset 0 1px 0 rgba(255,255,255,0.18), 0 6px 18px ${palette.icon}28`,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

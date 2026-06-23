@@ -37,12 +37,19 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
+  generateBuildId: async () => {
+    return process.env.RENDER_GIT_COMMIT?.slice(0, 12) ?? `build-${Date.now()}`;
+  },
   async headers() {
     const headers = [...securityHeaders];
     if (process.env.NODE_ENV === "production") {
       headers.push({
         key: "Strict-Transport-Security",
         value: "max-age=63072000; includeSubDomains; preload",
+      });
+      headers.push({
+        key: "Cache-Control",
+        value: "no-cache, must-revalidate",
       });
     }
     return [{ source: "/:path*", headers }];

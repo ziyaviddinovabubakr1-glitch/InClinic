@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import TiltCard from "@/components/ui/TiltCard";
 import ServiceIcon from "@/components/ui/ServiceIcon";
+import DoctorAvatar from "@/components/ui/DoctorAvatar";
 import {
   IconStethoscope, IconDoctor, IconCalendar,
   IconClipboard, IconCheck, IconClock,
@@ -452,7 +452,12 @@ function BookingWizardInner() {
                     className="glass-card service-row-ios w-full text-left p-4 sm:p-5 group transition-transform active:scale-[0.99]"
                   >
                     <div className="flex items-center gap-4">
-                      <ServiceIcon name={s.iconName} size="md" />
+                      <ServiceIcon
+                        name={s.iconName}
+                        nameRu={s.nameRu}
+                        nameTj={s.nameTj}
+                        size="md"
+                      />
                       <div className="flex-1 min-w-0">
                         <div className="text-sm sm:text-base glass-card-title font-semibold mb-1 leading-snug">
                           {serviceName(s, lang)}
@@ -502,8 +507,14 @@ function BookingWizardInner() {
               </button>
             </div>
 
-            <div className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium mb-6 text-theme theme-pill">
-              🩺 {serviceName(selectedService, lang)}
+            <div className="inline-flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium mb-6 text-theme theme-pill">
+              <ServiceIcon
+                name={selectedService.iconName}
+                nameRu={selectedService.nameRu}
+                nameTj={selectedService.nameTj}
+                size="sm"
+              />
+              {serviceName(selectedService, lang)}
             </div>
 
             {loading ? (
@@ -512,17 +523,17 @@ function BookingWizardInner() {
               </div>
             ) : doctors.length === 0 ? (
               <div className="glass-card p-10 text-center">
-                <div className="text-4xl mb-3">😔</div>
+                <div className="mx-auto mb-4 flex justify-center opacity-70">
+                  <IconDoctor size={40} />
+                </div>
               <p className="text-theme-muted">{t.noDoctors}</p>
               </div>
             ) : (
               <div className="space-y-3">
                 {doctors.map((d) => (
-                  <TiltCard
+                  <div
                     key={d.id}
-                    className="glass-card p-5 group cursor-pointer"
-                    intensity={8}
-                    glowColor="rgba(6,182,212,0.28)"
+                    className="glass-card p-5 group"
                   >
                     <button
                       onClick={() => {
@@ -535,14 +546,11 @@ function BookingWizardInner() {
                       }}
                       className="w-full flex items-center gap-4"
                     >
-                      <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 theme-icon-box">
-                        {d.photoUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={d.photoUrl} alt={doctorName(d, lang)} className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-2xl">👨‍⚕️</div>
-                        )}
-                      </div>
+                      <DoctorAvatar
+                        photoUrl={d.photoUrl}
+                        name={doctorName(d, lang)}
+                        size="md"
+                      />
                       <div className="flex-1 min-w-0 text-left">
                         <div className="font-bold text-theme group-hover:text-sky-600 transition-colors">
                           {doctorName(d, lang)}
@@ -558,7 +566,7 @@ function BookingWizardInner() {
                         </svg>
                       </div>
                     </button>
-                  </TiltCard>
+                  </div>
                 ))}
               </div>
             )}
@@ -581,14 +589,11 @@ function BookingWizardInner() {
             {rescheduleBanner}
 
             <div className="flex items-center gap-3 rounded-xl p-3 mb-5 theme-card">
-              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center text-xl flex-shrink-0 theme-icon-box">
-                {selectedDoctor.photoUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={selectedDoctor.photoUrl} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  "👨‍⚕️"
-                )}
-              </div>
+              <DoctorAvatar
+                photoUrl={selectedDoctor.photoUrl}
+                name={doctorName(selectedDoctor, lang)}
+                size="sm"
+              />
               <div>
                 <div className="text-sm font-semibold text-theme">{doctorName(selectedDoctor, lang)}</div>
                 <div className="text-xs text-theme-muted">

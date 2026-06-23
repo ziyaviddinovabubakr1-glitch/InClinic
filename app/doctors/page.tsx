@@ -3,6 +3,7 @@ import { MOCK_DOCTORS } from "@/lib/mockData";
 import { resolvePublicClinicId } from "@/lib/clinic-server";
 import { allowMockFallback } from "@/lib/env";
 import AnimatedSection from "@/components/ui/AnimatedSection";
+import DoctorAvatar from "@/components/ui/DoctorAvatar";
 import { IconDoctor } from "@/components/ui/Icons";
 
 interface Doctor {
@@ -64,13 +65,12 @@ export default async function DoctorsPage() {
               <div className="h-20 flex-shrink-0 relative"
                 style={{ background:"linear-gradient(135deg,rgba(14,165,233,0.22),rgba(6,182,212,0.12))" }}>
                 <div className="absolute -bottom-9 inset-x-0 flex justify-center">
-                  <div className="rounded-full overflow-hidden flex items-center justify-center theme-icon-box"
-                    style={{ width:"72px", height:"72px", borderWidth: 3 }}>
-                    {doctor.photoUrl
-                      // eslint-disable-next-line @next/next/no-img-element
-                      ? <img src={doctor.photoUrl} alt={doctor.nameRu} className="w-full h-full object-cover" />
-                      : <IconDoctor size={32} />}
-                  </div>
+                  <DoctorAvatar
+                    photoUrl={doctor.photoUrl}
+                    name={doctor.nameRu}
+                    size="lg"
+                    className="border-[3px] border-[var(--icon-box-border)]"
+                  />
                 </div>
               </div>
               <div className="pt-11 pb-6 px-5 flex flex-col items-center text-center flex-1">

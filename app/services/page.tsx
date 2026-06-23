@@ -49,13 +49,21 @@ export default async function ServicesPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 mb-12">
           {services.map((service) => {
-            const color = getServiceIconPalette(service.iconName ?? null);
+            const color = getServiceIconPalette(
+              service.iconName ?? null,
+              service.nameRu,
+              null
+            );
             return (
               <div key={service.id} className="glass-card flex flex-col w-full overflow-hidden">
                 <div className="h-0.5 w-full" style={{ background:`linear-gradient(90deg,${color.icon},${color.accent})` }} />
                 <div className="p-5 md:p-7 flex flex-col flex-1">
                   <div className="flex items-start gap-4 mb-4">
-                    <ServiceIcon name={service.iconName} size="lg" />
+                    <ServiceIcon
+                      name={service.iconName}
+                      nameRu={service.nameRu}
+                      size="lg"
+                    />
                     <div className="flex-1 min-w-0">
                       <h2 className="text-base glass-card-title mb-1.5">
                         {service.nameRu}

@@ -1054,6 +1054,12 @@
   .glass-card:hover .service-icon-ios {
     transform: scale(1.04);
   }
+  .doctor-avatar-ios {
+    transition: transform 0.2s ease;
+  }
+  .glass-card:hover .doctor-avatar-ios {
+    transform: scale(1.03);
+  }
 }
 
 @layer utilities {

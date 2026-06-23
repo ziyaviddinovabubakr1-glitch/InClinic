@@ -2,6 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { resolvePublicClinicId } from "@/lib/clinic-server";
+import ServiceIcon from "@/components/ui/ServiceIcon";
+import DoctorAvatar from "@/components/ui/DoctorAvatar";
+import { IconClock, IconDoctor } from "@/components/ui/Icons";
 
 interface Props {
   params: { id: string };
@@ -75,16 +78,32 @@ export default async function ServiceDetailPage({ params }: Props) {
           </Link>
 
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-            <div className="flex-1">
+            <div className="flex-1 flex items-start gap-5">
+              <ServiceIcon
+                name={service.iconName}
+                nameRu={service.nameRu}
+                nameTj={service.nameTj}
+                size="lg"
+              />
+              <div>
               <h1 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-3">
                 {service.nameRu}
               </h1>
               <div className="flex items-center gap-4 text-sm text-slate-400">
-                <span>⏱ {service.durationMin} мин</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <IconClock size={14} className="opacity-80" />
+                  {service.durationMin} мин
+                </span>
                 {service.price !== null && (
                   <span className="text-sky-600 font-semibold">{service.price.toLocaleString()} сомони</span>
                 )}
-                {activeDoctors.length > 0 && <span>👨‍⚕️ {activeDoctors.length} специалистов</span>}
+                {activeDoctors.length > 0 && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <IconDoctor size={14} className="opacity-80" />
+                    {activeDoctors.length} специалистов
+                  </span>
+                )}
+              </div>
               </div>
             </div>
             <Link href={`/booking?service=${service.id}`} className="btn-primary-lg flex-shrink-0">
@@ -163,19 +182,13 @@ export default async function ServiceDetailPage({ params }: Props) {
           {activeDoctors.length > 0 && (
             <div className="glass-card p-8">
               <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
-                <span>👨‍⚕️</span> Врачи по данной услуге
+                <IconDoctor size={18} className="text-sky-500" />
+                Врачи по данной услуге
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {activeDoctors.map((doctor) => (
                   <div key={doctor.id} className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
-                    <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-sky-100" style={{ background: "linear-gradient(135deg, #e0f2fe, #f0f9ff)" }}>
-                      {doctor.photoUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={doctor.photoUrl} alt={doctor.nameRu} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-2xl">👨‍⚕️</div>
-                      )}
-                    </div>
+                    <DoctorAvatar photoUrl={doctor.photoUrl} name={doctor.nameRu} size="md" />
                     <div className="flex-1 min-w-0">
                       <div className="text-slate-900 font-medium truncate">{doctor.nameRu}</div>
                       <div className="text-sky-500 text-sm truncate">{doctor.specialtyRu}</div>

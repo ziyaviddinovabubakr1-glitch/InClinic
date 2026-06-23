@@ -153,6 +153,38 @@ async function main() {
     console.log(`Updated workDays for ${scheduleFixed} doctor(s) → Mon–Sat`);
   }
 
+  const ICON_BY_NAME = [
+    { match: /карди|cardio|дил\b/i, iconName: "heart" },
+    { match: /невр|neuro|асаб/i, iconName: "brain" },
+    { match: /офтальм|oftalm|чашм|бино/i, iconName: "eye" },
+    { match: /ортоп|bone|кост/i, iconName: "bone" },
+    { match: /стомат|dental|дандон/i, iconName: "tooth" },
+    { match: /дермат|skin|пост/i, iconName: "skin" },
+    { match: /лабор|lab|анализ/i, iconName: "lab" },
+  ];
+
+  const existingServices = await prisma.service.findMany({ where: { clinicId: clinic.id } });
+  let iconsFixed = 0;
+  for (const svc of existingServices) {
+    if (svc.iconName) continue;
+    const text = `${svc.nameRu} ${svc.nameTj}`;
+    let iconName = "default";
+    for (const rule of ICON_BY_NAME) {
+      if (rule.match.test(text)) {
+        iconName = rule.iconName;
+        break;
+      }
+    }
+    await prisma.service.update({
+      where: { id: svc.id },
+      data: { iconName },
+    });
+    iconsFixed++;
+  }
+  if (iconsFixed > 0) {
+    console.log(`Backfilled iconName for ${iconsFixed} service(s)`);
+  }
+
   console.log(`Seeded clinic "${clinic.slug}", owner "${username}", demo doctors/services`);
 }
 
