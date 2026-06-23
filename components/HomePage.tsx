@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import {
-  IconShield, IconZap, IconLab, IconPhone, IconLocation, IconCalendar, IconClipboard,
+  IconShield, IconZap, IconLab, IconPhone, IconLocation, IconCalendar,
 } from "@/components/ui/Icons";
 import BrandLogo from "@/components/ui/BrandLogo";
 import AnimatedSection from "@/components/ui/AnimatedSection";
@@ -70,14 +70,6 @@ export default function HomePage() {
         <Link href="/booking" className="btn-primary px-10 py-3.5 text-base font-semibold inline-flex items-center gap-2">
           <IconCalendar size={20} />
           {t.bookCta}
-        </Link>
-
-        <Link
-          href="/my"
-          className="mt-4 inline-flex items-center gap-2 text-sm text-theme-muted hover:text-sky-400 transition-colors"
-        >
-          <IconClipboard size={16} />
-          {t.myRecords}
         </Link>
         </AnimatedSection>
       </div>
