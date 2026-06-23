@@ -4,9 +4,10 @@ import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import TiltCard from "@/components/ui/TiltCard";
+import ServiceIcon from "@/components/ui/ServiceIcon";
 import {
   IconStethoscope, IconDoctor, IconCalendar,
-  IconClipboard, IconCheck,
+  IconClipboard, IconCheck, IconClock,
 } from "@/components/ui/Icons";
 import { saveReceipt, updateReceiptStatus, removeReceipt, type ReceiptStatus } from "@/lib/clientReceipt";
 import { isSlotConflictRejection } from "@/lib/booking-rejection";
@@ -67,11 +68,6 @@ interface BookingResult {
 type Step = "service" | "doctor" | "date" | "time" | "contact" | "confirm";
 
 /* ── Constants ───────────────────────────────────── */
-
-const SERVICE_ICONS: Record<string, string> = {
-  heart: "🫀", brain: "🧠", bone: "🦴", eye: "👁️",
-  tooth: "🦷", skin: "🩹", lab: "🔬", default: "🩺",
-};
 
 /* ── Helpers ──────────────────────────────────────── */
 function formatDate(s: string) { return `${s.slice(8, 10)}.${s.slice(5, 7)}.${s.slice(0, 4)}`; }
@@ -447,42 +443,46 @@ function BookingWizardInner() {
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-3">
                 {services.map((s) => (
-                  <TiltCard
+                  <button
                     key={s.id}
-                    className="glass-card p-5 group cursor-pointer"
-                    intensity={10}
-                    glowColor="rgba(6,182,212,0.28)"
+                    type="button"
+                    onClick={() => { setSelectedService(s); setSelectedDoctor(null); setStep("doctor"); setError(""); }}
+                    className="glass-card service-row-ios w-full text-left p-4 sm:p-5 group transition-transform active:scale-[0.99]"
                   >
-                    <button
-                      onClick={() => { setSelectedService(s); setSelectedDoctor(null); setStep("doctor"); setError(""); }}
-                      className="w-full text-left"
-                    >
-                      <div className="flex items-start gap-3">
-                        <span className="text-2xl mt-0.5 flex-shrink-0">
-                          {SERVICE_ICONS[s.iconName ?? ""] ?? SERVICE_ICONS.default}
-                        </span>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm glass-card-title group-hover:text-sky-300 transition-colors mb-1">
-                            {serviceName(s, lang)}
-                          </div>
-                          <div className="text-xs glass-card-desc line-clamp-2">
-                            {serviceDesc(s, lang)}
-                          </div>
-                          <div className="flex items-center gap-3 mt-2 text-xs glass-card-meta">
-                            <span>⏱ {s.durationMin} {t.min}</span>
-                            {s.price !== null && s.price !== undefined && (
-                              <span className="glass-card-price">{(s.price as number).toLocaleString()} {t.somoni}</span>
-                            )}
-                          </div>
+                    <div className="flex items-center gap-4">
+                      <ServiceIcon name={s.iconName} size="md" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm sm:text-base glass-card-title font-semibold mb-1 leading-snug">
+                          {serviceName(s, lang)}
                         </div>
-                        <svg className="w-4 h-4 glass-card-meta group-hover:text-sky-300 transition-colors flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
+                        <div className="text-xs glass-card-desc line-clamp-2 leading-relaxed mb-2">
+                          {serviceDesc(s, lang)}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs glass-card-meta">
+                          <span className="inline-flex items-center gap-1">
+                            <IconClock size={13} className="opacity-75" />
+                            {s.durationMin} {t.min}
+                          </span>
+                          {s.price !== null && s.price !== undefined && (
+                            <span className="glass-card-price font-semibold">
+                              {(s.price as number).toLocaleString()} {t.somoni}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </button>
-                  </TiltCard>
+                      <svg
+                        className="w-5 h-5 flex-shrink-0 text-sky-400/80 group-hover:text-sky-300 transition-colors"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </button>
                 ))}
               </div>
             )}
