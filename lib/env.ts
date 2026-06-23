@@ -3,8 +3,8 @@
  */
 
 const DEV_JWT = "development-secret-min-32-characters-long";
-const DEV_ADMIN_USER = "admin";
-const DEV_ADMIN_PASS = "change-me";
+const DEV_ADMIN_USER = "Abubakr";
+const DEV_ADMIN_PASS = "InClinic2026!";
 
 function isProduction(): boolean {
   return process.env.NODE_ENV === "production";

@@ -40,8 +40,9 @@ function clearAuthCookies(response: NextResponse) {
 }
 
 async function authenticateUser(username: string, password: string) {
+  const normalized = username.trim();
   const user = await prisma.user.findUnique({
-    where: { username },
+    where: { username: normalized },
     include: { clinic: true },
   });
 
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const user = await authenticateUser(username, password);
+  const user = await authenticateUser(username.trim(), password);
   if (!user) {
     await writeAudit({
       action: "login.failure",

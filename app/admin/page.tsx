@@ -53,7 +53,7 @@ export default function OwnerLoginPage() {
                 className="oa-input"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="admin"
+                placeholder="Abubakr"
                 autoComplete="username"
                 autoFocus
               />

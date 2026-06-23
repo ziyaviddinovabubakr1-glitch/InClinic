@@ -97,9 +97,14 @@ async function main() {
     create: { slug, name: clinicName },
   });
 
-  const username = process.env.ADMIN_USERNAME ?? "admin";
-  const password = process.env.ADMIN_PASSWORD ?? "change-me";
+  const username = (process.env.ADMIN_USERNAME ?? "Abubakr").trim();
+  const password = process.env.ADMIN_PASSWORD ?? "InClinic2026!";
   const passwordHash = await bcrypt.hash(password, 12);
+
+  await prisma.user.updateMany({
+    where: { role: "OWNER", username: { not: username } },
+    data: { active: false },
+  });
 
   await prisma.user.upsert({
     where: { username },

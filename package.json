@@ -19,7 +19,8 @@
     "start": "node scripts/start-production.mjs",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "icons:process": "python scripts/process-icon-alpha.py"
+    "icons:process": "python scripts/process-icon-alpha.py",
+    "admin:reset": "node scripts/reset-admin.mjs"
   },
   "prisma": {
     "seed": "node prisma/seed.mjs"
