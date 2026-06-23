@@ -18,7 +18,8 @@
     "build:deploy": "node scripts/deploy-build.mjs",
     "start": "node scripts/start-production.mjs",
     "postinstall": "prisma generate",
-    "lint": "next lint"
+    "lint": "next lint",
+    "icons:process": "python scripts/process-icon-alpha.py"
   },
   "prisma": {
     "seed": "node prisma/seed.mjs"

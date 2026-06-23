@@ -28,8 +28,6 @@ export const SERVICE_ICON_ASSETS: Record<ServiceIconName, string> = {
   default: "/icons/medical/default.png",
 };
 
-export const DOCTOR_AVATAR_ASSET = "/icons/medical/doctor.png";
-
 export const SERVICE_ICON_COLORS: Record<ServiceIconName, ServiceIconPalette> = {
   heart: {
     bg: "rgba(244, 63, 94, 0.14)",

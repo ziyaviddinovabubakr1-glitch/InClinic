@@ -1,5 +1,4 @@
 import {
-  getServiceIconPalette,
   inferServiceIconName,
   SERVICE_ICON_ASSETS,
 } from "@/lib/service-icons";
@@ -16,7 +15,7 @@ interface ServiceIconProps {
   className?: string;
 }
 
-/** 3D clay-style medical service icon. */
+/** 3D medical service icon — transparent background, no container box. */
 export default function ServiceIcon({
   name,
   nameRu,
@@ -25,7 +24,6 @@ export default function ServiceIcon({
   className = "",
 }: ServiceIconProps) {
   const key = inferServiceIconName(name, nameRu, nameTj);
-  const palette = getServiceIconPalette(name, nameRu, nameTj);
   const dim = DIM[size];
   const src = SERVICE_ICON_ASSETS[key];
 
@@ -35,12 +33,11 @@ export default function ServiceIcon({
       style={{
         width: dim,
         height: dim,
-        borderRadius: Math.round(dim * 0.22),
-        background: `radial-gradient(circle at 35% 25%, ${palette.icon}22 0%, ${palette.bg} 55%, transparent 100%)`,
+        flexShrink: 0,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        flexShrink: 0,
+        background: "transparent",
       }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -50,10 +47,10 @@ export default function ServiceIcon({
         aria-hidden
         className="service-icon-3d-img"
         style={{
-          width: Math.round(dim * 0.88),
-          height: Math.round(dim * 0.88),
+          width: dim,
+          height: dim,
           objectFit: "contain",
-          filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.28))",
+          filter: "drop-shadow(0 5px 10px rgba(0,0,0,0.22))",
         }}
       />
     </div>

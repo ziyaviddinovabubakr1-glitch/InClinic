@@ -69,7 +69,6 @@ export default async function DoctorsPage() {
                     photoUrl={doctor.photoUrl}
                     name={doctor.nameRu}
                     size="lg"
-                    className="border-[3px] border-[var(--icon-box-border)]"
                   />
                 </div>
               </div>

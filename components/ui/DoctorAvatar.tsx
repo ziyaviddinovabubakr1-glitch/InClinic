@@ -1,4 +1,4 @@
-import { DOCTOR_AVATAR_ASSET } from "@/lib/service-icons";
+import { getDoctorAvatarAsset } from "@/lib/doctor-gender";
 
 type Size = "sm" | "md" | "lg" | "xl";
 
@@ -11,7 +11,7 @@ interface DoctorAvatarProps {
   className?: string;
 }
 
-/** 3D doctor avatar with photo or clay-style fallback. */
+/** 3D doctor avatar — photo or gendered clay icon on transparent background. */
 export default function DoctorAvatar({
   photoUrl,
   name = "",
@@ -29,7 +29,6 @@ export default function DoctorAvatar({
           height: dim,
           borderRadius: "50%",
           flexShrink: 0,
-          boxShadow: "0 6px 18px rgba(14,165,233,0.25)",
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -38,34 +37,32 @@ export default function DoctorAvatar({
     );
   }
 
+  const src = getDoctorAvatarAsset(name);
+
   return (
     <div
       className={`doctor-avatar-3d ${className}`}
       style={{
         width: dim,
         height: dim,
-        borderRadius: "50%",
         flexShrink: 0,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background:
-          "radial-gradient(circle at 35% 25%, rgba(125,211,252,0.35) 0%, rgba(14,165,233,0.12) 60%, transparent 100%)",
-        overflow: "hidden",
+        background: "transparent",
       }}
       title={name || undefined}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={DOCTOR_AVATAR_ASSET}
+        src={src}
         alt={name || "Doctor"}
         className="doctor-avatar-3d-img"
         style={{
-          width: Math.round(dim * 1.05),
-          height: Math.round(dim * 1.05),
-          objectFit: "cover",
-          objectPosition: "center top",
-          filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.22))",
+          width: dim,
+          height: dim,
+          objectFit: "contain",
+          filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.25))",
         }}
       />
     </div>
