@@ -1054,11 +1054,31 @@
   .glass-card:hover .service-icon-ios {
     transform: scale(1.04);
   }
+  .service-icon-3d {
+    transition: transform 0.2s ease;
+  }
+  .service-row-ios:active .service-icon-3d,
+  .glass-card:hover .service-icon-3d {
+    transform: scale(1.06);
+  }
+  .service-icon-3d-img {
+    transition: transform 0.2s ease;
+  }
+  .service-row-ios:active .service-icon-3d-img,
+  .glass-card:hover .service-icon-3d-img {
+    transform: translateY(-1px) scale(1.03);
+  }
   .doctor-avatar-ios {
     transition: transform 0.2s ease;
   }
   .glass-card:hover .doctor-avatar-ios {
     transform: scale(1.03);
+  }
+  .doctor-avatar-3d {
+    transition: transform 0.2s ease;
+  }
+  .glass-card:hover .doctor-avatar-3d {
+    transform: scale(1.04);
   }
 }
 

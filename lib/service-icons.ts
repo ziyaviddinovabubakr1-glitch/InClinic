@@ -1,4 +1,4 @@
-/** Shared palette for medical service icons (iOS-style tinted squircles). */
+/** Shared palette and 3D asset paths for medical service icons. */
 
 export type ServiceIconName =
   | "heart"
@@ -16,6 +16,19 @@ export interface ServiceIconPalette {
   icon: string;
   accent: string;
 }
+
+export const SERVICE_ICON_ASSETS: Record<ServiceIconName, string> = {
+  heart: "/icons/medical/heart.png",
+  brain: "/icons/medical/brain.png",
+  bone: "/icons/medical/bone.png",
+  eye: "/icons/medical/eye.png",
+  tooth: "/icons/medical/tooth.png",
+  skin: "/icons/medical/skin.png",
+  lab: "/icons/medical/lab.png",
+  default: "/icons/medical/default.png",
+};
+
+export const DOCTOR_AVATAR_ASSET = "/icons/medical/doctor.png";
 
 export const SERVICE_ICON_COLORS: Record<ServiceIconName, ServiceIconPalette> = {
   heart: {

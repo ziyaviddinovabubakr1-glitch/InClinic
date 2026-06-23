@@ -1,8 +1,8 @@
-import { IconDoctor } from "@/components/ui/Icons";
+import { DOCTOR_AVATAR_ASSET } from "@/lib/service-icons";
 
 type Size = "sm" | "md" | "lg" | "xl";
 
-const DIM: Record<Size, number> = { sm: 40, md: 56, lg: 72, xl: 80 };
+const DIM: Record<Size, number> = { sm: 44, md: 56, lg: 72, xl: 80 };
 
 interface DoctorAvatarProps {
   photoUrl?: string | null;
@@ -11,7 +11,7 @@ interface DoctorAvatarProps {
   className?: string;
 }
 
-/** iOS-style circular doctor avatar with photo or tinted fallback. */
+/** 3D doctor avatar with photo or clay-style fallback. */
 export default function DoctorAvatar({
   photoUrl,
   name = "",
@@ -19,23 +19,18 @@ export default function DoctorAvatar({
   className = "",
 }: DoctorAvatarProps) {
   const dim = DIM[size];
-  const shell = {
-    width: dim,
-    height: dim,
-    borderRadius: "50%",
-    background:
-      "linear-gradient(145deg, rgba(14,165,233,0.32) 0%, rgba(6,182,212,0.16) 100%)",
-    border: "1px solid rgba(125,211,252,0.42)",
-    boxShadow:
-      "inset 0 1px 0 rgba(255,255,255,0.14), 0 4px 16px rgba(14,165,233,0.22)",
-    flexShrink: 0,
-  };
 
   if (photoUrl) {
     return (
       <div
-        className={`doctor-avatar-ios overflow-hidden ${className}`}
-        style={shell}
+        className={`doctor-avatar-3d overflow-hidden ${className}`}
+        style={{
+          width: dim,
+          height: dim,
+          borderRadius: "50%",
+          flexShrink: 0,
+          boxShadow: "0 6px 18px rgba(14,165,233,0.25)",
+        }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={photoUrl} alt={name} className="w-full h-full object-cover" />
@@ -45,12 +40,34 @@ export default function DoctorAvatar({
 
   return (
     <div
-      className={`doctor-avatar-ios flex items-center justify-center ${className}`}
-      style={shell}
-      aria-hidden={!name}
+      className={`doctor-avatar-3d ${className}`}
+      style={{
+        width: dim,
+        height: dim,
+        borderRadius: "50%",
+        flexShrink: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background:
+          "radial-gradient(circle at 35% 25%, rgba(125,211,252,0.35) 0%, rgba(14,165,233,0.12) 60%, transparent 100%)",
+        overflow: "hidden",
+      }}
       title={name || undefined}
     >
-      <IconDoctor size={Math.round(dim * 0.44)} />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={DOCTOR_AVATAR_ASSET}
+        alt={name || "Doctor"}
+        className="doctor-avatar-3d-img"
+        style={{
+          width: Math.round(dim * 1.05),
+          height: Math.round(dim * 1.05),
+          objectFit: "cover",
+          objectPosition: "center top",
+          filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.22))",
+        }}
+      />
     </div>
   );
 }
