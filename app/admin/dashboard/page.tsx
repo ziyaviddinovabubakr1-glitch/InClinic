@@ -32,7 +32,38 @@ export default function DashboardPage() {
   const apptSpark = toSpark(appointmentsSeries);
 
   return (
-    <MotionPage style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+    <MotionPage className="oa-dashboard" style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+      {/* Главное для владельца — компактный обзор (мобильный) */}
+      <MotionItem>
+        <div className="oa-owner-spotlight">
+          <div className="oa-owner-spotlight-top">
+            <div>
+              <p className="oa-owner-spotlight-eyebrow">Главное сегодня</p>
+              <p className="oa-owner-spotlight-title">Доход за месяц</p>
+              <p className="oa-owner-spotlight-value">{money(kpis.revenueMonth)}</p>
+              <p className="oa-owner-spotlight-delta">+12% к прошлому месяцу</p>
+            </div>
+            <div className="oa-owner-spotlight-gauge">
+              <Gauge value={executive.clinicHealthScore} size={112} label="Health" />
+            </div>
+          </div>
+          <div className="oa-owner-spotlight-stats">
+            <div className="oa-owner-spotlight-stat">
+              <span className="oa-owner-spotlight-stat-val">{kpis.patientsToday}</span>
+              <span className="oa-owner-spotlight-stat-lbl">Пациентов</span>
+            </div>
+            <div className="oa-owner-spotlight-stat">
+              <span className="oa-owner-spotlight-stat-val">{kpis.appointmentsToday}</span>
+              <span className="oa-owner-spotlight-stat-lbl">Записей</span>
+            </div>
+            <div className="oa-owner-spotlight-stat">
+              <span className="oa-owner-spotlight-stat-val">{overview.clinicRating.toFixed(1)}</span>
+              <span className="oa-owner-spotlight-stat-lbl">Рейтинг</span>
+            </div>
+          </div>
+        </div>
+      </MotionItem>
+
       {/* Executive KPI hero row */}
       <MotionGrid className="oa-kpi-hero-grid">
         <MotionItem>
@@ -178,7 +209,7 @@ function OverviewCard({ icon: Icon, tone, title, name, metric }: {
   icon: (p: React.SVGProps<SVGSVGElement>) => JSX.Element; tone: string; title: string; name: string; metric: string;
 }) {
   return (
-    <div className="oa-overview-card">
+    <div className="oa-overview-card" style={{ width: "100%", height: "100%" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
         <div className={`oa-kpi-icon oa-tone-${tone}`} style={{ margin: 0, width: 40, height: 40 }}>
           <Icon style={{ width: 19, height: 19 }} />
@@ -193,14 +224,11 @@ function OverviewCard({ icon: Icon, tone, title, name, metric }: {
 
 function DashboardSkeleton() {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      <div className="oa-kpi-hero-grid">{Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} height={148} />)}</div>
-      <div className="oa-grid-auto">{Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} height={120} />)}</div>
+    <div className="oa-dashboard" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      <SkeletonCard height={200} />
+      <div className="oa-kpi-hero-grid">{Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} height={152} />)}</div>
+      <div className="oa-kpi-grid-secondary">{Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} height={132} />)}</div>
       <SkeletonCard height={220} />
-      <div className="oa-grid-charts">
-        <SkeletonCard height={300} /><SkeletonCard height={300} />
-      </div>
-      <SkeletonRows rows={6} />
     </div>
   );
 }

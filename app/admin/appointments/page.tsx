@@ -79,7 +79,7 @@ export default function AppointmentsPage() {
         ) : rows.length === 0 ? (
           <EmptyState icon={<IAppointments />} title="Записи не найдены" sub="Измените фильтры поиска." />
         ) : (
-          <div className="oa-table-wrap">
+          <div className="oa-table-wrap oa-table-responsive">
             <table className="oa-table">
               <thead>
                 <tr>
@@ -97,23 +97,23 @@ export default function AppointmentsPage() {
                   const next = allowedTransitions(a.status);
                   return (
                     <tr key={a.id}>
-                      <td className="oa-table-col-patient">
+                      <td className="oa-table-col-patient oa-table-col-patient-first" data-label="Пациент">
                         <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
                           <Avatar name={a.patientName} size={32} tone="violet" />
                           <span className="oa-cell-strong">{a.patientName}</span>
                         </div>
                       </td>
-                      <td className="oa-cell-soft oa-table-col-doctor">{a.doctorName}</td>
-                      <td className="oa-cell-soft oa-table-col-service">{a.serviceName}</td>
-                      <td className="oa-table-col-datetime">
+                      <td className="oa-cell-soft oa-table-col-doctor" data-label="Врач">{a.doctorName}</td>
+                      <td className="oa-cell-soft oa-table-col-service" data-label="Услуга">{a.serviceName}</td>
+                      <td className="oa-table-col-datetime" data-label="Дата / время">
                         <div className="oa-datetime-cell">
                           <span className="oa-datetime-date">{formatApptDate(a.date)}</span>
                           <span className="oa-datetime-time">{a.time}</span>
                         </div>
                       </td>
-                      <td className="oa-cell-strong oa-table-col-sum">{money(a.price)}</td>
-                      <td className="oa-table-col-status"><StatusBadge status={a.status} /></td>
-                      <td className="oa-table-col-actions">
+                      <td className="oa-cell-strong oa-table-col-sum" data-label="Сумма">{money(a.price)}</td>
+                      <td className="oa-table-col-status" data-label="Статус"><StatusBadge status={a.status} /></td>
+                      <td className="oa-table-col-actions" data-label="Действия">
                         <div className="oa-table-actions">
                           {next.length === 0 ? (
                             <span style={{ fontSize: 11.5, color: "var(--oa-text-faint)" }}>{a.status === "COMPLETED" ? "в архиве" : "—"}</span>

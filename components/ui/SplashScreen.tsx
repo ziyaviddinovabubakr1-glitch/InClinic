@@ -7,8 +7,15 @@ import { useSplash } from "@/lib/splash";
 import BrandLogo from "@/components/ui/BrandLogo";
 import MedicalLoader from "@/components/ui/MedicalLoader";
 
-const LOADER_DURATION = 4_000;
-const FADE_OUT_MS = 450;
+const FADE_OUT_MS = 380;
+const SESSION_KEY = "inclinic-splash-done";
+
+function getLoaderDuration(): number {
+  if (typeof window === "undefined") return 1800;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return 500;
+  if (window.matchMedia("(max-width: 768px)").matches) return 1400;
+  return 2200;
+}
 
 export default function SplashScreen() {
   const pathname = usePathname();
@@ -26,21 +33,32 @@ export default function SplashScreen() {
     document.documentElement.setAttribute("data-splash", "skip");
   }, [pathname, setActive]);
 
-  /* Запуск при каждой полной загрузке страницы (F5). Пустой deps — Strict Mode безопасен */
+  /* Запуск при полной загрузке; повторно в той же сессии — без заставки */
   useLayoutEffect(() => {
     if (pathname?.startsWith("/admin")) return;
+
+    if (sessionStorage.getItem(SESSION_KEY) === "1") {
+      setVisible(false);
+      setExiting(false);
+      setActive(false);
+      document.documentElement.setAttribute("data-splash", "done");
+      return;
+    }
+
+    const duration = getLoaderDuration();
 
     setVisible(true);
     setExiting(false);
     setActive(true);
     document.documentElement.setAttribute("data-splash", "show");
 
-    const exitTimer = window.setTimeout(() => setExiting(true), LOADER_DURATION - FADE_OUT_MS);
+    const exitTimer = window.setTimeout(() => setExiting(true), duration - FADE_OUT_MS);
     const hideTimer = window.setTimeout(() => {
+      sessionStorage.setItem(SESSION_KEY, "1");
       setVisible(false);
       setActive(false);
       document.documentElement.setAttribute("data-splash", "done");
-    }, LOADER_DURATION);
+    }, duration);
 
     return () => {
       window.clearTimeout(exitTimer);

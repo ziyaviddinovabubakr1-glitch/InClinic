@@ -78,7 +78,7 @@ export default function PatientsPage() {
         ) : rows.length === 0 ? (
           <EmptyState icon={<IPatients />} title="Пациенты не найдены" sub="Измените условия поиска или фильтр." />
         ) : (
-          <div className="oa-table-wrap">
+          <div className="oa-table-wrap oa-table-responsive">
             <table className="oa-table">
               <thead>
                 <tr>
@@ -89,17 +89,17 @@ export default function PatientsPage() {
               <tbody>
                 {rows.map((p) => (
                   <tr key={p.id} style={{ cursor: "pointer" }} onClick={() => openProfile(p.id)}>
-                    <td>
+                    <td className="oa-table-col-patient-first" data-label="Пациент">
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <Avatar name={p.fullName} size={36} tone="violet" />
                         <span className="oa-cell-strong">{p.fullName}</span>
                       </div>
                     </td>
-                    <td className="oa-cell-soft" style={{ fontSize: 12.5 }}>{p.phone}<br />{p.email}</td>
-                    <td><SegmentBadge segment={p.segment} /></td>
-                    <td className="oa-cell-strong">{p.visitsCount}</td>
-                    <td className="oa-cell-strong">{money(p.totalPaid)}</td>
-                    <td className="oa-cell-soft">{p.lastVisitAt ? new Date(p.lastVisitAt).toLocaleDateString("ru-RU") : "—"}</td>
+                    <td className="oa-cell-soft" style={{ fontSize: 12.5 }} data-label="Контакты">{p.phone}<br />{p.email}</td>
+                    <td data-label="Сегмент"><SegmentBadge segment={p.segment} /></td>
+                    <td className="oa-cell-strong" data-label="Визиты">{p.visitsCount}</td>
+                    <td className="oa-cell-strong" data-label="Сумма оплат">{money(p.totalPaid)}</td>
+                    <td className="oa-cell-soft" data-label="Последний визит">{p.lastVisitAt ? new Date(p.lastVisitAt).toLocaleDateString("ru-RU") : "—"}</td>
                   </tr>
                 ))}
               </tbody>

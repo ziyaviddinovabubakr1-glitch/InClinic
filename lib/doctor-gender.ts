@@ -39,7 +39,9 @@ export function inferDoctorGender(fullName?: string | null): DoctorGender {
 }
 
 export function getDoctorAvatarAsset(fullName?: string | null): string {
-  return inferDoctorGender(fullName) === "female"
-    ? "/icons/medical/doctor-female.png"
-    : "/icons/medical/doctor-male.png";
+  const base =
+    inferDoctorGender(fullName) === "female"
+      ? "/icons/medical/doctor-female.png"
+      : "/icons/medical/doctor-male.png";
+  return `${base}?v=5`;
 }

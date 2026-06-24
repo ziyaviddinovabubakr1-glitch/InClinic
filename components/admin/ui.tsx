@@ -28,7 +28,7 @@ export function KpiCard({
     red: "#ef4444", violet: "#a78bfa", sky: "#93c5fd",
   };
   return (
-    <div className={`oa-kpi oa-kpi--${tone}${hero ? " oa-kpi-hero" : ""}`}>
+    <div className={`oa-kpi oa-kpi--${tone}${hero ? " oa-kpi-hero" : ""}`} style={{ width: "100%" }}>
       <div className="oa-kpi-top">
         <div className={`oa-kpi-icon oa-tone-${tone}`}>
           <Icon style={{ width: hero ? 22 : 20, height: hero ? 22 : 20 }} />

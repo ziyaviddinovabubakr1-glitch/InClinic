@@ -113,10 +113,17 @@ export default function WaveBackground({ fixed = false, intensity }: Props) {
 
     /* intensity scale factor */
     const IM = preset === "subtle" ? 0.35 : preset === "medium" ? 0.55 : 0.75;
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const perfScale = isMobile ? 0.45 : 1;
 
     /* particle count — capped for performance */
-    const pCount = Math.floor(
-      (preset === "subtle" ? 18 : preset === "medium" ? 24 : 30) * (isLight ? 0.45 : 1),
+    const pCount = Math.max(
+      6,
+      Math.floor(
+        (preset === "subtle" ? 18 : preset === "medium" ? 24 : 30)
+          * (isLight ? 0.45 : 1)
+          * perfScale,
+      ),
     );
 
     /* ── Initialise scene objects ──────────────────────────────── */
@@ -130,7 +137,8 @@ export default function WaveBackground({ fixed = false, intensity }: Props) {
       };
     });
 
-    const stars: Star[] = Array.from({ length: isLight ? 24 : 30 }, () => {
+    const starCount = Math.max(8, Math.floor((isLight ? 24 : 30) * perfScale));
+    const stars: Star[] = Array.from({ length: starCount }, () => {
       const tier = Math.random();
       if (isLight) {
         return {
@@ -745,8 +753,15 @@ export default function WaveBackground({ fixed = false, intensity }: Props) {
     ══════════════════════════════════════════════════════════ */
     let start = 0;
     let lastTs = 0;
+    let frameSkip = 0;
+    const frameStride = isMobile ? 2 : 1;
     function loop(ts: number) {
       if (!start) { start = ts; lastTs = ts; }
+      frameSkip += 1;
+      if (frameSkip % frameStride !== 0) {
+        rafRef.current = requestAnimationFrame(loop);
+        return;
+      }
       const t  = (ts - start) / 1000;
       const dt = Math.min((ts - lastTs) / 1000, 0.05);
       lastTs = ts;

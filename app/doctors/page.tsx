@@ -62,9 +62,9 @@ export default async function DoctorsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
           {doctors.map((doctor) => (
             <div key={doctor.id} className="glass-card overflow-hidden flex flex-col w-full">
-              <div className="h-20 flex-shrink-0 relative"
+              <div className="h-24 flex-shrink-0 relative"
                 style={{ background:"linear-gradient(135deg,rgba(14,165,233,0.22),rgba(6,182,212,0.12))" }}>
-                <div className="absolute -bottom-9 inset-x-0 flex justify-center">
+                <div className="absolute -bottom-[3.25rem] inset-x-0 flex justify-center">
                   <DoctorAvatar
                     photoUrl={doctor.photoUrl}
                     name={doctor.nameRu}
@@ -72,7 +72,7 @@ export default async function DoctorsPage() {
                   />
                 </div>
               </div>
-              <div className="pt-11 pb-6 px-5 flex flex-col items-center text-center flex-1">
+              <div className="pt-14 pb-6 px-5 flex flex-col items-center text-center flex-1">
                 <h3 className="font-semibold glass-card-title text-sm leading-snug mb-1.5">
                   {doctor.nameRu}
                 </h3>

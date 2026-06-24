@@ -563,12 +563,12 @@ function BookingWizardInner() {
                         setStep("date");
                         setError("");
                       }}
-                      className="w-full flex items-center gap-4"
+                      className="w-full flex items-center gap-4 py-1"
                     >
                       <DoctorAvatar
                         photoUrl={d.photoUrl}
                         name={doctorName(d, lang)}
-                        size="md"
+                        size="lg"
                       />
                       <div className="flex-1 min-w-0 text-left">
                         <div className="font-bold text-theme group-hover:text-sky-600 transition-colors">
@@ -611,7 +611,7 @@ function BookingWizardInner() {
               <DoctorAvatar
                 photoUrl={selectedDoctor.photoUrl}
                 name={doctorName(selectedDoctor, lang)}
-                size="sm"
+                size="md"
               />
               <div>
                 <div className="text-sm font-semibold text-theme">{doctorName(selectedDoctor, lang)}</div>

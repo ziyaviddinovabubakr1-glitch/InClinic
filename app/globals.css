@@ -1074,6 +1074,15 @@
   }
   .doctor-avatar-3d {
     transition: transform 0.2s ease;
+    flex-shrink: 0;
+    align-self: center;
+  }
+  .doctor-avatar-3d--portrait .doctor-avatar-3d-img {
+    display: block;
+    max-width: none;
+  }
+  .glass-card .doctor-avatar-3d--portrait {
+    overflow: visible;
   }
   .glass-card:hover .doctor-avatar-3d {
     transform: scale(1.04);

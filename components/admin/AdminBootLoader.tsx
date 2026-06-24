@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import AdminBrandLogo from "@/components/admin/AdminBrandLogo";
 import PremiumAdminLoader from "@/components/admin/PremiumAdminLoader";
 
-const DURATION_MS = 1100;
-const FADE_MS = 280;
+const DURATION_MS = 650;
+const FADE_MS = 220;
 const SESSION_KEY = "inclinic-admin-boot";
 
 function isLoginRoute(pathname: string | null): boolean {
