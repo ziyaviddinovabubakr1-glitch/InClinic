@@ -98,7 +98,7 @@ async function main() {
   });
 
   const username = (process.env.ADMIN_USERNAME ?? "Abubakr").trim();
-  const password = process.env.ADMIN_PASSWORD ?? "InClinic2026!";
+  const password = (process.env.ADMIN_PASSWORD ?? "InClinic2026!").trim();
   const passwordHash = await hashPassword(password);
 
   await prisma.user.updateMany({

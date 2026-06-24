@@ -5,11 +5,18 @@ import { spawn } from "child_process";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { loadEnvFiles } from "./load-env.mjs";
+import { syncAdminFromEnv } from "./sync-admin-from-env.mjs";
 import { registerTelegramWebhook } from "./setup-telegram-webhook.mjs";
 
 loadEnvFiles();
 
 const port = process.env.PORT ?? "3000";
+
+try {
+  await syncAdminFromEnv();
+} catch (e) {
+  console.warn("→ Admin sync skipped:", e?.message ?? e);
+}
 
 try {
   const ok = await registerTelegramWebhook({

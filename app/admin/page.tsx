@@ -73,6 +73,10 @@ export default function OwnerLoginPage() {
             {error && (
               <div className="oa-badge oa-badge-cancelled" style={{ padding: "9px 13px", borderRadius: 10, fontSize: 12.5 }}>
                 {error}
+                <p style={{ marginTop: 8, opacity: 0.85, fontWeight: 400, lineHeight: 1.45 }}>
+                  Логин и пароль должны точно совпадать с ADMIN_USERNAME и ADMIN_PASSWORD в Render → Environment.
+                  После смены на Render нажмите Save и дождитесь перезапуска (1–2 мин).
+                </p>
               </div>
             )}
 

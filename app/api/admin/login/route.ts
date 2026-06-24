@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { verifyPassword } from "@/lib/password";
+import { verifyPassword, hashPassword } from "@/lib/password";
 import { createSession, revokeSessionByJti } from "@/lib/session";
 import { rateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { writeAudit } from "@/lib/audit";
@@ -41,18 +41,67 @@ function clearAuthCookies(response: NextResponse) {
 
 async function authenticateUser(username: string, password: string) {
   const normalized = username.trim();
-  const user = await prisma.user.findUnique({
+  const plain = password.trim();
+
+  let user = await prisma.user.findUnique({
     where: { username: normalized },
     include: { clinic: true },
   });
 
-  if (user?.active && (await verifyPassword(password, user.passwordHash))) {
+  if (!user) {
+    user = await prisma.user.findFirst({
+      where: {
+        username: { equals: normalized, mode: "insensitive" },
+        role: "OWNER",
+        active: true,
+      },
+      include: { clinic: true },
+    });
+  }
+
+  if (user?.active && (await verifyPassword(plain, user.passwordHash))) {
     return user;
+  }
+
+  /* Render: если логин/пароль совпали с env, но БД ещё не обновилась — синхронизируем на лету */
+  const envUser = process.env.ADMIN_USERNAME?.trim();
+  const envPass = process.env.ADMIN_PASSWORD?.trim();
+  if (
+    envUser &&
+    envPass &&
+    normalized.toLowerCase() === envUser.toLowerCase() &&
+    plain === envPass
+  ) {
+    const slug = process.env.DEFAULT_CLINIC_SLUG ?? "default";
+    const clinic =
+      (await prisma.clinic.findUnique({ where: { slug } })) ??
+      (await prisma.clinic.create({
+        data: { slug, name: process.env.NEXT_PUBLIC_CLINIC_NAME ?? "InClinic" },
+      }));
+
+    await prisma.user.updateMany({
+      where: { role: "OWNER", username: { not: envUser } },
+      data: { active: false },
+    });
+
+    const passwordHash = await hashPassword(envPass);
+    return prisma.user.upsert({
+      where: { username: envUser },
+      update: { passwordHash, role: "OWNER", clinicId: clinic.id, active: true },
+      create: {
+        username: envUser,
+        passwordHash,
+        role: "OWNER",
+        clinicId: clinic.id,
+        active: true,
+      },
+      include: { clinic: true },
+    });
   }
 
   if (allowDevCredentials()) {
     const dev = getDevAdminCredentials();
-    if (username === dev.username && password === dev.password) {
+    if (normalized === dev.username && plain === dev.password) {
       const fallback = await prisma.user.findFirst({
         where: { role: "OWNER", active: true },
         include: { clinic: true },
@@ -92,7 +141,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const user = await authenticateUser(username.trim(), password);
+  const user = await authenticateUser(username, password.trim());
   if (!user) {
     await writeAudit({
       action: "login.failure",
