@@ -1073,19 +1073,60 @@
     transform: scale(1.03);
   }
   .doctor-avatar-3d {
+    --da-w: 68px;
+    --da-aspect: 1.49;
+    width: var(--da-w);
+    height: calc(var(--da-w) * var(--da-aspect));
     transition: transform 0.2s ease;
     flex-shrink: 0;
     align-self: center;
+    line-height: 0;
+    overflow: visible;
   }
-  .doctor-avatar-3d--portrait .doctor-avatar-3d-img {
+  .doctor-avatar-3d--female { --da-aspect: 1.262; }
+  .doctor-avatar-3d--male { --da-aspect: 1.49; }
+  .doctor-avatar-3d--size-sm { --da-w: 52px; }
+  .doctor-avatar-3d--size-md { --da-w: 68px; }
+  .doctor-avatar-3d--size-lg { --da-w: 84px; }
+  .doctor-avatar-3d--size-xl { --da-w: 96px; }
+  .doctor-avatar-3d--photo {
+    overflow: hidden;
+    border-radius: 12px;
+  }
+  .doctor-avatar-3d--portrait .doctor-avatar-3d-img,
+  .doctor-avatar-3d--photo .doctor-avatar-3d-img {
+    width: var(--da-w);
+    height: calc(var(--da-w) * var(--da-aspect));
     display: block;
     max-width: none;
+    object-fit: contain;
+    object-position: center bottom;
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.32));
+  }
+  .doctor-avatar-3d--photo .doctor-avatar-3d-img {
+    object-fit: cover;
+    object-position: center top;
+    filter: none;
   }
   .glass-card .doctor-avatar-3d--portrait {
     overflow: visible;
   }
   .glass-card:hover .doctor-avatar-3d {
     transform: scale(1.04);
+  }
+
+  /* Doctor card banner — scales with avatar on phones */
+  .doctor-card-banner {
+    height: 6rem;
+  }
+  .doctor-card-banner-inner {
+    position: absolute;
+    bottom: -3.25rem;
+    left: 0;
+    right: 0;
+  }
+  .doctor-card-body {
+    padding-top: 3.5rem;
   }
 }
 
@@ -1880,4 +1921,60 @@
     height: 2rem !important;
     font-size: 0.75rem !important;
   }
+
+  /* Large phones — iPhone Pro Max, Galaxy Ultra (~428–480px) */
+  .doctor-avatar-3d--size-xl { --da-w: 78px; }
+  .doctor-avatar-3d--size-lg { --da-w: 70px; }
+  .doctor-avatar-3d--size-md { --da-w: 56px; }
+  .doctor-avatar-3d--size-sm { --da-w: 44px; }
+  .doctor-card-banner { height: 5.25rem; }
+  .doctor-card-banner-inner { bottom: -2.75rem; }
+  .doctor-card-body { padding-top: 3rem; }
+  .bk-doctor-pick { gap: 0.75rem !important; }
+  .glass-card.bk-doctor-card { padding: 1rem !important; }
+}
+
+@media (max-width: 414px) {
+  /* Standard iPhone / mid Android (~390–414px) */
+  .doctor-avatar-3d--size-xl { --da-w: 72px; }
+  .doctor-avatar-3d--size-lg { --da-w: 64px; }
+  .doctor-avatar-3d--size-md { --da-w: 52px; }
+  .doctor-avatar-3d--size-sm { --da-w: 42px; }
+  .doctor-card-banner { height: 5rem; }
+  .doctor-card-banner-inner { bottom: -2.5rem; }
+  .doctor-card-body { padding-top: 2.75rem; }
+}
+
+@media (max-width: 390px) {
+  /* iPhone 12/13/14, Pixel (~375–390px) */
+  .doctor-avatar-3d--size-xl { --da-w: 68px; }
+  .doctor-avatar-3d--size-lg { --da-w: 60px; }
+  .doctor-avatar-3d--size-md { --da-w: 48px; }
+  .doctor-avatar-3d--size-sm { --da-w: 40px; }
+  .doctor-card-banner { height: 4.75rem; }
+  .doctor-card-banner-inner { bottom: -2.35rem; }
+  .doctor-card-body { padding-top: 2.5rem; }
+}
+
+@media (max-width: 375px) {
+  /* iPhone SE, mini (~320–375px) */
+  .doctor-avatar-3d--size-xl { --da-w: 64px; }
+  .doctor-avatar-3d--size-lg { --da-w: 56px; }
+  .doctor-avatar-3d--size-md { --da-w: 46px; }
+  .doctor-avatar-3d--size-sm { --da-w: 38px; }
+  .doctor-card-banner { height: 4.5rem; }
+  .doctor-card-banner-inner { bottom: -2.15rem; }
+  .doctor-card-body { padding-top: 2.35rem; }
+  .glass-card.bk-doctor-card { padding: 0.875rem !important; }
+}
+
+@media (max-width: 360px) {
+  /* Compact Android (~360px and below) */
+  .doctor-avatar-3d--size-xl { --da-w: 60px; }
+  .doctor-avatar-3d--size-lg { --da-w: 52px; }
+  .doctor-avatar-3d--size-md { --da-w: 42px; }
+  .doctor-avatar-3d--size-sm { --da-w: 36px; }
+  .doctor-card-banner { height: 4.25rem; }
+  .doctor-card-banner-inner { bottom: -2rem; }
+  .doctor-card-body { padding-top: 2.15rem; }
 }

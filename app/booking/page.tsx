@@ -552,7 +552,7 @@ function BookingWizardInner() {
                 {doctors.map((d) => (
                   <div
                     key={d.id}
-                    className="glass-card p-5 group"
+                    className="glass-card bk-doctor-card p-5 group"
                   >
                     <button
                       onClick={() => {
@@ -563,7 +563,7 @@ function BookingWizardInner() {
                         setStep("date");
                         setError("");
                       }}
-                      className="w-full flex items-center gap-4 py-1"
+                      className="bk-doctor-pick w-full flex items-center gap-4 py-1"
                     >
                       <DoctorAvatar
                         photoUrl={d.photoUrl}
