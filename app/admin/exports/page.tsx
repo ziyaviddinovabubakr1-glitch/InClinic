@@ -5,6 +5,7 @@ import { exportData, EXPORT_CATEGORIES, EXPORT_FORMATS } from "@/lib/admin/servi
 import type { ExportCategory, ExportFormat } from "@/lib/admin/services";
 import { SectionHeader } from "@/components/admin/ui";
 import { MotionPage } from "@/components/admin/motion";
+import AdminIcon3d from "@/components/admin/AdminIcon3d";
 import { IExports, IPatients, IDoctors, IAppointments, IReviews, IMoney, IServices } from "@/components/admin/icons";
 
 const CATEGORY_META: Record<ExportCategory, { label: string; icon: (p: React.SVGProps<SVGSVGElement>) => JSX.Element; tone: string }> = {
@@ -29,7 +30,7 @@ export default function ExportsPage() {
     setBusy(false);
 
     if (result.pending) {
-      setMessage(`Формат ${format} будет доступен в следующем релизе. Архитектура экспорта уже готова.`);
+      setMessage(result.message ?? `Формат ${format} временно недоступен.`);
       return;
     }
     // Working CSV download
@@ -56,7 +57,7 @@ export default function ExportsPage() {
               <button key={c} onClick={() => setCategory(c)}
                 className="oa-card oa-card-hover"
                 style={{ padding: 16, textAlign: "left", borderColor: active ? "var(--oa-accent)" : undefined, boxShadow: active ? "0 0 0 3px rgba(37,99,235,0.12)" : undefined, cursor: "pointer", background: "var(--oa-surface)" }}>
-                <div className={`oa-kpi-icon oa-tone-${meta.tone}`} style={{ margin: 0, width: 34, height: 34 }}><Icon style={{ width: 17, height: 17 }} /></div>
+                <AdminIcon3d icon={Icon} size={30} iconSize={14} />
                 <div style={{ fontWeight: 700, fontSize: 14, marginTop: 10 }}>{meta.label}</div>
               </button>
             );
@@ -65,11 +66,11 @@ export default function ExportsPage() {
       </div>
 
       <div className="oa-card oa-card-pad">
-        <SectionHeader title="Формат" sub="CSV доступен сейчас · XLSX и PDF — скоро" />
+        <SectionHeader title="Формат" sub="CSV, Excel или PDF" />
         <div className="oa-chips">
           {EXPORT_FORMATS.map((f) => (
             <button key={f} className={`oa-chip ${format === f ? "oa-chip-active" : ""}`} onClick={() => setFormat(f)}>
-              {f}{f !== "CSV" ? " · скоро" : ""}
+              {f}
             </button>
           ))}
         </div>

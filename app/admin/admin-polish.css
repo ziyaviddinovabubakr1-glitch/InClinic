@@ -1,0 +1,299 @@
+/* Admin UI polish — gold icons, segment tabs, stat cards, tables, forms */
+
+/* ── Gold 3D icons (content area — sidebar nav untouched) ── */
+.owner-admin .oa-admin-icon-3d,
+.owner-admin .oa-kpi-icon,
+.owner-admin .oa-insight-icon,
+.owner-admin .oa-empty-icon > span:first-child {
+  --oa-gold-hi: #fff8dc;
+  --oa-gold-mid: #e4b84a;
+  --oa-gold-lo: #9a6b14;
+  width: 26px !important;
+  height: 26px !important;
+  min-width: 26px;
+  border-radius: 7px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: linear-gradient(165deg, var(--oa-gold-hi) 0%, var(--oa-gold-mid) 42%, var(--oa-gold-lo) 100%) !important;
+  border: 1px solid rgba(255, 220, 140, 0.42) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.62) inset,
+    0 -1px 3px rgba(60, 38, 8, 0.38) inset,
+    0 2px 7px rgba(0, 0, 0, 0.28) !important;
+  color: #3d2a0a !important;
+}
+
+.owner-admin .oa-admin-icon-3d svg,
+.owner-admin .oa-kpi-icon svg,
+.owner-admin .oa-insight-icon svg {
+  color: #3d2a0a !important;
+  filter: drop-shadow(0 1px 0 rgba(255, 248, 220, 0.65));
+}
+
+.owner-admin .oa-kpi-icon.oa-tone-blue,
+.owner-admin .oa-kpi-icon.oa-tone-violet,
+.owner-admin .oa-kpi-icon.oa-tone-green,
+.owner-admin .oa-kpi-icon.oa-tone-amber,
+.owner-admin .oa-kpi-icon.oa-tone-red,
+.owner-admin .oa-kpi-icon.oa-tone-sky,
+.owner-admin .oa-insight-icon.oa-tone-blue,
+.owner-admin .oa-insight-icon.oa-tone-violet,
+.owner-admin .oa-insight-icon.oa-tone-green,
+.owner-admin .oa-insight-icon.oa-tone-amber,
+.owner-admin .oa-insight-icon.oa-tone-red,
+.owner-admin .oa-insight-icon.oa-tone-sky {
+  background: linear-gradient(165deg, var(--oa-gold-hi) 0%, var(--oa-gold-mid) 42%, var(--oa-gold-lo) 100%) !important;
+  color: #3d2a0a !important;
+}
+
+/* ── Patient segment filter tabs ── */
+.owner-admin .oa-segment-stats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.owner-admin .oa-segment-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 64px;
+  padding: 10px 8px;
+  border: 1px solid var(--oa-border);
+  border-radius: 10px;
+  background: var(--oa-surface-solid);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.owner-admin .oa-segment-stat:hover {
+  border-color: rgba(228, 184, 74, 0.35);
+  background: rgba(228, 184, 74, 0.06);
+}
+
+.owner-admin .oa-segment-stat-active {
+  border-color: rgba(228, 184, 74, 0.55) !important;
+  background: rgba(228, 184, 74, 0.12) !important;
+  box-shadow: 0 0 0 1px rgba(228, 184, 74, 0.2);
+}
+
+.owner-admin .oa-segment-stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--oa-text);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.owner-admin .oa-segment-stat-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--oa-text-faint);
+  text-align: center;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.owner-admin .oa-segment-stat-active .oa-segment-stat-label {
+  color: #fef3c7;
+}
+
+/* ── Archive / stat cards (not dashboard KPI strip) ── */
+.owner-admin .oa-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 14px;
+  min-height: 108px;
+  background: var(--oa-surface-solid);
+  border: 1px solid var(--oa-border);
+  border-radius: 12px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.owner-admin .oa-stat-card:hover {
+  border-color: rgba(228, 184, 74, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.owner-admin .oa-stat-card .oa-kpi-label {
+  font-size: 12px !important;
+  font-weight: 500;
+  color: var(--oa-text-faint) !important;
+  line-height: 1.3 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+}
+
+.owner-admin .oa-stat-card .oa-kpi-value {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: var(--oa-text) !important;
+  margin-top: auto !important;
+}
+
+/* ── Tables: horizontal action buttons ── */
+.owner-admin .oa-table-actions {
+  flex-wrap: nowrap !important;
+  gap: 4px !important;
+  min-width: 108px;
+}
+
+.owner-admin .oa-table tbody td:last-child,
+.owner-admin .oa-table-dense tbody td:last-child {
+  width: 120px;
+  white-space: nowrap;
+}
+
+.owner-admin .oa-table tbody td {
+  height: auto !important;
+  min-height: 44px !important;
+  vertical-align: middle !important;
+}
+
+.owner-admin .oa-table-wrap {
+  overflow-x: auto !important;
+}
+
+.owner-admin .oa-table-actions .oa-btn-icon,
+.owner-admin .oa-table-actions .oa-btn-sm {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  padding: 0 !important;
+  flex-shrink: 0;
+}
+
+/* ── Selects: readable dropdowns ── */
+.owner-admin .oa-select {
+  height: auto !important;
+  min-height: 42px !important;
+  padding: 10px 36px 10px 14px !important;
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+  color: var(--oa-text) !important;
+  background-color: var(--oa-surface-2) !important;
+}
+
+.owner-admin .oa-select option {
+  font-size: 14px;
+  padding: 8px;
+  background: var(--oa-surface-solid);
+  color: var(--oa-text);
+}
+
+/* ── Dashboard reviews row ── */
+.owner-admin .oa-review-dense-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.owner-admin .oa-review-dense-top {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+}
+
+.owner-admin .oa-review-dense-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ── Dashboard insight tiles ── */
+.owner-admin .oa-insight-tile {
+  padding: 10px 12px !important;
+  min-height: 72px;
+}
+
+.owner-admin .oa-insight-name {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden !important;
+}
+
+/* ── Gold avatars ── */
+.owner-admin .oa-avatar-gold {
+  background: linear-gradient(165deg, #fff8dc, #e4b84a, #9a6b14) !important;
+  color: #3d2a0a !important;
+  border: 1px solid rgba(255, 220, 140, 0.45) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* ── Export format chips ── */
+.owner-admin .oa-chip-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.owner-admin .oa-format-note {
+  font-size: 12px;
+  color: var(--oa-text-faint);
+  margin-top: 8px;
+}
+
+/* ── Hide hint/callout blocks when removed from JSX — utility for legacy ── */
+.owner-admin .oa-hint-box,
+.owner-admin .oa-tab-hint,
+.owner-admin .oa-callout {
+  display: none !important;
+}
+
+/* ── Segmented control ── */
+.owner-admin .oa-segmented-item-active {
+  background: rgba(228, 184, 74, 0.18) !important;
+  color: #fef3c7 !important;
+  box-shadow: inset 0 0 0 1px rgba(228, 184, 74, 0.35);
+}
+
+.owner-admin .oa-rail-stat-value--green,
+.owner-admin .oa-rail-stat-value--blue,
+.owner-admin .oa-rail-stat-value--violet,
+.owner-admin .oa-rail-stat-value--amber {
+  color: #e4b84a !important;
+}
+
+/* ── Primary buttons gold accent ── */
+.owner-admin .oa-btn-primary {
+  background: linear-gradient(165deg, #f0c84a 0%, #c9921a 100%) !important;
+  border-color: rgba(255, 220, 140, 0.45) !important;
+  color: #3d2a0a !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 1px 0 rgba(255, 255, 255, 0.35) inset !important;
+}
+
+.owner-admin .oa-btn-primary:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.owner-admin .oa-chip-active {
+  background: rgba(228, 184, 74, 0.18) !important;
+  border-color: rgba(228, 184, 74, 0.45) !important;
+  color: #fef3c7 !important;
+}
+
+@media (max-width: 900px) {
+  .owner-admin .oa-segment-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .owner-admin .oa-dash-v3-insights {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .owner-admin .oa-segment-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

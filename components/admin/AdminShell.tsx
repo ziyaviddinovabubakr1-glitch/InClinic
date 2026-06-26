@@ -142,7 +142,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
         <div className="oa-sidebar-footer">
           <div className="oa-sidebar-owner-card">
-            <OwnerAvatar size={42} />
+            <OwnerAvatar size={34} />
             <div className="oa-sidebar-owner-text">
               <div className="oa-sidebar-owner-name">{OWNER_NAME}</div>
               <div className="oa-sidebar-owner-role">{OWNER_TITLE}</div>
@@ -154,7 +154,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             onClick={handleLogout}
             aria-label="Выйти из панели"
           >
-            <ILogout style={{ width: 18, height: 18 }} />
+            <ILogout style={{ width: 15, height: 15 }} />
             <span>Выйти</span>
           </button>
         </div>

@@ -22,8 +22,8 @@
   flex-shrink: 0;
   display: flex !important;
   flex-direction: column !important;
-  gap: 10px;
-  padding: 12px;
+  gap: 8px;
+  padding: 10px;
   border-top: 1px solid var(--oa-border, rgba(255, 255, 255, 0.08));
 }
 
@@ -162,7 +162,7 @@
 }
 
 .oa-sidebar-fill .oa-sidebar-owner-card .oa-sidebar-owner-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #fafafa;
   line-height: 1.25;
@@ -173,7 +173,7 @@
 
 .oa-sidebar-fill .oa-sidebar-owner-card .oa-sidebar-owner-role {
   display: block !important;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
   color: #fbbf24;
   margin-top: 2px;
@@ -184,15 +184,15 @@
   display: flex !important;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   width: 100% !important;
-  min-height: 40px;
-  padding: 10px 14px;
+  min-height: 34px;
+  padding: 8px 12px;
   border: 1px solid rgba(229, 72, 77, 0.35);
-  border-radius: 10px;
+  border-radius: 9px;
   background: rgba(229, 72, 77, 0.12);
   color: #fca5a5;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
 }

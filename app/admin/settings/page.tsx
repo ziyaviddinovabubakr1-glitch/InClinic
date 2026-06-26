@@ -5,6 +5,7 @@ import { SectionHeader } from "@/components/admin/ui";
 import { MotionPage } from "@/components/admin/motion";
 import AdminBrandLogo from "@/components/admin/AdminBrandLogo";
 import OwnerAvatar from "@/components/admin/OwnerAvatar";
+import AdminIcon3d from "@/components/admin/AdminIcon3d";
 import { IShield, IArchive, IDownload } from "@/components/admin/icons";
 import { getOwnerAvatarUrl, setOwnerAvatarUrl, clearOwnerAvatarUrl } from "@/lib/owner-avatar";
 import {
@@ -163,7 +164,7 @@ export default function SettingsPage() {
 
       {/* Backup Center */}
       <div className="oa-card oa-card-pad">
-        <SectionHeader title="Центр резервных копий" sub="Создание и восстановление данных" action={<span className="oa-soon-pill">Скоро</span>} />
+        <SectionHeader title="Центр резервных копий" sub="Резервное копирование данных клиники" />
         <div className="oa-grid-auto">
           {[
             { icon: IArchive, label: "Создать копию" },
@@ -173,7 +174,7 @@ export default function SettingsPage() {
             const Icon = b.icon;
             return (
               <button key={i} className="oa-card oa-card-hover" disabled style={{ padding: 16, textAlign: "left", cursor: "not-allowed", opacity: 0.7, background: "var(--oa-surface-2)" }}>
-                <div className="oa-kpi-icon oa-tone-blue" style={{ margin: 0, width: 34, height: 34 }}><Icon style={{ width: 17, height: 17 }} /></div>
+                <AdminIcon3d icon={Icon} size={30} iconSize={14} />
                 <div style={{ fontWeight: 650, fontSize: 13.5, marginTop: 10 }}>{b.label}</div>
               </button>
             );

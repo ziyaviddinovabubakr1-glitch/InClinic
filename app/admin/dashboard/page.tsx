@@ -79,14 +79,14 @@ export default function DashboardPage() {
             </StaggerItem>
           ))}
         </StaggerGrid>
-        <StaggerGrid className="oa-kpi-strip oa-kpi-strip--muted">
+        <StaggerGrid className="oa-kpi-strip oa-kpi-strip--muted oa-kpi-strip--3">
           {REVIEW_KPIS(data, revenueSpark).map((k) => (
             <StaggerItem key={k.label}>
               <KpiCard label={k.label} value={k.value} tone={k.tone} delta={k.delta} deltaDir={k.deltaDir} sparkData={k.spark} />
             </StaggerItem>
           ))}
         </StaggerGrid>
-        <StaggerGrid className="oa-kpi-strip oa-kpi-strip--muted">
+        <StaggerGrid className="oa-kpi-strip oa-kpi-strip--muted oa-kpi-strip--6">
           {SECONDARY_KPIS(data, revenueSpark, apptSpark).map((k) => (
             <StaggerItem key={k.label}>
               <KpiCard label={k.label} value={k.value} tone={k.tone} delta={k.delta} deltaDir={k.deltaDir} sparkData={k.spark} />
@@ -136,7 +136,7 @@ export default function DashboardPage() {
               <span className="oa-panel-title">Показатели</span>
             </div>
             <div className="oa-rail-gauge">
-              <Gauge value={executive.clinicHealthScore} size={64} label="Health" />
+              <Gauge value={executive.clinicHealthScore} size={64} label="Здоровье" />
             </div>
             <div className="oa-rail-stats">
               <RailStat label="Общий доход" value={money(executive.totalLifetimeRevenue)} tone="green" />
@@ -206,8 +206,10 @@ export default function DashboardPage() {
                 <div className="oa-review-dense-body">
                   <div className="oa-review-dense-top">
                     <span className="oa-cell-strong">{r.patientName}</span>
-                    <Stars rating={r.rating} size={10} />
-                  <ReviewStatusBadge status={r.status} />
+                    <div className="oa-review-dense-meta">
+                      <Stars rating={r.rating} size={10} />
+                      <ReviewStatusBadge status={r.status} />
+                    </div>
                   </div>
                   <div className="oa-cell-soft oa-review-dense-text">{r.comment}</div>
                 </div>

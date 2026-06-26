@@ -137,15 +137,15 @@ export function ReviewStatusBadge({ status }: { status: ReviewStatus }) {
 export function Avatar({ name, size = 38, tone = "blue" }: { name: string; size?: number; tone?: string }) {
   const initials = name.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase();
   const gradients: Record<string, string> = {
-    blue: "linear-gradient(135deg,#5e6ad2,#4338ca)",
-    violet: "linear-gradient(135deg,#8b5cf6,#6d28d9)",
-    green: "linear-gradient(135deg,#30a46c,#059669)",
-    amber: "linear-gradient(135deg,#f5a623,#ea580c)",
+    blue: "linear-gradient(165deg,#fff8dc,#e4b84a,#9a6b14)",
+    violet: "linear-gradient(165deg,#fff8dc,#e4b84a,#9a6b14)",
+    green: "linear-gradient(165deg,#fff8dc,#e4b84a,#9a6b14)",
+    amber: "linear-gradient(165deg,#fff8dc,#e4b84a,#9a6b14)",
   };
   return (
-    <span style={{
+    <span className="oa-avatar-gold" style={{
       width: size, height: size, borderRadius: "50%", flexShrink: 0,
-      background: gradients[tone] ?? gradients.blue, color: "#fff",
+      background: gradients[tone] ?? gradients.blue, color: "#3d2a0a",
       display: "inline-flex", alignItems: "center", justifyContent: "center",
       fontWeight: 600, fontSize: size * 0.34,
       border: "1px solid var(--oa-border-strong)",

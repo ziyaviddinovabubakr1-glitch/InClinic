@@ -253,9 +253,6 @@ function DoctorForm({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div className="oa-hint-box">
-        Телефон — логин врача на сайте <strong>/doctor</strong>. Пароль задаётся здесь; в админку врачи не входят.
-      </div>
       <div><label className="oa-label">ФИО</label><input className="oa-input" value={form.fullName} onChange={(e) => set({ fullName: e.target.value })} placeholder="Иванов Иван" /></div>
       <div className="oa-grid-2">
         <div><label className="oa-label">Телефон (логин)</label><input className="oa-input" type="tel" value={form.phone} onChange={(e) => set({ phone: e.target.value })} placeholder="+992 90 000 00 00" /></div>

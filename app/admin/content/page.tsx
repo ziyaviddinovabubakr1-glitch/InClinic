@@ -44,8 +44,6 @@ export default function ContentPage() {
   const [promoText, setPromoText] = useState("Действует до конца месяца для новых пациентов.");
   const [saved, setSaved] = useState(false);
 
-  const activeTab = TABS.find((t) => t.id === tab)!;
-
   function save() {
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -54,15 +52,7 @@ export default function ContentPage() {
   return (
     <MotionPage style={{ display: "flex", flexDirection: "column", gap: 18, maxWidth: 860, margin: "0 auto", width: "100%" }}>
       <div className="oa-card oa-card-pad">
-        <SectionHeader
-          title="Контент сайта"
-          sub="Редактируйте тексты и контакты — изменения появятся на публичном сайте"
-        />
-
-        <div className="oa-hint-box" style={{ marginBottom: 16 }}>
-          <strong>Как пользоваться:</strong> выберите раздел ниже, измените поля и нажмите «Сохранить изменения».
-          Логотип, favicon и бренд — в разделе <strong>Настройки</strong>.
-        </div>
+        <SectionHeader title="Контент сайта" sub="Редактируйте тексты и контакты для публичного сайта" />
 
         <div className="oa-chips" style={{ marginBottom: 14 }}>
           {TABS.map((t) => (
@@ -71,8 +61,6 @@ export default function ContentPage() {
             </button>
           ))}
         </div>
-
-        <p className="oa-tab-hint">{activeTab.hint}</p>
 
         {tab === "contacts" && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
