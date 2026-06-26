@@ -24,24 +24,23 @@ interface NavItem {
   href: string;
   label: string;
   Icon: (p: React.SVGProps<SVGSVGElement>) => JSX.Element;
-  tone: string;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { href: "/admin/dashboard", label: "Дашборд", Icon: IDashboard, tone: "blue" },
-  { href: "/admin/analytics", label: "Аналитика", Icon: IAnalytics, tone: "violet" },
-  { href: "/admin/doctors", label: "Врачи", Icon: IDoctors, tone: "sky" },
-  { href: "/admin/patients", label: "Пациенты", Icon: IPatients, tone: "emerald" },
-  { href: "/admin/appointments", label: "Записи", Icon: IAppointments, tone: "amber" },
-  { href: "/admin/services", label: "Услуги", Icon: IServices, tone: "rose" },
-  { href: "/admin/reviews", label: "Отзывы", Icon: IReviews, tone: "gold" },
-  { href: "/admin/activity", label: "Активность", Icon: IActivity, tone: "cyan" },
-  { href: "/admin/archive", label: "Архив", Icon: IArchive, tone: "slate" },
-  { href: "/admin/reports", label: "Отчёты", Icon: IReports, tone: "indigo" },
-  { href: "/admin/exports", label: "Экспорт", Icon: IExports, tone: "teal" },
-  { href: "/admin/content", label: "Контент", Icon: IContent, tone: "purple" },
-  { href: "/admin/notifications", label: "Уведомления", Icon: INotifications, tone: "orange" },
-  { href: "/admin/settings", label: "Настройки", Icon: ISettings, tone: "zinc" },
+  { href: "/admin/dashboard", label: "Дашборд", Icon: IDashboard },
+  { href: "/admin/analytics", label: "Аналитика", Icon: IAnalytics },
+  { href: "/admin/doctors", label: "Врачи", Icon: IDoctors },
+  { href: "/admin/patients", label: "Пациенты", Icon: IPatients },
+  { href: "/admin/appointments", label: "Записи", Icon: IAppointments },
+  { href: "/admin/services", label: "Услуги", Icon: IServices },
+  { href: "/admin/reviews", label: "Отзывы", Icon: IReviews },
+  { href: "/admin/activity", label: "Активность", Icon: IActivity },
+  { href: "/admin/archive", label: "Архив", Icon: IArchive },
+  { href: "/admin/reports", label: "Отчёты", Icon: IReports },
+  { href: "/admin/exports", label: "Экспорт", Icon: IExports },
+  { href: "/admin/content", label: "Контент", Icon: IContent },
+  { href: "/admin/notifications", label: "Уведомления", Icon: INotifications },
+  { href: "/admin/settings", label: "Настройки", Icon: ISettings },
 ];
 
 const PAGE_TITLES: Record<string, string> = {
@@ -122,7 +121,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           className="oa-nav oa-nav-flat oa-nav-fill"
           style={{ "--oa-nav-rows": visibleNav.length } as CSSProperties}
         >
-          {visibleNav.map(({ href, label, Icon, tone }) => {
+          {visibleNav.map(({ href, label, Icon }) => {
             const active = pathname === href || pathname.startsWith(`${href}/`);
             return (
               <Link
@@ -132,8 +131,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 className={`oa-nav-item ${active ? "oa-nav-item-active" : ""}`}
               >
                 {active && <NavIndicator />}
-                <span className={`oa-nav-icon-wrap oa-nav-icon-3d oa-nav-icon-3d--${tone}`}>
-                  <Icon style={{ width: 16, height: 16 }} />
+                <span className="oa-nav-icon-wrap oa-nav-icon-3d">
+                  <Icon style={{ width: 13, height: 13 }} />
                 </span>
                 <span className="oa-nav-label">{label}</span>
               </Link>
