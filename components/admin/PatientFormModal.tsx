@@ -73,8 +73,22 @@ export default function PatientFormModal({
   }
 
   return (
-    <Modal open={open} onClose={onClose} title={title}>
-      <form onSubmit={handleSubmit} className="oa-patient-form">
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={title}
+      premium
+      maxWidth={500}
+      footer={
+        <>
+          <button type="button" className="oa-btn oa-btn-ghost" onClick={onClose}>Отмена</button>
+          <button type="submit" form="oa-patient-form" className="oa-btn oa-btn-primary" disabled={saving}>
+            {saving ? "Сохранение…" : "Сохранить"}
+          </button>
+        </>
+      }
+    >
+      <form id="oa-patient-form" onSubmit={handleSubmit} className="oa-patient-form oa-form-premium">
         <div className="oa-form-grid-2">
           <label className="oa-field">
             <span className="oa-field-label">Имя</span>
@@ -159,14 +173,6 @@ export default function PatientFormModal({
           />
         </label>
         {error && <p className="oa-form-error">{error}</p>}
-        <div className="oa-form-actions">
-          <button type="button" className="oa-btn oa-btn-ghost" onClick={onClose}>
-            Отмена
-          </button>
-          <button type="submit" className="oa-btn oa-btn-primary" disabled={saving}>
-            {saving ? "Сохранение…" : "Сохранить"}
-          </button>
-        </div>
       </form>
     </Modal>
   );

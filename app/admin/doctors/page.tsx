@@ -16,7 +16,6 @@ import type { DoctorInput } from "@/lib/admin/services";
 import { Modal, ConfirmDialog } from "@/components/admin/Modal";
 import {
   Avatar, Stars, SkeletonRows, EmptyState,
-  doctorPerformanceScore,
 } from "@/components/admin/ui";
 import { MotionPage } from "@/components/admin/motion";
 import SegmentedControl from "@/components/admin/SegmentedControl";
@@ -156,47 +155,49 @@ export default function DoctorsPage() {
         ) : !doctors?.length ? (
           <EmptyState icon={<IDoctors />} title="Врачи не найдены" sub="Измените фильтры или добавьте нового врача." />
         ) : (
-          <div className="oa-table-wrap oa-table-responsive">
+          <div className="oa-table-wrap oa-table-no-scroll">
             <table className="oa-table oa-table-compact oa-table-doctors">
+              <colgroup>
+                <col className="oa-col-doctor" />
+                <col className="oa-col-rate" />
+                <col className="oa-col-num" />
+                <col className="oa-col-num" />
+                <col className="oa-col-money" />
+                <col className="oa-col-status" />
+                <col className="oa-col-actions" />
+              </colgroup>
               <thead>
                 <tr>
                   <th>Врач</th>
-                  <th>Телефон</th>
                   <th>Рейтинг</th>
-                  <th>Пациенты</th>
+                  <th>Пац.</th>
                   <th>Приёмы</th>
                   <th>Доход</th>
-                  <th>Score</th>
                   <th>Статус</th>
                   <th />
                 </tr>
               </thead>
               <tbody>
-                {doctors.map((d) => {
-                  const score = doctorPerformanceScore(d);
-                  return (
+                {doctors.map((d) => (
                     <tr key={d.id}>
                       <td className="oa-table-col-patient-first" data-label="Врач">
                         <div className="oa-doctor-cell">
-                          <Avatar name={d.fullName} size={28} tone={d.status === "ACTIVE" ? "blue" : "amber"} />
+                          <Avatar name={d.fullName} size={26} tone={d.status === "ACTIVE" ? "blue" : "amber"} />
                           <div className="oa-doctor-cell-text">
                             <div className="oa-doctor-cell-name" title={d.fullName}>{d.fullName}</div>
-                            <div className="oa-doctor-cell-meta">{d.specialty} · {d.experienceYears} лет</div>
+                            <div className="oa-doctor-cell-meta">{d.specialty} · {d.phone}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="oa-cell-soft" data-label="Телефон" style={{ fontSize: 12.5 }}>{d.phone}</td>
                       <td data-label="Рейтинг">
                         <div className="oa-doctor-rating">
-                          <Stars rating={d.rating} size={10} />
+                          <Stars rating={d.rating} size={9} />
                           <span className="oa-cell-strong">{d.rating.toFixed(1)}</span>
-                          <span className="oa-cell-soft">({d.reviewCount})</span>
                         </div>
                       </td>
-                      <td className="oa-cell-strong" data-label="Пациенты">{d.patientsCount}</td>
-                      <td className="oa-cell-strong" data-label="Приёмы">{d.appointmentsCount}</td>
-                      <td className="oa-cell-strong" data-label="Доход">{money(d.revenueGenerated)}</td>
-                      <td className="oa-cell-strong" data-label="Score">{score}</td>
+                      <td className="oa-cell-strong oa-cell-num" data-label="Пациенты">{d.patientsCount}</td>
+                      <td className="oa-cell-strong oa-cell-num" data-label="Приёмы">{d.appointmentsCount}</td>
+                      <td className="oa-cell-strong oa-cell-money" data-label="Доход">{money(d.revenueGenerated)}</td>
                       <td data-label="Статус">
                         {d.status === "HIDDEN"
                           ? <span className="oa-badge oa-badge-hidden">скрыт</span>
@@ -223,8 +224,7 @@ export default function DoctorsPage() {
                         </div>
                       </td>
                     </tr>
-                  );
-                })}
+                ))}
               </tbody>
             </table>
           </div>
@@ -280,7 +280,7 @@ function DoctorForm({
   const set = (patch: Partial<DoctorInput>) => setForm({ ...form, ...patch });
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+    <div className="oa-form-premium">
       <div><label className="oa-label">ФИО</label><input className="oa-input" value={form.fullName} onChange={(e) => set({ fullName: e.target.value })} placeholder="Иванов Иван" /></div>
       <div className="oa-grid-2">
         <div><label className="oa-label">Телефон (логин)</label><input className="oa-input" type="tel" value={form.phone} onChange={(e) => set({ phone: e.target.value })} placeholder="+992 90 000 00 00" /></div>

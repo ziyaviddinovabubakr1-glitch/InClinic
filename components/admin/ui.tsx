@@ -12,7 +12,7 @@ import { IStar, ITrendUp, ITrendDown } from "./icons";
 
 /* ───────────────────────────  KPI card (Stripe-style compact)  ─────────── */
 export function KpiCard({
-  label, value, tone = "blue", delta, deltaDir, sparkData,
+  label, value, tone = "blue", delta, deltaDir, sparkData, hero = false,
 }: {
   label: string;
   value: string;
@@ -23,12 +23,9 @@ export function KpiCard({
   sparkData?: number[];
   hero?: boolean;
 }) {
-  const sparkColors: Record<string, string> = {
-    blue: "#5e6ad2", green: "#30a46c", amber: "#f5a623",
-    red: "#e5484d", violet: "#8b5cf6", sky: "#38bdf8",
-  };
+  const sparkColor = hero ? "#fce588" : "#e4b84a";
   return (
-    <div className={`oa-kpi oa-kpi-v3 oa-kpi--${tone}`}>
+    <div className={`oa-kpi oa-kpi-v3 oa-kpi--${tone}${hero ? " oa-kpi-v3--hero" : ""}`}>
       <div className="oa-kpi-v3-inner">
         <div className="oa-kpi-v3-main">
           <div className="oa-kpi-label">{label}</div>
@@ -44,7 +41,7 @@ export function KpiCard({
         </div>
         {sparkData && sparkData.length > 1 && (
           <div className="oa-kpi-v3-spark">
-            <Sparkline data={sparkData} color={sparkColors[tone]} width={52} height={16} />
+            <Sparkline data={sparkData} color={sparkColor} width={hero ? 120 : 52} height={hero ? 28 : 16} />
           </div>
         )}
       </div>

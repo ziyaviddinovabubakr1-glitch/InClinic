@@ -50,7 +50,7 @@ export default function ReviewsPage() {
   const [rating, setRating] = useState<number | "ALL">("ALL");
   const [doctorId, setDoctorId] = useState("");
   const [toDelete, setToDelete] = useState<Review | null>(null);
-  const pageSize = 12;
+  const pageSize = 20;
   const { can } = useAdminPermissions();
 
   useEffect(() => {
@@ -88,6 +88,11 @@ export default function ReviewsPage() {
 
   const pages = Math.max(1, Math.ceil(total / pageSize));
   const canModerate = can("review:update");
+
+  const doctorOptions = [
+    { id: "", label: "Все врачи" },
+    ...doctors.map((d) => ({ id: d.id, label: formatShortName(d.fullName) })),
+  ];
 
   return (
     <MotionPage className="oa-reviews-page">
@@ -143,17 +148,12 @@ export default function ReviewsPage() {
               onChange={setStatus}
               className="oa-reviews-status-tabs"
             />
-            <select
-              className="oa-select oa-select-compact oa-reviews-doctor-select"
+            <SegmentedControl
+              options={doctorOptions}
               value={doctorId}
-              onChange={(e) => setDoctorId(e.target.value)}
-              aria-label="Фильтр по врачу"
-            >
-              <option value="">Все врачи</option>
-              {doctors.map((d) => (
-                <option key={d.id} value={d.id}>{formatShortName(d.fullName)}</option>
-              ))}
-            </select>
+              onChange={setDoctorId}
+              className="oa-reviews-doctor-tabs"
+            />
             <SegmentedControl
               options={RATING_OPTIONS}
               value={rating === "ALL" ? "ALL" : String(rating)}
@@ -186,7 +186,7 @@ export default function ReviewsPage() {
               <tr key={r.id}>
                 <td data-label="Пациент">
                   <div className="oa-review-patient">
-                    <Avatar name={r.patientName} size={26} tone="violet" />
+                    <Avatar name={r.patientName} size={22} tone="violet" />
                     <Link href={`/admin/patients/${r.patientId}`} className="oa-cell-link oa-review-patient-name" title={r.patientName}>
                       {formatShortName(r.patientName)}
                     </Link>

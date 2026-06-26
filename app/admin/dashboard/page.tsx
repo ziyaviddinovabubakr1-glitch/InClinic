@@ -79,12 +79,23 @@ export default function DashboardPage() {
       />
 
       <section className="oa-dash-v3-kpi">
-        <StaggerGrid className="oa-kpi-grid">
-          {DASHBOARD_KPIS(data, revenueSpark, apptSpark).map((k) => (
-            <StaggerItem key={k.label}>
-              <KpiCard label={k.label} value={k.value} tone={k.tone} delta={k.delta} deltaDir={k.deltaDir} sparkData={k.spark} />
-            </StaggerItem>
-          ))}
+        <StaggerGrid className="oa-kpi-grid oa-kpi-grid--dashboard">
+          {(() => {
+            const kpis = DASHBOARD_KPIS(data, revenueSpark, apptSpark);
+            const [hero, ...rest] = kpis;
+            return (
+              <>
+                <StaggerItem key={hero.label} className="oa-kpi-hero-slot">
+                  <KpiCard label={hero.label} value={hero.value} tone={hero.tone} delta={hero.delta} deltaDir={hero.deltaDir} sparkData={hero.spark} hero />
+                </StaggerItem>
+                {rest.map((k) => (
+                  <StaggerItem key={k.label}>
+                    <KpiCard label={k.label} value={k.value} tone={k.tone} delta={k.delta} deltaDir={k.deltaDir} sparkData={k.spark} />
+                  </StaggerItem>
+                ))}
+              </>
+            );
+          })()}
         </StaggerGrid>
       </section>
 
