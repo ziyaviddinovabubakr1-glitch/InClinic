@@ -56,11 +56,71 @@
   border: none !important;
 }
 
-.oa-sidebar-fill .oa-nav-fill .oa-nav-item svg {
-  width: 18px;
-  height: 18px;
+.owner-admin .oa-sidebar-fill .oa-nav-fill .oa-nav-item svg {
+  width: 16px !important;
+  height: 16px !important;
   flex-shrink: 0;
-  opacity: 0.65;
+  opacity: 1 !important;
+  color: #fff !important;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+}
+
+/* Soft 3D nav tiles — CSS only, no extra assets */
+.owner-admin .oa-sidebar-fill .oa-nav-icon-3d {
+  --oa-3d-top: #8b9cff;
+  --oa-3d-mid: #5e6ad2;
+  --oa-3d-bot: #3d4599;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px;
+  border-radius: 9px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: linear-gradient(155deg, var(--oa-3d-top) 0%, var(--oa-3d-mid) 52%, var(--oa-3d-bot) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.28) inset,
+    0 -2px 4px rgba(0, 0, 0, 0.28) inset,
+    0 3px 10px rgba(0, 0, 0, 0.32) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.owner-admin .oa-sidebar-fill .oa-nav-item:hover .oa-nav-icon-3d {
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.32) inset,
+    0 -2px 4px rgba(0, 0, 0, 0.25) inset,
+    0 5px 14px rgba(0, 0, 0, 0.38) !important;
+}
+
+.owner-admin .oa-sidebar-fill .oa-nav-item-active .oa-nav-icon-3d {
+  transform: translateY(-1px) scale(1.04);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.38) inset,
+    0 -2px 5px rgba(0, 0, 0, 0.22) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 6px 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+.owner-admin .oa-nav-icon-3d--blue    { --oa-3d-top: #8b9cff; --oa-3d-mid: #5e6ad2; --oa-3d-bot: #3d4599; }
+.owner-admin .oa-nav-icon-3d--violet  { --oa-3d-top: #c4b5fd; --oa-3d-mid: #8b5cf6; --oa-3d-bot: #6d28d9; }
+.owner-admin .oa-nav-icon-3d--sky     { --oa-3d-top: #7dd3fc; --oa-3d-mid: #38bdf8; --oa-3d-bot: #0284c7; }
+.owner-admin .oa-nav-icon-3d--emerald { --oa-3d-top: #6ee7b7; --oa-3d-mid: #34d399; --oa-3d-bot: #059669; }
+.owner-admin .oa-nav-icon-3d--amber   { --oa-3d-top: #fcd34d; --oa-3d-mid: #f59e0b; --oa-3d-bot: #d97706; }
+.owner-admin .oa-nav-icon-3d--rose    { --oa-3d-top: #fda4af; --oa-3d-mid: #f43f5e; --oa-3d-bot: #e11d48; }
+.owner-admin .oa-nav-icon-3d--gold    { --oa-3d-top: #fde68a; --oa-3d-mid: #fbbf24; --oa-3d-bot: #d97706; }
+.owner-admin .oa-nav-icon-3d--cyan    { --oa-3d-top: #67e8f9; --oa-3d-mid: #22d3ee; --oa-3d-bot: #0891b2; }
+.owner-admin .oa-nav-icon-3d--slate   { --oa-3d-top: #cbd5e1; --oa-3d-mid: #94a3b8; --oa-3d-bot: #64748b; }
+.owner-admin .oa-nav-icon-3d--indigo  { --oa-3d-top: #a5b4fc; --oa-3d-mid: #6366f1; --oa-3d-bot: #4338ca; }
+.owner-admin .oa-nav-icon-3d--teal    { --oa-3d-top: #5eead4; --oa-3d-mid: #14b8a6; --oa-3d-bot: #0f766e; }
+.owner-admin .oa-nav-icon-3d--purple  { --oa-3d-top: #d8b4fe; --oa-3d-mid: #a855f7; --oa-3d-bot: #7e22ce; }
+.owner-admin .oa-nav-icon-3d--orange  { --oa-3d-top: #fdba74; --oa-3d-mid: #f97316; --oa-3d-bot: #ea580c; }
+.owner-admin .oa-nav-icon-3d--zinc    { --oa-3d-top: #d4d4d8; --oa-3d-mid: #a1a1aa; --oa-3d-bot: #71717a; }
+
+.owner-admin .oa-sidebar-fill .oa-nav-fill .oa-nav-item:hover svg {
+  opacity: 1 !important;
 }
 
 .oa-sidebar-fill .oa-nav-fill .oa-nav-item:hover {
@@ -68,19 +128,10 @@
   color: var(--oa-text, #fafafa);
 }
 
-.oa-sidebar-fill .oa-nav-fill .oa-nav-item:hover svg {
-  opacity: 0.95;
-}
-
 .oa-sidebar-fill .oa-nav-fill .oa-nav-item-active {
   background: rgba(94, 106, 210, 0.16);
   color: var(--oa-text, #fafafa);
   font-weight: 600;
-}
-
-.oa-sidebar-fill .oa-nav-fill .oa-nav-item-active svg {
-  color: var(--oa-primary, #5e6ad2);
-  opacity: 1;
 }
 
 .oa-sidebar-fill .oa-sidebar-owner-card {
@@ -149,9 +200,15 @@
     gap: 10px;
     padding: 0 10px 0 12px;
   }
-  .oa-sidebar-fill .oa-nav-fill .oa-nav-item svg {
-    width: 16px;
-    height: 16px;
+  .owner-admin .oa-sidebar-fill .oa-nav-icon-3d {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px;
+    border-radius: 8px !important;
+  }
+  .owner-admin .oa-sidebar-fill .oa-nav-fill .oa-nav-item svg {
+    width: 14px !important;
+    height: 14px !important;
   }
   .oa-sidebar-fill .oa-sidebar-footer {
     padding: 8px;

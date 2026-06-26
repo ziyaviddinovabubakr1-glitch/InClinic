@@ -52,14 +52,14 @@ import {
 
 type P = SVGProps<SVGSVGElement> & { filled?: boolean };
 
-function wrap(Icon: LucideIcon, opts?: { fillWhenFilled?: boolean }) {
+function wrap(Icon: LucideIcon, opts?: { fillWhenFilled?: boolean; nav?: boolean }) {
   return function AdminIcon({ filled, style, className, ...rest }: P) {
     const w = style?.width;
     const size = typeof w === "number" ? w : 20;
     return (
       <Icon
         size={size}
-        strokeWidth={1.5}
+        strokeWidth={opts?.nav ? 2.25 : 1.5}
         style={style}
         className={className}
         fill={opts?.fillWhenFilled && filled ? "currentColor" : "none"}
@@ -69,19 +69,24 @@ function wrap(Icon: LucideIcon, opts?: { fillWhenFilled?: boolean }) {
   };
 }
 
-export const IDashboard = wrap(LayoutDashboard);
-export const IAnalytics = wrap(LineChart);
-export const IDoctors = wrap(Stethoscope);
-export const IPatients = wrap(Users);
-export const IAppointments = wrap(CalendarCheck);
-export const IServices = wrap(HeartPulse);
-export const IReviews = wrap(Star, { fillWhenFilled: true });
-export const IArchive = wrap(Archive);
-export const IReports = wrap(FileText);
-export const IExports = wrap(Download);
-export const IContent = wrap(Layout);
-export const INotifications = wrap(Bell);
-export const ISettings = wrap(Settings);
+/** Sidebar nav — slightly bolder strokes for soft 3D tiles (still Lucide SVG, zero extra weight). */
+function wrapNav(Icon: LucideIcon, opts?: { fillWhenFilled?: boolean }) {
+  return wrap(Icon, { ...opts, nav: true });
+}
+
+export const IDashboard = wrapNav(LayoutDashboard);
+export const IAnalytics = wrapNav(LineChart);
+export const IDoctors = wrapNav(Stethoscope);
+export const IPatients = wrapNav(Users);
+export const IAppointments = wrapNav(CalendarCheck);
+export const IServices = wrapNav(HeartPulse);
+export const IReviews = wrapNav(Star, { fillWhenFilled: true });
+export const IArchive = wrapNav(Archive);
+export const IReports = wrapNav(FileText);
+export const IExports = wrapNav(Download);
+export const IContent = wrapNav(Layout);
+export const INotifications = wrapNav(Bell);
+export const ISettings = wrapNav(Settings);
 export const ILogout = wrap(LogOut);
 
 export const ISearch = wrap(Search);
@@ -112,7 +117,7 @@ export const IGlobe = wrap(Globe);
 export const IShield = wrap(Shield);
 export const IDownload = IExports;
 export const IFilter = wrap(Filter);
-export const IActivity = wrap(Activity);
+export const IActivity = wrapNav(Activity);
 export const IWallet = wrap(Wallet);
 export const IInventory = wrap(Package);
 export const IUserCircle = wrap(UserCircle);
