@@ -420,7 +420,6 @@ body.admin-route {
   border: 1px solid transparent;
   border-left: 2px solid transparent;
   overflow: hidden;
-  flex-shrink: 0;
 }
 .oa-nav-item::after {
   content: "";
@@ -503,6 +502,48 @@ body.admin-route {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+.oa-sidebar-owner-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  min-width: 0;
+}
+.oa-sidebar-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 14px;
+  border: 1px solid rgba(229, 72, 77, 0.28);
+  border-radius: 8px;
+  background: rgba(229, 72, 77, 0.08);
+  color: #f4a4a7;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.oa-sidebar-logout-btn:hover {
+  background: rgba(229, 72, 77, 0.16);
+  border-color: rgba(229, 72, 77, 0.45);
+  color: #fecaca;
+}
+.oa-nav-distribute {
+  justify-content: flex-start;
+  gap: 3px;
+}
+
+.oa-nav-distribute .oa-nav-item {
+  flex: 1 1 0;
+  min-height: 0;
+  flex-shrink: 1;
 }
 .oa-sidebar-owner {
   display: flex;
@@ -952,12 +993,8 @@ body.admin-route {
 
 @media (max-height: 600px) {
   .oa-nav-group-label { display: none; }
-  .oa-sidebar-owner-text { display: none; }
-  .oa-sidebar-owner {
-    flex: 0;
-    background: transparent;
-    padding: 0;
-  }
+  .owner-admin .oa-sidebar-owner-text { display: flex !important; }
+  .owner-admin .oa-sidebar-owner-role { display: block !important; }
 }
 
 @media (max-width: 768px) {

@@ -6,7 +6,9 @@ import { assertAdminApiSession } from "@/lib/admin-api-guard";
 import { rateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { getClientIp } from "@/lib/auth-guard";
 import { writeAudit } from "@/lib/audit";
+import { createClinicNotification } from "@/lib/notifications-db";
 import { uiStatusToDb, mapBookingToAppointment } from "@/lib/admin/mappers";
+import { parseBookingPatch } from "@/lib/admin/validators/booking";
 import type { AppointmentStatus } from "@/lib/admin/types";
 
 export const dynamic = "force-dynamic";
@@ -150,21 +152,24 @@ export async function PATCH(request: NextRequest) {
 
   const clinicId = await requireClinicId(request);
 
-  let body: { id?: string; status?: AppointmentStatus | BookingStatus; rejectionReason?: string };
+  let body: unknown;
   try {
-    body = (await request.json()) as typeof body;
+    body = await request.json();
   } catch {
     return NextResponse.json({ error: "Неверный запрос" }, { status: 400 });
   }
 
-  const { id, rejectionReason } = body;
+  const parsed = parseBookingPatch(body);
+  if (!parsed.ok) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 });
+  }
+
+  const { id, rejectionReason } = parsed.data;
   let status: BookingStatus | undefined;
-  if (body.status) {
-    if (["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"].includes(body.status as string)) {
-      status = uiStatusToDb(body.status as AppointmentStatus);
-    } else if (ALLOWED_STATUS.has(body.status as BookingStatus)) {
-      status = body.status as BookingStatus;
-    }
+  if (["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"].includes(parsed.data.status as string)) {
+    status = uiStatusToDb(parsed.data.status as AppointmentStatus);
+  } else if (ALLOWED_STATUS.has(parsed.data.status as BookingStatus)) {
+    status = parsed.data.status as BookingStatus;
   }
 
   if (!id || !status) {
@@ -211,6 +216,34 @@ export async function PATCH(request: NextRequest) {
       ip,
       metadata: { status, from: current.status },
     });
+
+    try {
+      const patientLabel = `${booking.firstName} ${booking.lastName}`.trim();
+      if (status === "REJECTED") {
+        await createClinicNotification({
+          clinicId,
+          type: "cancel",
+          title: "Запись отменена",
+          message: `${patientLabel} · ${booking.service.nameRu}`,
+        });
+      } else if (status === "ACCEPTED" && current.status === "PENDING") {
+        await createClinicNotification({
+          clinicId,
+          type: "booking",
+          title: "Запись подтверждена",
+          message: `${patientLabel} · ${booking.service.nameRu}`,
+        });
+      } else if (status === "COMPLETED") {
+        await createClinicNotification({
+          clinicId,
+          type: "booking",
+          title: "Приём завершён",
+          message: `${patientLabel} · ${booking.service.nameRu}`,
+        });
+      }
+    } catch (notifyErr) {
+      console.error("[admin/bookings PATCH] notification failed:", notifyErr);
+    }
 
     return NextResponse.json({
       booking: mapBookingToAppointment(booking),

@@ -1,44 +1,56 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getNotifications, markAllNotificationsRead } from "@/lib/admin/services";
+import { useState } from "react";
+import {
+  useNotifications,
+  useMarkNotificationRead,
+  useMarkAllNotificationsRead,
+} from "@/lib/admin/query/hooks";
 import type { AdminNotification } from "@/lib/admin/services/notifications";
 import { SectionHeader, SkeletonRows, EmptyState } from "@/components/admin/ui";
 import { MotionPage } from "@/components/admin/motion";
-import { INotifications, IPatients, IAppointments, IReviews, IArchive, IDoctors, ICalendar } from "@/components/admin/icons";
+import {
+  INotifications, IPatients, IAppointments, IReviews, IArchive, IDoctors, ICalendar,
+} from "@/components/admin/icons";
 
-const TYPE_ICON: Record<AdminNotification["type"], (p: React.SVGProps<SVGSVGElement>) => JSX.Element> = {
+const TYPE_ICON: Record<string, (p: React.SVGProps<SVGSVGElement>) => JSX.Element> = {
   patient: IPatients,
+  booking: IAppointments,
   appointment: IAppointments,
   review: IReviews,
   cancel: IArchive,
   doctor: IDoctors,
   schedule: ICalendar,
+  system: INotifications,
 };
 
-const TYPE_TONE: Record<AdminNotification["type"], string> = {
+const TYPE_TONE: Record<string, string> = {
   patient: "blue",
+  booking: "sky",
   appointment: "sky",
   review: "amber",
   cancel: "red",
   doctor: "violet",
   schedule: "green",
+  system: "blue",
 };
 
 export default function NotificationsPage() {
-  const [items, setItems] = useState<AdminNotification[] | null>(null);
   const [filter, setFilter] = useState<"all" | "unread">("all");
+  const { data: items, isLoading } = useNotifications();
+  const markRead = useMarkNotificationRead();
+  const markAll = useMarkAllNotificationsRead();
 
-  useEffect(() => {
-    getNotifications().then(setItems);
-  }, []);
+  const list = items ?? [];
+  const visible = list.filter((n) => filter === "all" || !n.read);
+  const unread = list.filter((n) => !n.read).length;
 
-  const visible = items?.filter((n) => filter === "all" || !n.read) ?? [];
-  const unread = items?.filter((n) => !n.read).length ?? 0;
+  async function handleMarkAll() {
+    await markAll.mutateAsync();
+  }
 
-  async function markAll() {
-    await markAllNotificationsRead();
-    setItems((prev) => prev?.map((n) => ({ ...n, read: true })) ?? null);
+  async function handleMarkOne(n: AdminNotification) {
+    if (!n.read) await markRead.mutateAsync(n.id);
   }
 
   return (
@@ -49,7 +61,12 @@ export default function NotificationsPage() {
           sub="События клиники: пациенты, записи, отзывы и расписание"
           action={
             unread > 0 ? (
-              <button type="button" className="oa-btn oa-btn-ghost oa-btn-sm" onClick={markAll}>
+              <button
+                type="button"
+                className="oa-btn oa-btn-ghost oa-btn-sm"
+                onClick={handleMarkAll}
+                disabled={markAll.isPending}
+              >
                 Прочитать все ({unread})
               </button>
             ) : (
@@ -67,18 +84,19 @@ export default function NotificationsPage() {
           </button>
         </div>
 
-        {!items ? (
+        {isLoading ? (
           <SkeletonRows rows={6} />
         ) : visible.length === 0 ? (
           <EmptyState icon={<INotifications style={{ width: 28, height: 28 }} />} title="Нет уведомлений" sub="Новые события появятся здесь автоматически" />
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {visible.map((n) => {
-              const Icon = TYPE_ICON[n.type];
-              const tone = TYPE_TONE[n.type];
+              const Icon = TYPE_ICON[n.type] ?? INotifications;
+              const tone = TYPE_TONE[n.type] ?? "blue";
               return (
-                <div
+                <button
                   key={n.id}
+                  type="button"
                   className="oa-card"
                   style={{
                     padding: "14px 16px",
@@ -87,7 +105,12 @@ export default function NotificationsPage() {
                     gap: 14,
                     opacity: n.read ? 0.72 : 1,
                     borderColor: n.read ? undefined : "rgba(212,175,55,0.22)",
+                    width: "100%",
+                    textAlign: "left",
+                    cursor: n.read ? "default" : "pointer",
+                    background: "inherit",
                   }}
+                  onClick={() => handleMarkOne(n)}
                 >
                   <div className={`oa-kpi-icon oa-tone-${tone}`} style={{ margin: 0, width: 40, height: 40, flexShrink: 0 }}>
                     <Icon style={{ width: 18, height: 18 }} />
@@ -100,7 +123,7 @@ export default function NotificationsPage() {
                     <div style={{ fontSize: 13.5, color: "var(--oa-text-soft)", marginTop: 4 }}>{n.message}</div>
                   </div>
                   {!n.read && <span className="oa-badge-dot" style={{ marginTop: 6, flexShrink: 0 }} />}
-                </div>
+                </button>
               );
             })}
           </div>

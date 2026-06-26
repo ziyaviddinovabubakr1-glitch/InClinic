@@ -2,37 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useNotifications, useMarkNotificationRead } from "@/lib/admin/query/hooks";
 import { INotifications } from "./icons";
-import type { Appointment } from "@/lib/admin/types";
+import type { AdminNotification } from "@/lib/admin/services/notifications";
 
 export default function AdminNotifyDropdown() {
   const [open, setOpen] = useState(false);
-  const [items, setItems] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-
-  async function load() {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/admin/bookings?status=PENDING&pageSize=8", {
-        credentials: "include",
-        cache: "no-store",
-      });
-      if (!res.ok) return;
-      const data = (await res.json()) as { bookings?: Appointment[] };
-      setItems(data.bookings ?? []);
-    } catch {
-      /* ignore */
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    load();
-    const t = setInterval(load, 30_000);
-    return () => clearInterval(t);
-  }, []);
+  const { data: items = [], isLoading, isFetching } = useNotifications();
+  const markRead = useMarkNotificationRead();
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {
@@ -42,7 +20,16 @@ export default function AdminNotifyDropdown() {
     return () => document.removeEventListener("mousedown", onDoc);
   }, [open]);
 
-  const count = items.length;
+  const unread = items.filter((n) => !n.read);
+  const count = unread.length;
+  const preview = items.slice(0, 8);
+
+  async function openItem(n: AdminNotification) {
+    if (!n.read) {
+      await markRead.mutateAsync(n.id);
+    }
+    setOpen(false);
+  }
 
   return (
     <div className="oa-notify-wrap" ref={ref}>
@@ -51,37 +38,38 @@ export default function AdminNotifyDropdown() {
         className="oa-notify-btn"
         aria-label="Уведомления"
         aria-expanded={open}
-        onClick={() => { setOpen((v) => !v); if (!open) load(); }}
+        onClick={() => setOpen((v) => !v)}
       >
         <INotifications style={{ width: 18, height: 18 }} />
-        {count > 0 && <span className="oa-notify-badge oa-notify-badge--count">{count > 9 ? "9+" : count}</span>}
+        {count > 0 && (
+          <span className="oa-notify-badge oa-notify-badge--count">
+            {count > 9 ? "9+" : count}
+          </span>
+        )}
       </button>
 
       {open && (
         <div className="oa-notify-panel">
           <div className="oa-notify-panel-head">
-            <span>Новые заявки</span>
-            {loading && <span className="oa-notify-panel-muted">…</span>}
+            <span>Уведомления</span>
+            {(isLoading || isFetching) && <span className="oa-notify-panel-muted">…</span>}
           </div>
 
-          {items.length === 0 ? (
-            <div className="oa-notify-empty">Нет ожидающих заявок</div>
+          {preview.length === 0 ? (
+            <div className="oa-notify-empty">Нет новых уведомлений</div>
           ) : (
             <ul className="oa-notify-list">
-              {items.map((b) => (
-                <li key={b.id}>
+              {preview.map((n) => (
+                <li key={n.id}>
                   <Link
-                    href="/admin/appointments"
+                    href="/admin/notifications"
                     className="oa-notify-item"
-                    onClick={() => setOpen(false)}
+                    style={{ opacity: n.read ? 0.72 : 1 }}
+                    onClick={() => openItem(n)}
                   >
-                    <div className="oa-notify-item-title">{b.patientName}</div>
-                    <div className="oa-notify-item-sub">
-                      {b.serviceName} · {b.doctorName}
-                    </div>
-                    <div className="oa-notify-item-meta">
-                      {b.date.slice(8, 10)}.{b.date.slice(5, 7)} · {b.time}
-                    </div>
+                    <div className="oa-notify-item-title">{n.title}</div>
+                    <div className="oa-notify-item-sub">{n.message}</div>
+                    <div className="oa-notify-item-meta">{n.time}</div>
                   </Link>
                 </li>
               ))}

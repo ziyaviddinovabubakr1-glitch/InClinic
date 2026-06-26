@@ -1,17 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  listReviews,
-  approveReview,
-  rejectReview,
-  deleteReview,
-  getReviewAnalytics,
-  listDoctors,
-} from "@/lib/admin/services";
-import type { Review, ReviewAnalytics, ReviewStatus } from "@/lib/admin/types";
-import type { Doctor } from "@/lib/admin/types";
+  useReviewsList,
+  useReviewAnalytics,
+  useDoctorsList,
+  useApproveReview,
+  useRejectReview,
+  useDeleteReview,
+} from "@/lib/admin/query/hooks";
+import { useAdminPermissions } from "@/components/providers/AdminPermissionsProvider";
+import type { Review, ReviewStatus } from "@/lib/admin/types";
 import { ConfirmDialog } from "@/components/admin/Modal";
 import {
   Avatar, Stars, ReviewStatusBadge, StatTile, SkeletonCard, EmptyState, Pagination,
@@ -38,51 +38,47 @@ function formatReviewDate(iso: string): string {
 }
 
 export default function ReviewsPage() {
-  const [rows, setRows] = useState<Review[] | null>(null);
-  const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [debounced, setDebounced] = useState("");
   const [status, setStatus] = useState<ReviewStatus | "ALL">("ALL");
   const [rating, setRating] = useState<number | "ALL">("ALL");
   const [doctorId, setDoctorId] = useState("");
-  const [doctors, setDoctors] = useState<Doctor[]>([]);
-  const [analytics, setAnalytics] = useState<ReviewAnalytics | null>(null);
   const [toDelete, setToDelete] = useState<Review | null>(null);
   const pageSize = 12;
+  const { can } = useAdminPermissions();
 
   useEffect(() => {
-    listDoctors().then(setDoctors);
-  }, []);
-
-  const refresh = useCallback(() => {
-    setRows(null);
-    listReviews({
-      search,
-      status,
-      rating,
-      doctorId: doctorId || undefined,
-      page,
-      pageSize,
-    }).then((r) => {
-      setRows(r.rows);
-      setTotal(r.total);
-    });
-    getReviewAnalytics().then(setAnalytics);
-  }, [search, status, rating, doctorId, page]);
-
-  useEffect(() => {
-    const t = setTimeout(refresh, 180);
+    const t = setTimeout(() => setDebounced(search), 180);
     return () => clearTimeout(t);
-  }, [refresh]);
-  useEffect(() => { setPage(1); }, [search, status, rating, doctorId]);
+  }, [search]);
+
+  useEffect(() => { setPage(1); }, [debounced, status, rating, doctorId]);
+
+  const { data: doctors = [] } = useDoctorsList();
+  const { data: analytics } = useReviewAnalytics();
+  const { data, isLoading } = useReviewsList({
+    search: debounced,
+    status,
+    rating,
+    doctorId: doctorId || undefined,
+    page,
+    pageSize,
+  });
+  const approve = useApproveReview();
+  const reject = useRejectReview();
+  const remove = useDeleteReview();
+
+  const rows = data?.rows ?? null;
+  const total = data?.total ?? 0;
 
   async function moderate(r: Review, next: ReviewStatus) {
-    if (next === "APPROVED") await approveReview(r.id);
-    else if (next === "REJECTED") await rejectReview(r.id);
-    refresh();
+    if (next === "APPROVED") await approve.mutateAsync(r.id);
+    else if (next === "REJECTED") await reject.mutateAsync(r.id);
   }
 
   const pages = Math.max(1, Math.ceil(total / pageSize));
+  const canModerate = can("review:update");
 
   return (
     <MotionPage className="oa-reviews-page">
@@ -107,7 +103,7 @@ export default function ReviewsPage() {
       )}
 
       <DataTableShell
-        loading={!rows}
+        loading={isLoading && !rows}
         empty={
           rows?.length === 0
             ? { icon: <IReviews />, title: "Отзывы не найдены", sub: "Измените фильтры поиска." }
@@ -199,31 +195,35 @@ export default function ReviewsPage() {
                 <td className="oa-cell-soft" data-label="Дата">{formatReviewDate(r.date)}</td>
                 <td data-label="Действия">
                   <div className="oa-table-actions">
-                    {r.status !== "APPROVED" && (
+                    {canModerate && r.status !== "APPROVED" && (
                       <button
                         type="button"
                         className="oa-btn oa-btn-success oa-btn-sm"
+                        disabled={approve.isPending}
                         onClick={() => moderate(r, "APPROVED")}
                       >
                         <ICheck style={{ width: 13, height: 13 }} /> Одобрить
                       </button>
                     )}
-                    {r.status !== "REJECTED" && (
+                    {canModerate && r.status !== "REJECTED" && (
                       <button
                         type="button"
                         className="oa-btn oa-btn-ghost oa-btn-sm"
+                        disabled={reject.isPending}
                         onClick={() => moderate(r, "REJECTED")}
                       >
                         <IClose style={{ width: 13, height: 13 }} /> Отклонить
                       </button>
                     )}
-                    <button
-                      type="button"
-                      className="oa-btn oa-btn-danger oa-btn-sm"
-                      onClick={() => setToDelete(r)}
-                    >
-                      <ITrash style={{ width: 13, height: 13 }} />
-                    </button>
+                    {can("review:delete") && (
+                      <button
+                        type="button"
+                        className="oa-btn oa-btn-danger oa-btn-sm"
+                        onClick={() => setToDelete(r)}
+                      >
+                        <ITrash style={{ width: 13, height: 13 }} />
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>
@@ -240,9 +240,8 @@ export default function ReviewsPage() {
         confirmLabel="Удалить"
         danger
         onConfirm={() => {
-          if (toDelete) {
-            deleteReview(toDelete.id).then(() => refresh());
-          }
+          if (toDelete) remove.mutate(toDelete.id);
+          setToDelete(null);
         }}
       />
     </MotionPage>

@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getDashboardData, getAnalytics, exportData, money } from "@/lib/admin/services";
-import type { DashboardData } from "@/lib/admin/types";
-import type { AnalyticsData } from "@/lib/admin/services/analytics";
+import { useState } from "react";
+import { useDashboard, useAnalytics } from "@/lib/admin/query/hooks";
+import { exportData, money } from "@/lib/admin/services";
 import { SectionHeader, SkeletonCard, StatTile } from "@/components/admin/ui";
 import { MotionPage, MotionGrid, MotionItem } from "@/components/admin/motion";
 import { AreaChart } from "@/components/admin/charts";
@@ -19,16 +18,13 @@ const REPORTS: { id: ReportKind; label: string; sub: string; preset: "today" | "
 ];
 
 export default function ReportsPage() {
-  const [dashboard, setDashboard] = useState<DashboardData | null>(null);
-  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const { data: dashboard, isLoading: dashLoading } = useDashboard();
+  const { data: analytics, isLoading: analyticsLoading } = useAnalytics({ preset: "month" });
   const [active, setActive] = useState<ReportKind>("monthly");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    getDashboardData().then(setDashboard);
-    getAnalytics({ preset: "month" }).then(setAnalytics);
-  }, []);
+  const loading = dashLoading || analyticsLoading;
 
   async function downloadReport(kind: ReportKind) {
     setBusy(true);
@@ -85,7 +81,7 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {!dashboard || !analytics ? (
+      {loading || !dashboard || !analytics ? (
         <SkeletonCard height={320} />
       ) : (
         <>

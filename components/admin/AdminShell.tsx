@@ -1,20 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import "./admin-sidebar.css";
 import OwnerSessionGuard from "./OwnerSessionGuard";
 import AdminBrandLogo from "./AdminBrandLogo";
 import {
   IDashboard, IAnalytics, IDoctors, IPatients, IAppointments, IServices,
   IReviews, IArchive, IReports, IExports, IContent, INotifications, ISettings,
-  ILogout, IMenu, IClose, IPlus,
+  ILogout, IMenu, IClose, IPlus, IActivity,
 } from "./icons";
-import { OWNER_NAME } from "@/lib/admin/owner";
+import { OWNER_NAME, OWNER_TITLE } from "@/lib/admin/owner";
 import AdminNotifyDropdown from "./AdminNotifyDropdown";
+import AdminBookingAlerts from "./AdminBookingAlerts";
 import OwnerAvatar from "./OwnerAvatar";
 import { NavIndicator } from "./motion";
+import { useAdminPermissions } from "@/components/providers/AdminPermissionsProvider";
+import { permissionForAdminPage } from "@/lib/rbac";
 
 interface NavItem {
   href: string;
@@ -30,6 +34,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/admin/appointments", label: "Записи", Icon: IAppointments },
   { href: "/admin/services", label: "Услуги", Icon: IServices },
   { href: "/admin/reviews", label: "Отзывы", Icon: IReviews },
+  { href: "/admin/activity", label: "Активность", Icon: IActivity },
   { href: "/admin/archive", label: "Архив", Icon: IArchive },
   { href: "/admin/reports", label: "Отчёты", Icon: IReports },
   { href: "/admin/exports", label: "Экспорт", Icon: IExports },
@@ -45,6 +50,8 @@ const PAGE_TITLES: Record<string, string> = {
   "/admin/patients": "Пациенты",
   "/admin/appointments": "Записи",
   "/admin/services": "Услуги",
+  "/admin/reviews": "Отзывы",
+  "/admin/activity": "Журнал активности",
   "/admin/archive": "Архив",
   "/admin/reports": "Отчёты",
   "/admin/exports": "Экспорт",
@@ -76,17 +83,25 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   }
 
   const title = pageTitle(pathname);
+  const { can: canAction, loading: permLoading } = useAdminPermissions();
+
+  const visibleNav = NAV_ITEMS.filter((item) => {
+    if (permLoading) return true;
+    const perm = permissionForAdminPage(item.href);
+    return !perm || canAction(perm);
+  });
 
   return (
     <div className="oa-shell">
+      <AdminBookingAlerts />
       <div
         className={`oa-sidebar-overlay ${open ? "oa-sidebar-overlay-show" : ""}`}
         onClick={() => setOpen(false)}
       />
 
-      <aside className={`oa-sidebar oa-sidebar-linear ${open ? "oa-sidebar-open" : ""}`}>
+      <aside className={`oa-sidebar oa-sidebar-linear oa-sidebar-fill ${open ? "oa-sidebar-open" : ""}`}>
         <Link href="/admin/dashboard" className="oa-sidebar-brand" style={{ textDecoration: "none", color: "inherit" }}>
-          <AdminBrandLogo size="xs" context="admin" />
+          <AdminBrandLogo size="sm" context="admin" />
           <div className="oa-sidebar-brand-text">
             <div className="oa-brand-title">
               In<span className="oa-brand-title-gold">Clinic</span>
@@ -102,8 +117,11 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </button>
         </Link>
 
-        <nav className="oa-nav oa-nav-flat">
-          {NAV_ITEMS.map(({ href, label, Icon }) => {
+        <nav
+          className="oa-nav oa-nav-flat oa-nav-fill"
+          style={{ "--oa-nav-rows": visibleNav.length } as CSSProperties}
+        >
+          {visibleNav.map(({ href, label, Icon }) => {
             const active = pathname === href || pathname.startsWith(`${href}/`);
             return (
               <Link
@@ -121,23 +139,22 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </nav>
 
         <div className="oa-sidebar-footer">
-          <div className="oa-sidebar-footer-row">
-            <div className="oa-sidebar-owner">
-              <OwnerAvatar size={22} />
-              <div className="oa-sidebar-owner-text">
-                <div className="oa-sidebar-owner-name">{OWNER_NAME}</div>
-              </div>
+          <div className="oa-sidebar-owner-card">
+            <OwnerAvatar size={42} />
+            <div className="oa-sidebar-owner-text">
+              <div className="oa-sidebar-owner-name">{OWNER_NAME}</div>
+              <div className="oa-sidebar-owner-role">{OWNER_TITLE}</div>
             </div>
-            <button
-              type="button"
-              className="oa-btn oa-btn-icon oa-btn-ghost oa-sidebar-logout"
-              onClick={handleLogout}
-              aria-label="Выйти"
-              title="Выйти"
-            >
-              <ILogout />
-            </button>
           </div>
+          <button
+            type="button"
+            className="oa-sidebar-logout-btn"
+            onClick={handleLogout}
+            aria-label="Выйти из панели"
+          >
+            <ILogout style={{ width: 18, height: 18 }} />
+            <span>Выйти</span>
+          </button>
         </div>
       </aside>
 

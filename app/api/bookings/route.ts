@@ -11,6 +11,7 @@ import {
 import { createTelegramActionToken } from "@/lib/telegram-actions";
 import { findOrCreatePatient } from "@/lib/patients";
 import { writeAudit } from "@/lib/audit";
+import { createClinicNotification } from "@/lib/notifications-db";
 import { getClientIp } from "@/lib/auth-guard";
 import { MOCK_SERVICES, MOCK_DOCTORS } from "@/lib/mockData";
 
@@ -168,6 +169,17 @@ export async function POST(request: NextRequest) {
       ip,
       metadata: { patientId: patient.id },
     });
+
+    try {
+      await createClinicNotification({
+        clinicId,
+        type: "booking",
+        title: "Новая запись",
+        message: `${firstName.trim()} ${lastName.trim()} · ${booking.service.nameRu} · ${formattedDate} ${timeSlot}`,
+      });
+    } catch (notifyErr) {
+      console.error("[bookings] notification failed:", notifyErr);
+    }
 
     return NextResponse.json(
       {

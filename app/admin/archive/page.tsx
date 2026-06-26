@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getArchiveSummary, money } from "@/lib/admin/services";
-import type { ArchiveSummary } from "@/lib/admin/services";
+import { useArchiveSummary } from "@/lib/admin/query/hooks";
+import { money } from "@/lib/admin/services";
 import { SkeletonCard } from "@/components/admin/ui";
 import { MotionPage, MotionGrid, MotionItem } from "@/components/admin/motion";
 import {
@@ -10,8 +9,7 @@ import {
 } from "@/components/admin/icons";
 
 export default function ArchivePage() {
-  const [summary, setSummary] = useState<ArchiveSummary | null>(null);
-  useEffect(() => { getArchiveSummary().then(setSummary); }, []);
+  const { data: summary, isLoading } = useArchiveSummary();
 
   return (
     <MotionPage style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -22,7 +20,7 @@ export default function ArchivePage() {
         </span>
       </div>
 
-      {!summary ? (
+      {isLoading || !summary ? (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 16 }}>
           {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} height={110} />)}
         </div>

@@ -1,12 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  listPatients, getSegmentCounts, createPatient, money,
-} from "@/lib/admin/services";
-import type { Patient, PatientSegment } from "@/lib/admin/types";
+  usePatientsList,
+  usePatientSegmentCounts,
+  useCreatePatient,
+} from "@/lib/admin/query/hooks";
+import { money } from "@/lib/admin/services";
+import type { PatientSegment } from "@/lib/admin/types";
 import {
   Avatar, SegmentBadge, SkeletonRows, Pagination, EmptyState,
 } from "@/components/admin/ui";
@@ -25,36 +28,33 @@ type SortKey = "createdAt" | "name" | "totalPaid";
 
 export default function PatientsPage() {
   const router = useRouter();
-  const [rows, setRows] = useState<Patient[] | null>(null);
-  const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [debounced, setDebounced] = useState("");
   const [segment, setSegment] = useState<PatientSegment | "ALL">("ALL");
   const [sort, setSort] = useState<SortKey>("createdAt");
-  const [counts, setCounts] = useState<Record<PatientSegment, number> | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
-  const [error, setError] = useState("");
   const pageSize = 12;
 
-  const refresh = useCallback(() => {
-    setRows(null);
-    setError("");
-    listPatients({ search, segment, page, pageSize, sort })
-      .then((r) => {
-        setRows(r.rows);
-        setTotal(r.total);
-      })
-      .catch((e) => setError(e instanceof Error ? e.message : "Ошибка загрузки"));
-  }, [search, segment, page, sort]);
-
   useEffect(() => {
-    const t = setTimeout(refresh, 180);
+    const t = setTimeout(() => setDebounced(search), 180);
     return () => clearTimeout(t);
-  }, [refresh]);
+  }, [search]);
 
-  useEffect(() => { getSegmentCounts().then(setCounts).catch(() => {}); }, [rows]);
-  useEffect(() => { setPage(1); }, [search, segment, sort]);
+  useEffect(() => { setPage(1); }, [debounced, segment, sort]);
 
+  const { data, isLoading, error } = usePatientsList({
+    search: debounced,
+    segment,
+    page,
+    pageSize,
+    sort,
+  });
+  const { data: counts } = usePatientSegmentCounts();
+  const createPatient = useCreatePatient();
+
+  const rows = data?.rows ?? null;
+  const total = data?.total ?? 0;
   const pages = Math.max(1, Math.ceil(total / pageSize));
   const totalPatients = counts
     ? counts.NEW + counts.REGULAR + counts.VIP + counts.INACTIVE
@@ -72,7 +72,7 @@ export default function PatientsPage() {
         }
       />
 
-      {error && <div className="oa-alert oa-alert-error">{error}</div>}
+      {error && <div className="oa-alert oa-alert-error">{error.message}</div>}
 
       <div className="oa-segment-stats">
         {SEGMENTS.map((s) => {
@@ -92,7 +92,7 @@ export default function PatientsPage() {
       </div>
 
       <DataTableShell
-        loading={!rows}
+        loading={isLoading && !rows}
         empty={
           rows?.length === 0
             ? { icon: <IPatients />, title: "Пациенты не найдены", sub: "Создайте пациента или измените фильтры." }
@@ -176,9 +176,8 @@ export default function PatientsPage() {
         open={createOpen}
         onClose={() => setCreateOpen(false)}
         title="Новый пациент"
-        onSave={async (data) => {
-          const patient = await createPatient(data);
-          refresh();
+        onSave={async (formData) => {
+          const patient = await createPatient.mutateAsync(formData);
           router.push(`/admin/patients/${patient.id}`);
         }}
       />

@@ -50,6 +50,7 @@ model Clinic {
   bookings  Booking[]
   reviews   Review[]
   auditLogs AuditLog[]
+  notifications Notification[]
 }
 
 model User {
@@ -65,6 +66,7 @@ model User {
   clinic    Clinic     @relation(fields: [clinicId], references: [id], onDelete: Cascade)
   sessions  Session[]
   auditLogs AuditLog[]
+  notifications Notification[]
 
   @@index([clinicId])
 }
@@ -273,4 +275,22 @@ model Review {
   @@index([clinicId, patientId])
   @@index([clinicId, createdAt])
   @@index([doctorId, status])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  clinicId  String
+  userId    String?
+  type      String
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([clinicId, read, createdAt])
+  @@index([clinicId, createdAt])
+  @@index([userId, read])
 }

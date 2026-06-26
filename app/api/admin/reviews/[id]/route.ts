@@ -9,6 +9,7 @@ import { writeAudit } from "@/lib/audit";
 import { mapDbReviewToUi, uiStatusToDb } from "@/lib/admin/review-mappers";
 import { validateReviewPatch } from "@/lib/admin/validators/review";
 import { validateReviewInput } from "@/lib/reviews";
+import { createClinicNotification } from "@/lib/notifications-db";
 
 export const dynamic = "force-dynamic";
 
@@ -108,6 +109,19 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
       oldData: { status: existing.status, rating: existing.rating },
       newData: { status: review.status, rating: review.rating },
     });
+
+    if (action === "review.approve") {
+      try {
+        await createClinicNotification({
+          clinicId,
+          type: "review",
+          title: "Отзыв одобрен",
+          message: `${review.patient.firstName} ${review.patient.lastName} · ${review.rating}★`,
+        });
+      } catch (notifyErr) {
+        console.error("[admin/reviews PATCH] notification failed:", notifyErr);
+      }
+    }
 
     return NextResponse.json({ review: mapDbReviewToUi(review) });
   } catch (err) {

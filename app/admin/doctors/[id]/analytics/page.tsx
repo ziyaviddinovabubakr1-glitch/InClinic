@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { getDoctorAnalytics, money } from "@/lib/admin/services";
-import type { DoctorAnalytics } from "@/lib/admin/types";
+import { useDoctorAnalytics } from "@/lib/admin/query/hooks";
+import { money } from "@/lib/admin/services";
 import { AreaChart, BarChart } from "@/components/admin/charts";
 import {
   Avatar, Stars, StatTile, SkeletonCard, EmptyState,
@@ -16,24 +15,12 @@ import { IArrowLeft, IDoctors } from "@/components/admin/icons";
 export default function DoctorAnalyticsPage() {
   const params = useParams();
   const id = params.id as string;
-  const [data, setData] = useState<DoctorAnalytics | null>(null);
-  const [error, setError] = useState("");
+  const { data, isLoading, isError } = useDoctorAnalytics(id);
 
-  useEffect(() => {
-    setData(null);
-    setError("");
-    getDoctorAnalytics(id)
-      .then((d) => {
-        if (!d) setError("Врач не найден");
-        else setData(d);
-      })
-      .catch(() => setError("Ошибка загрузки аналитики"));
-  }, [id]);
-
-  if (error) {
+  if (isError || (!isLoading && !data)) {
     return (
       <MotionPage>
-        <EmptyState icon={<IDoctors />} title="Аналитика недоступна" sub={error} />
+        <EmptyState icon={<IDoctors />} title="Аналитика недоступна" sub="Врач не найден или ошибка загрузки" />
         <Link href="/admin/doctors" className="oa-btn oa-btn-ghost oa-btn-sm" style={{ marginTop: 16 }}>
           <IArrowLeft style={{ width: 14, height: 14 }} /> К списку врачей
         </Link>
@@ -41,7 +28,7 @@ export default function DoctorAnalyticsPage() {
     );
   }
 
-  if (!data) return <AnalyticsSkeleton />;
+  if (isLoading || !data) return <AnalyticsSkeleton />;
 
   return (
     <MotionPage className="oa-doctor-analytics">

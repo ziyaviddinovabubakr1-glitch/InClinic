@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  listAppointments, updateAppointmentStatus, allowedTransitions, money,
-} from "@/lib/admin/services";
+  useAppointmentsList,
+  useUpdateAppointmentStatus,
+} from "@/lib/admin/query/hooks";
+import { allowedTransitions, money } from "@/lib/admin/services";
 import type { Appointment, AppointmentStatus } from "@/lib/admin/types";
 import { Avatar, StatusBadge, EmptyState, Pagination } from "@/components/admin/ui";
 import { DataTableShell } from "@/components/admin/DataTable";
@@ -28,33 +30,34 @@ function formatApptDate(iso: string): string {
 }
 
 export default function AppointmentsPage() {
-  const [rows, setRows] = useState<Appointment[] | null>(null);
-  const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [debounced, setDebounced] = useState("");
   const [status, setStatus] = useState<AppointmentStatus | "ALL">("ALL");
   const pageSize = 14;
 
-  const refresh = useCallback(() => {
-    setRows(null);
-    listAppointments({ search, status, page, pageSize }).then((r) => {
-      setRows(r.rows);
-      setTotal(r.total);
-    });
-  }, [search, status, page]);
-
   useEffect(() => {
-    const t = setTimeout(refresh, 180);
+    const t = setTimeout(() => setDebounced(search), 180);
     return () => clearTimeout(t);
-  }, [refresh]);
-  useEffect(() => { setPage(1); }, [search, status]);
+  }, [search]);
+
+  useEffect(() => { setPage(1); }, [debounced, status]);
+
+  const { data, isLoading, isFetching } = useAppointmentsList({
+    search: debounced,
+    status,
+    page,
+    pageSize,
+  });
+  const updateStatus = useUpdateAppointmentStatus();
+
+  const rows = data?.rows ?? null;
+  const total = data?.total ?? 0;
+  const pages = Math.max(1, Math.ceil(total / pageSize));
 
   async function transition(a: Appointment, next: AppointmentStatus) {
-    await updateAppointmentStatus(a.id, next);
-    refresh();
+    await updateStatus.mutateAsync({ id: a.id, status: next });
   }
-
-  const pages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <MotionPage style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -71,92 +74,85 @@ export default function AppointmentsPage() {
       />
 
       <DataTableShell
-        loading={!rows}
+        loading={isLoading && !rows}
         empty={rows?.length === 0 ? { icon: <IAppointments />, title: "Записи не найдены", sub: "Измените фильтры поиска." } : undefined}
         toolbar={
           <div className="oa-search" style={{ flex: 1, minWidth: 220 }}>
             <ISearch />
             <input
               className="oa-input"
-              placeholder="Поиск по пациенту, врачу или услуге"
+              placeholder="Поиск по пациенту, телефону, услуге…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
+            {isFetching && rows && (
+              <span style={{ fontSize: 11, color: "var(--oa-text-faint)", marginLeft: 8 }}>…</span>
+            )}
           </div>
         }
-        footer={
-          <>
-            <span>{total} записей</span>
-            <Pagination page={page} pages={pages} onChange={setPage} />
-          </>
-        }
+        footer={pages > 1 ? <Pagination page={page} pages={pages} onChange={setPage} /> : undefined}
       >
-        <table className="oa-table">
-          <thead>
-            <tr>
-              <th className="oa-table-col-patient">Пациент</th>
-              <th className="oa-table-col-doctor">Врач</th>
-              <th className="oa-table-col-service">Услуга</th>
-              <th className="oa-table-col-datetime">Дата / время</th>
-              <th className="oa-table-col-sum">Сумма</th>
-              <th className="oa-table-col-status">Статус</th>
-              <th className="oa-table-col-actions" style={{ textAlign: "right" }}>Действия</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows?.map((a) => {
-              const next = allowedTransitions(a.status);
-              return (
-                <tr key={a.id}>
-                  <td className="oa-table-col-patient oa-table-col-patient-first" data-label="Пациент">
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <Avatar name={a.patientName} size={28} tone="violet" />
-                      <div>
-                        {a.patientId ? (
-                          <Link href={`/admin/patients/${a.patientId}`} className="oa-cell-link oa-cell-strong">
-                            {a.patientName}
-                          </Link>
-                        ) : (
-                          <span className="oa-cell-strong">{a.patientName}</span>
-                        )}
-                        <div className="oa-cell-soft" style={{ fontSize: 12 }}>{a.patientPhone}</div>
+        {rows && (
+          <table className="oa-table">
+            <thead>
+              <tr>
+                <th>Пациент</th>
+                <th>Услуга</th>
+                <th>Врач</th>
+                <th>Дата</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((a) => {
+                const transitions = allowedTransitions(a.status);
+                return (
+                  <tr key={a.id}>
+                    <td>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <Avatar name={a.patientName} size={28} />
+                        <div>
+                          <div style={{ fontWeight: 600, fontSize: 13.5 }}>{a.patientName}</div>
+                          {a.patientPhone && (
+                            <div style={{ fontSize: 12, color: "var(--oa-text-faint)" }}>{a.patientPhone}</div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="oa-cell-soft oa-table-col-doctor" data-label="Врач">{a.doctorName}</td>
-                  <td className="oa-cell-soft oa-table-col-service" data-label="Услуга">{a.serviceName}</td>
-                  <td className="oa-table-col-datetime" data-label="Дата / время">
-                    <div className="oa-datetime-cell">
-                      <span className="oa-datetime-date">{formatApptDate(a.date)}</span>
-                      <span className="oa-datetime-time">{a.time}</span>
-                    </div>
-                  </td>
-                  <td className="oa-cell-strong oa-table-col-sum" data-label="Сумма">{money(a.price)}</td>
-                  <td className="oa-table-col-status" data-label="Статус"><StatusBadge status={a.status} /></td>
-                  <td className="oa-table-col-actions" data-label="Действия">
-                    <div className="oa-table-actions">
-                      {next.length === 0 ? (
-                        <span style={{ fontSize: 12, color: "var(--oa-text-faint)" }}>
-                          {a.status === "COMPLETED" ? "в архиве" : "—"}
-                        </span>
-                      ) : next.map((n) => (
-                        <button
-                          key={n}
-                          type="button"
-                          className={`oa-btn oa-btn-sm ${n === "CANCELLED" ? "oa-btn-danger" : n === "COMPLETED" ? "oa-btn-success" : "oa-btn-soft"}`}
-                          onClick={() => transition(a, n)}
-                        >
-                          {n === "CANCELLED" ? <IClose style={{ width: 13, height: 13 }} /> : <ICheck style={{ width: 13, height: 13 }} />}
-                          {TRANSITION_LABEL[n]}
-                        </button>
-                      ))}
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                    </td>
+                    <td>{a.serviceName}</td>
+                    <td>{a.doctorName}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{formatApptDate(a.date)} · {a.time}</td>
+                    <td>{money(a.price ?? 0)}</td>
+                    <td><StatusBadge status={a.status} /></td>
+                    <td>
+                      <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                        {transitions.map((next) => (
+                          <button
+                            key={next}
+                            type="button"
+                            className={`oa-btn oa-btn-sm ${next === "CANCELLED" ? "oa-btn-ghost" : "oa-btn-primary"}`}
+                            disabled={updateStatus.isPending}
+                            onClick={() => transition(a, next)}
+                            title={TRANSITION_LABEL[next]}
+                          >
+                            {next === "CONFIRMED" ? <ICheck style={{ width: 14, height: 14 }} /> : next === "CANCELLED" ? <IClose style={{ width: 14, height: 14 }} /> : TRANSITION_LABEL[next]}
+                          </button>
+                        ))}
+                        {a.patientId && (
+                          <Link href={`/admin/patients/${a.patientId}`} className="oa-btn oa-btn-ghost oa-btn-sm" style={{ textDecoration: "none" }}>
+                            Профиль
+                          </Link>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
       </DataTableShell>
     </MotionPage>
   );

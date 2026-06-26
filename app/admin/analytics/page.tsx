@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getAnalytics, money } from "@/lib/admin/services";
-import type { AnalyticsData } from "@/lib/admin/services";
+import { useState } from "react";
+import { useAnalytics } from "@/lib/admin/query/hooks";
+import { money } from "@/lib/admin/services";
 import type { DateRangePreset } from "@/lib/admin/types";
 import { AreaChart, BarChart } from "@/components/admin/charts";
 import { SkeletonCard } from "@/components/admin/ui";
@@ -24,12 +24,7 @@ function sumValues(data: { value: number }[]) {
 
 export default function AnalyticsPage() {
   const [preset, setPreset] = useState<DateRangePreset>("month");
-  const [data, setData] = useState<AnalyticsData | null>(null);
-
-  useEffect(() => {
-    setData(null);
-    getAnalytics({ preset }).then(setData);
-  }, [preset]);
+  const { data, isLoading } = useAnalytics({ preset });
 
   const revenueTotal = data ? sumValues(data.revenue) : 0;
   const apptTotal = data ? sumValues(data.appointments) : 0;
@@ -46,7 +41,7 @@ export default function AnalyticsPage() {
         }
       />
 
-      {!data ? (
+      {isLoading || !data ? (
         <div className="oa-analytics-v3-grid">
           <div className="oa-analytics-v3-summary">
             {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} height={48} />)}

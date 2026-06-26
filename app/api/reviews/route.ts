@@ -9,6 +9,7 @@ import {
   validateReviewInput,
 } from "@/lib/reviews";
 import { mapDbReviewToUi } from "@/lib/admin/review-mappers";
+import { createClinicNotification } from "@/lib/notifications-db";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +62,17 @@ export async function POST(request: NextRequest) {
       where: { id },
       include: REVIEW_INCLUDE,
     });
+
+    try {
+      await createClinicNotification({
+        clinicId,
+        type: "review",
+        title: "Новый отзыв",
+        message: `${review.patient.firstName} ${review.patient.lastName} · ${review.rating}★ · ${review.doctor.nameRu}`,
+      });
+    } catch (notifyErr) {
+      console.error("[reviews POST] notification failed:", notifyErr);
+    }
 
     return NextResponse.json(
       { success: true, review: mapDbReviewToUi(review) },

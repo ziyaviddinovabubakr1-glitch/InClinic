@@ -6,6 +6,7 @@ import { assertAdminApiSession } from "@/lib/admin-api-guard";
 import { rateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { getClientIp } from "@/lib/auth-guard";
 import { writeAudit } from "@/lib/audit";
+import { createClinicNotification } from "@/lib/notifications-db";
 import { hashPhone } from "@/lib/booking-rules";
 import {
   parseBirthDate,
@@ -210,6 +211,17 @@ export async function POST(request: NextRequest) {
         phone: patient.phone,
       },
     });
+
+    try {
+      await createClinicNotification({
+        clinicId,
+        type: "patient",
+        title: "Новый пациент",
+        message: `${patient.firstName} ${patient.lastName} · ${patient.phone}`,
+      });
+    } catch (notifyErr) {
+      console.error("[admin/patients POST] notification failed:", notifyErr);
+    }
 
     return NextResponse.json(
       { patient: mapDbPatientToUi(patient) },

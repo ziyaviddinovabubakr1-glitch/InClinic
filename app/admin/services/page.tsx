@@ -1,9 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  listServices, createService, updateService, deleteService, setServiceActive, money,
-} from "@/lib/admin/services";
+  useServicesList,
+  useCreateService,
+  useUpdateService,
+  useDeleteService,
+  useSetServiceActive,
+} from "@/lib/admin/query/hooks";
+import { useAdminPermissions } from "@/components/providers/AdminPermissionsProvider";
+import { money } from "@/lib/admin/services";
 import type { Service } from "@/lib/admin/types";
 import type { ServiceInput } from "@/lib/admin/services";
 import { Modal, ConfirmDialog } from "@/components/admin/Modal";
@@ -14,23 +20,29 @@ import { IPlus, ISearch, IEdit, ITrash, IEye, IEyeOff, IServices } from "@/compo
 const EMPTY: ServiceInput = { name: "", description: "", price: 100, durationMin: 30, active: true };
 
 export default function ServicesPage() {
-  const [services, setServices] = useState<Service[] | null>(null);
   const [search, setSearch] = useState("");
+  const [debounced, setDebounced] = useState("");
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Service | null>(null);
   const [form, setForm] = useState<ServiceInput>(EMPTY);
-  const [saving, setSaving] = useState(false);
   const [toDelete, setToDelete] = useState<Service | null>(null);
-
-  const refresh = useCallback(() => {
-    setServices(null);
-    listServices({ search }).then(setServices);
-  }, [search]);
+  const { can } = useAdminPermissions();
 
   useEffect(() => {
-    const t = setTimeout(refresh, 180);
+    const t = setTimeout(() => setDebounced(search), 180);
     return () => clearTimeout(t);
-  }, [refresh]);
+  }, [search]);
+
+  const { data: services, isLoading } = useServicesList({ search: debounced });
+  const createMut = useCreateService();
+  const updateMut = useUpdateService();
+  const deleteMut = useDeleteService();
+  const setActiveMut = useSetServiceActive();
+
+  const canManage = can("service:update");
+  const canCreate = can("service:create");
+  const canDelete = can("service:delete");
+  const saving = createMut.isPending || updateMut.isPending;
 
   function openCreate() { setEditing(null); setForm(EMPTY); setFormOpen(true); }
   function openEdit(s: Service) {
@@ -40,12 +52,9 @@ export default function ServicesPage() {
   }
   async function save() {
     if (!form.name.trim()) return;
-    setSaving(true);
-    if (editing) await updateService(editing.id, form);
-    else await createService(form);
-    setSaving(false);
+    if (editing) await updateMut.mutateAsync({ id: editing.id, patch: form });
+    else await createMut.mutateAsync(form);
     setFormOpen(false);
-    refresh();
   }
 
   return (
@@ -55,13 +64,15 @@ export default function ServicesPage() {
           <ISearch />
           <input className="oa-input" placeholder="Поиск услуги" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <button className="oa-btn oa-btn-primary" onClick={openCreate}><IPlus /> Добавить услугу</button>
+        {canCreate && (
+          <button className="oa-btn oa-btn-primary" onClick={openCreate}><IPlus /> Добавить услугу</button>
+        )}
       </div>
 
       <div className="oa-card oa-table-card">
-        {!services ? (
+        {isLoading && !services ? (
           <div className="oa-card-pad"><SkeletonRows rows={8} /></div>
-        ) : services.length === 0 ? (
+        ) : !services?.length ? (
           <EmptyState icon={<IServices />} title="Услуги не найдены" sub="Добавьте первую услугу." />
         ) : (
           <div className="oa-table-wrap oa-table-responsive">
@@ -102,9 +113,15 @@ export default function ServicesPage() {
                     </td>
                     <td data-label="Действия">
                       <div className="oa-table-actions">
-                        <button className="oa-btn oa-btn-soft oa-btn-sm" onClick={() => openEdit(s)} title="Изменить"><IEdit style={{ width: 14, height: 14 }} /></button>
-                        <button className="oa-btn oa-btn-ghost oa-btn-icon" onClick={async () => { await setServiceActive(s.id, !s.active); refresh(); }} aria-label="Скрыть/показать">{s.active ? <IEyeOff /> : <IEye />}</button>
-                        <button className="oa-btn oa-btn-danger oa-btn-icon" onClick={() => setToDelete(s)} aria-label="Удалить"><ITrash /></button>
+                        {canManage && (
+                          <button className="oa-btn oa-btn-soft oa-btn-sm" onClick={() => openEdit(s)} title="Изменить"><IEdit style={{ width: 14, height: 14 }} /></button>
+                        )}
+                        {canManage && (
+                          <button className="oa-btn oa-btn-ghost oa-btn-icon" onClick={() => setActiveMut.mutate({ id: s.id, active: !s.active })} aria-label="Скрыть/показать">{s.active ? <IEyeOff /> : <IEye />}</button>
+                        )}
+                        {canDelete && (
+                          <button className="oa-btn oa-btn-danger oa-btn-icon" onClick={() => setToDelete(s)} aria-label="Удалить"><ITrash /></button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -140,7 +157,10 @@ export default function ServicesPage() {
       </Modal>
 
       <ConfirmDialog open={!!toDelete} onClose={() => setToDelete(null)}
-        onConfirm={async () => { if (toDelete) { await deleteService(toDelete.id); refresh(); } }}
+        onConfirm={async () => {
+          if (toDelete) await deleteMut.mutateAsync(toDelete.id);
+          setToDelete(null);
+        }}
         title="Удалить услугу?" message={`Услуга «${toDelete?.name}» будет удалена. Историческая статистика продаж сохраняется в архиве.`} />
     </MotionPage>
   );

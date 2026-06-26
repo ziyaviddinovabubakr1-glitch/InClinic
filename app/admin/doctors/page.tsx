@@ -1,11 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  listDoctors, createDoctor, updateDoctor, deleteDoctor, setDoctorStatus,
-  money,
-} from "@/lib/admin/services";
+  useDoctorsList,
+  useCreateDoctor,
+  useUpdateDoctor,
+  useDeleteDoctor,
+  useSetDoctorStatus,
+} from "@/lib/admin/query/hooks";
+import { useAdminPermissions } from "@/components/providers/AdminPermissionsProvider";
+import { money } from "@/lib/admin/services";
 import type { Doctor, DoctorStatus } from "@/lib/admin/types";
 import type { DoctorInput } from "@/lib/admin/services";
 import { Modal, ConfirmDialog } from "@/components/admin/Modal";
@@ -33,27 +38,32 @@ const EMPTY_FORM: DoctorInput = {
 };
 
 export default function DoctorsPage() {
-  const [doctors, setDoctors] = useState<Doctor[] | null>(null);
   const [search, setSearch] = useState("");
+  const [debounced, setDebounced] = useState("");
   const [statusFilter, setStatusFilter] = useState<DoctorStatus | "ALL">("ALL");
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Doctor | null>(null);
   const [form, setForm] = useState<DoctorInput>(EMPTY_FORM);
   const [password, setPassword] = useState("");
-  const [saving, setSaving] = useState(false);
 
   const [toDelete, setToDelete] = useState<Doctor | null>(null);
-
-  const refresh = useCallback(() => {
-    setDoctors(null);
-    listDoctors({ search, status: statusFilter }).then(setDoctors);
-  }, [search, statusFilter]);
+  const { can } = useAdminPermissions();
 
   useEffect(() => {
-    const t = setTimeout(refresh, 180);
+    const t = setTimeout(() => setDebounced(search), 180);
     return () => clearTimeout(t);
-  }, [refresh]);
+  }, [search]);
+
+  const { data: doctors, isLoading } = useDoctorsList({ search: debounced, status: statusFilter });
+  const createDoctorMut = useCreateDoctor();
+  const updateDoctorMut = useUpdateDoctor();
+  const deleteDoctorMut = useDeleteDoctor();
+  const setStatusMut = useSetDoctorStatus();
+
+  const canManage = can("doctor:update");
+  const canCreate = can("doctor:create");
+  const canDelete = can("doctor:delete");
 
   function openCreate() {
     setEditing(null);
@@ -76,22 +86,23 @@ export default function DoctorsPage() {
   async function save() {
     if (!form.fullName.trim() || !form.specialty.trim() || !form.phone.trim()) return;
     if (!editing && password.trim().length < 6) return;
-    setSaving(true);
     if (editing) {
-      await updateDoctor(editing.id, form);
+      await updateDoctorMut.mutateAsync({ id: editing.id, patch: form });
       if (password.trim().length >= 6) setDoctorCredentials(form.phone, password.trim());
     } else {
-      await createDoctor(form, { password: password.trim() });
+      await createDoctorMut.mutateAsync({ input: form, password: password.trim() });
     }
-    setSaving(false);
     setFormOpen(false);
-    refresh();
   }
 
   async function toggleStatus(d: Doctor) {
-    await setDoctorStatus(d.id, d.status === "ACTIVE" ? "HIDDEN" : "ACTIVE");
-    refresh();
+    await setStatusMut.mutateAsync({
+      id: d.id,
+      status: d.status === "ACTIVE" ? "HIDDEN" : "ACTIVE",
+    });
   }
+
+  const saving = createDoctorMut.isPending || updateDoctorMut.isPending;
 
   return (
     <MotionPage style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -107,13 +118,15 @@ export default function DoctorsPage() {
             </button>
           ))}
         </div>
-        <button className="oa-btn oa-btn-primary" onClick={openCreate}><IPlus /> Добавить врача</button>
+        {canCreate && (
+          <button className="oa-btn oa-btn-primary" onClick={openCreate}><IPlus /> Добавить врача</button>
+        )}
       </div>
 
       <div className="oa-card oa-table-card">
-        {!doctors ? (
+        {isLoading && !doctors ? (
           <div className="oa-card-pad"><SkeletonRows rows={8} /></div>
-        ) : doctors.length === 0 ? (
+        ) : !doctors?.length ? (
           <EmptyState icon={<IDoctors />} title="Врачи не найдены" sub="Измените фильтры или добавьте нового врача." />
         ) : (
           <div className="oa-table-wrap oa-table-responsive">
@@ -171,9 +184,15 @@ export default function DoctorsPage() {
                           >
                             <IAnalytics style={{ width: 14, height: 14 }} />
                           </Link>
-                          <button className="oa-btn oa-btn-ghost oa-btn-icon" onClick={() => openEdit(d)} aria-label="Редактировать"><IEdit /></button>
-                          <button className="oa-btn oa-btn-ghost oa-btn-icon" onClick={() => toggleStatus(d)} aria-label="Скрыть/показать">{d.status === "ACTIVE" ? <IEyeOff /> : <IEye />}</button>
-                          <button className="oa-btn oa-btn-danger oa-btn-icon" onClick={() => setToDelete(d)} aria-label="Удалить"><ITrash /></button>
+                          {canManage && (
+                            <button className="oa-btn oa-btn-ghost oa-btn-icon" onClick={() => openEdit(d)} aria-label="Редактировать"><IEdit /></button>
+                          )}
+                          {canManage && (
+                            <button className="oa-btn oa-btn-ghost oa-btn-icon" onClick={() => toggleStatus(d)} aria-label="Скрыть/показать">{d.status === "ACTIVE" ? <IEyeOff /> : <IEye />}</button>
+                          )}
+                          {canDelete && (
+                            <button className="oa-btn oa-btn-danger oa-btn-icon" onClick={() => setToDelete(d)} aria-label="Удалить"><ITrash /></button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -205,7 +224,10 @@ export default function DoctorsPage() {
       </Modal>
 
       <ConfirmDialog open={!!toDelete} onClose={() => setToDelete(null)}
-        onConfirm={async () => { if (toDelete) { await deleteDoctor(toDelete.id); refresh(); } }}
+        onConfirm={async () => {
+          if (toDelete) await deleteDoctorMut.mutateAsync(toDelete.id);
+          setToDelete(null);
+        }}
         title="Удалить врача?"
         message={`Врач «${toDelete?.fullName}» будет удалён из списка. Историческая статистика и завершённые приёмы сохраняются в архиве.`} />
     </MotionPage>

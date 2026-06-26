@@ -14,5 +14,6 @@ export * from "./analytics";
 export * from "./export";
 export * from "./archive";
 export * from "./notifications";
+export * from "./activity";
 export { money } from "./util";
 export type { PatientInput } from "./patients";

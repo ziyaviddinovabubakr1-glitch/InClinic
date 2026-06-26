@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getDashboardData, money } from "@/lib/admin/services";
+import { useDashboard } from "@/lib/admin/query/hooks";
+import { money } from "@/lib/admin/services";
 import type { DashboardData } from "@/lib/admin/types";
 import { AreaChart, BarChart, Gauge } from "@/components/admin/charts";
 import {
@@ -42,13 +42,9 @@ const SECONDARY_KPIS = (data: DashboardData, revenueSpark: number[], apptSpark: 
 ];
 
 export default function DashboardPage() {
-  const [data, setData] = useState<DashboardData | null>(null);
+  const { data, isLoading } = useDashboard();
 
-  useEffect(() => {
-    getDashboardData().then(setData);
-  }, []);
-
-  if (!data) return <DashboardSkeleton />;
+  if (isLoading || !data) return <DashboardSkeleton />;
 
   const { kpis, executive, overview, revenueSeries, appointmentsSeries, recentAppointments, latestReviews } = data;
   const revenueSpark = toSpark(revenueSeries);

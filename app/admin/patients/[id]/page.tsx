@@ -1,10 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { getPatientProfile, updatePatient, deletePatient, money } from "@/lib/admin/services";
-import type { PatientProfile } from "@/lib/admin/types";
+import {
+  usePatientProfile,
+  useUpdatePatient,
+  useDeletePatient,
+} from "@/lib/admin/query/hooks";
+import { useAdminPermissions } from "@/components/providers/AdminPermissionsProvider";
+import { money } from "@/lib/admin/services";
 import {
   Avatar, SegmentBadge, StatusBadge, StatTile, SkeletonCard, EmptyState,
 } from "@/components/admin/ui";
@@ -28,21 +33,17 @@ export default function PatientProfilePage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
+  const { can } = useAdminPermissions();
 
-  const [profile, setProfile] = useState<PatientProfile | null>(null);
-  const [error, setError] = useState("");
+  const { data: profile, isLoading, error: queryError } = usePatientProfile(id);
+  const updatePatient = useUpdatePatient(id);
+  const deletePatientMut = useDeletePatient();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  useEffect(() => {
-    setProfile(null);
-    setError("");
-    getPatientProfile(id)
-      .then(setProfile)
-      .catch((e) => setError(e instanceof Error ? e.message : "Пациент не найден"));
-  }, [id]);
+  const error = queryError instanceof Error ? queryError.message : queryError ? "Пациент не найден" : "";
 
-  if (error) {
+  if (error && !isLoading) {
     return (
       <MotionPage>
         <EmptyState title="Пациент не найден" sub={error} />
@@ -53,7 +54,7 @@ export default function PatientProfilePage() {
     );
   }
 
-  if (!profile) {
+  if (isLoading || !profile) {
     return (
       <MotionPage className="oa-patient-profile">
         <SkeletonCard height={80} />
@@ -84,12 +85,16 @@ export default function PatientProfilePage() {
             </div>
           </div>
           <div className="oa-profile-header-actions">
-            <button type="button" className="oa-btn oa-btn-ghost oa-btn-sm" onClick={() => setEditOpen(true)}>
-              <IEdit style={{ width: 14, height: 14 }} /> Редактировать
-            </button>
-            <button type="button" className="oa-btn oa-btn-ghost oa-btn-sm" onClick={() => setDeleteOpen(true)}>
-              <ITrash style={{ width: 14, height: 14 }} /> Удалить
-            </button>
+            {can("patient:update") && (
+              <button type="button" className="oa-btn oa-btn-ghost oa-btn-sm" onClick={() => setEditOpen(true)}>
+                <IEdit style={{ width: 14, height: 14 }} /> Редактировать
+              </button>
+            )}
+            {can("patient:delete") && (
+              <button type="button" className="oa-btn oa-btn-ghost oa-btn-sm" onClick={() => setDeleteOpen(true)}>
+                <ITrash style={{ width: 14, height: 14 }} /> Удалить
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -222,8 +227,8 @@ export default function PatientProfilePage() {
           notes: profile.notes,
         }}
         onSave={async (data) => {
-          const updated = await updatePatient(id, data);
-          setProfile(await getPatientProfile(updated.id));
+          await updatePatient.mutateAsync(data);
+          setEditOpen(false);
         }}
       />
 
@@ -234,10 +239,9 @@ export default function PatientProfilePage() {
         message="Пациент с историей визитов будет скрыт (soft delete). Полное удаление возможно только без записей. Активные записи нужно отменить заранее."
         confirmLabel="Удалить"
         danger
-        onConfirm={() => {
-          deletePatient(id).then((r) => {
-            if (r.ok) router.push("/admin/patients");
-          });
+        onConfirm={async () => {
+          const r = await deletePatientMut.mutateAsync(id);
+          if (r.ok) router.push("/admin/patients");
         }}
       />
     </MotionPage>
