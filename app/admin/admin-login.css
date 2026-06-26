@@ -1,0 +1,217 @@
+/* Admin login — neon card + runaway button */
+
+.oa-login-motion {
+  display: flex;
+  justify-content: center;
+}
+
+.oa-login-card-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.oa-login-neon-svg {
+  position: absolute;
+  inset: -2px;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  pointer-events: none;
+  overflow: visible;
+  transform-origin: center center;
+  animation: oaLoginNeonSpin 5s linear infinite;
+}
+
+.oa-login-neon-stroke {
+  stroke-dasharray: 140 920;
+  filter:
+    drop-shadow(0 0 4px rgba(252, 229, 136, 0.9))
+    drop-shadow(0 0 10px rgba(228, 184, 74, 0.65))
+    drop-shadow(0 0 18px rgba(201, 146, 26, 0.35));
+}
+
+.oa-login-card {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(165deg, rgba(16, 14, 11, 0.98), rgba(6, 6, 6, 0.98));
+  border: 1px solid rgba(228, 184, 74, 0.18);
+  border-radius: 22px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 220, 0.07),
+    0 14px 44px rgba(0, 0, 0, 0.5);
+  padding: 26px 26px 22px;
+  overflow: hidden;
+}
+
+.oa-login-card::before {
+  content: none !important;
+}
+
+.oa-login-card-brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(228, 184, 74, 0.12);
+}
+
+.oa-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.oa-login-error {
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #fecaca;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  animation: oaLoginErrorIn 0.35s ease-out;
+}
+
+.oa-login-btn-zone {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 88px;
+  margin-top: 4px;
+  touch-action: none;
+}
+
+.oa-login-btn-zone--blocked {
+  cursor: not-allowed;
+}
+
+.oa-login-btn {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  width: auto !important;
+  padding: 9px 22px !important;
+  margin: 0 !important;
+  border-radius: 999px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition:
+    transform 0.14s cubic-bezier(0.34, 1.25, 0.64, 1),
+    box-shadow 0.18s ease,
+    filter 0.18s ease;
+  will-change: transform;
+}
+
+.oa-login-btn--ready {
+  animation: oaLoginBtnReady 2.8s ease-in-out infinite;
+}
+
+.oa-login-btn--ready:hover:not(:disabled) {
+  transform: translate(0, -2px) scale(1.03) !important;
+  filter: brightness(1.06);
+}
+
+.oa-login-btn--flee {
+  cursor: not-allowed !important;
+  pointer-events: auto;
+  box-shadow:
+    0 4px 18px rgba(228, 184, 74, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+}
+
+.oa-login-btn--tease.oa-login-btn--flee {
+  filter: brightness(1.08) saturate(1.05);
+}
+
+.oa-login-btn--shake {
+  animation: oaLoginBtnShake 0.45s ease-in-out !important;
+}
+
+.oa-login-btn--loading {
+  opacity: 0.88;
+  pointer-events: none;
+}
+
+.oa-login-btn-label {
+  position: relative;
+  z-index: 1;
+}
+
+.oa-login-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 16px;
+  color: var(--oa-gold-text-faint, rgba(254, 243, 199, 0.38));
+  font-size: 11px;
+}
+
+@keyframes oaLoginNeonSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes oaLoginErrorIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes oaLoginBtnShake {
+  0%, 100% { transform: translate(var(--btn-x, 0), var(--btn-y, 0)) rotate(0deg); }
+  20% { transform: translate(calc(var(--btn-x, 0px) - 6px), var(--btn-y, 0)) rotate(-4deg); }
+  40% { transform: translate(calc(var(--btn-x, 0px) + 7px), var(--btn-y, 0)) rotate(4deg); }
+  60% { transform: translate(calc(var(--btn-x, 0px) - 5px), var(--btn-y, 0)) rotate(-3deg); }
+  80% { transform: translate(calc(var(--btn-x, 0px) + 4px), var(--btn-y, 0)) rotate(2deg); }
+}
+
+@keyframes oaLoginBtnReady {
+  0%, 100% {
+    box-shadow:
+      0 4px 16px rgba(228, 184, 74, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 6px 22px rgba(228, 184, 74, 0.38),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oa-login-neon-svg {
+    animation: none;
+  }
+
+  .oa-login-btn--ready {
+    animation: none;
+  }
+
+  .oa-login-btn {
+    transition: none !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .oa-login-card {
+    padding: 22px 18px 18px;
+  }
+
+  .oa-login-btn-zone {
+    min-height: 76px;
+  }
+}

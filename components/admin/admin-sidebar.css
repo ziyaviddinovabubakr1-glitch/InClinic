@@ -22,8 +22,8 @@
   flex-shrink: 0;
   display: flex !important;
   flex-direction: column !important;
-  gap: 6px;
-  padding: 7px 8px 8px;
+  gap: 5px;
+  padding: 5px 6px 6px;
   border-top: 1px solid var(--oa-border, rgba(255, 255, 255, 0.08));
 }
 
@@ -146,9 +146,9 @@
 .oa-sidebar-fill .oa-sidebar-owner-card {
   display: flex !important;
   align-items: center;
-  gap: 8px;
-  padding: 7px 9px;
-  border-radius: 8px;
+  gap: 6px;
+  padding: 5px 7px;
+  border-radius: 7px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   min-width: 0;
@@ -162,10 +162,10 @@
 }
 
 .oa-sidebar-fill .oa-sidebar-owner-card .oa-sidebar-owner-name {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: #fafafa;
-  line-height: 1.2;
+  line-height: 1.15;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -173,26 +173,26 @@
 
 .oa-sidebar-fill .oa-sidebar-owner-card .oa-sidebar-owner-role {
   display: block !important;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 500;
   color: #fbbf24;
-  margin-top: 1px;
-  line-height: 1.15;
+  margin-top: 0;
+  line-height: 1.1;
 }
 
 .oa-sidebar-fill .oa-sidebar-logout-btn {
   display: flex !important;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 4px;
   width: 100% !important;
-  min-height: 28px;
-  padding: 5px 10px;
+  min-height: 24px;
+  padding: 4px 8px;
   border: 1px solid rgba(229, 72, 77, 0.35);
-  border-radius: 8px;
+  border-radius: 7px;
   background: rgba(229, 72, 77, 0.12);
   color: #fca5a5;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -220,11 +220,64 @@
     height: 12px !important;
   }
   .oa-sidebar-fill .oa-sidebar-footer {
-    padding: 6px;
-    gap: 6px;
+    padding: 4px 5px 5px;
+    gap: 4px;
   }
   .oa-sidebar-logout-btn {
-    min-height: 28px;
-    font-size: 12px;
+    min-height: 22px;
+    font-size: 10px;
+  }
+}
+
+/* ── Owner avatar: orbiting gold neon arc ── */
+.oa-avatar-neon-wrap {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.oa-avatar-neon-svg {
+  position: absolute;
+  inset: -3px;
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
+  overflow: visible;
+  pointer-events: none;
+  transform-origin: center center;
+  animation: oaAvatarNeonSpin 2.6s linear infinite;
+}
+
+.oa-avatar-neon-stroke {
+  stroke-dasharray: 52 238;
+  stroke-dashoffset: 0;
+  filter:
+    drop-shadow(0 0 3px rgba(252, 229, 136, 0.95))
+    drop-shadow(0 0 7px rgba(228, 184, 74, 0.75))
+    drop-shadow(0 0 12px rgba(201, 146, 26, 0.45));
+}
+
+.oa-avatar-neon-core {
+  position: relative;
+  z-index: 1;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.oa-avatar--neon-inner {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+@keyframes oaAvatarNeonSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oa-avatar-neon-svg {
+    animation: none;
   }
 }

@@ -39,18 +39,8 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
               {t.tagline}
             </p>
           </div>
-          <div className="flex flex-col items-center gap-1 flex-shrink-0">
+          <div className="flex items-center flex-shrink-0 pt-0.5">
             <ThemeSwitcher compact />
-            {onClose && (
-              <button
-                type="button"
-                onClick={onClose}
-                className="mobile-menu-btn mobile-menu-btn--compact md:hidden"
-                aria-label={t.closeMenu}
-              >
-                ✕
-              </button>
-            )}
           </div>
         </div>
       </div>
