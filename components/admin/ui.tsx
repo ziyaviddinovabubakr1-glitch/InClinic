@@ -4,49 +4,50 @@ import type { ReactNode, SVGProps } from "react";
 import type {
   AppointmentStatus,
   PatientSegment,
+  ReviewStatus,
   ReviewVisibility,
 } from "@/lib/admin/types";
 import { Sparkline } from "./charts";
 import { IStar, ITrendUp, ITrendDown } from "./icons";
 
-/* ───────────────────────────  KPI card  ────────────────────────────────── */
+/* ───────────────────────────  KPI card (Stripe-style compact)  ─────────── */
 export function KpiCard({
-  label, value, icon, tone = "blue", delta, deltaDir, sparkData, hero = false,
+  label, value, tone = "blue", delta, deltaDir, sparkData,
 }: {
   label: string;
   value: string;
-  icon: (p: SVGProps<SVGSVGElement>) => JSX.Element;
+  icon?: (p: SVGProps<SVGSVGElement>) => JSX.Element;
   tone?: "blue" | "green" | "amber" | "red" | "violet" | "sky";
   delta?: string;
   deltaDir?: "up" | "down" | "flat";
   sparkData?: number[];
   hero?: boolean;
 }) {
-  const Icon = icon;
   const sparkColors: Record<string, string> = {
-    blue: "#60a5fa", green: "#22c55e", amber: "#f59e0b",
-    red: "#ef4444", violet: "#a78bfa", sky: "#93c5fd",
+    blue: "#5e6ad2", green: "#30a46c", amber: "#f5a623",
+    red: "#e5484d", violet: "#8b5cf6", sky: "#38bdf8",
   };
   return (
-    <div className={`oa-kpi oa-kpi--${tone}${hero ? " oa-kpi-hero" : ""}`} style={{ width: "100%" }}>
-      <div className="oa-kpi-top">
-        <div className={`oa-kpi-icon oa-tone-${tone}`}>
-          <Icon style={{ width: hero ? 22 : 20, height: hero ? 22 : 20 }} />
-        </div>
-        {sparkData && sparkData.length > 1 && (
-          <Sparkline data={sparkData} color={sparkColors[tone]} width={hero ? 112 : 96} height={hero ? 36 : 32} />
-        )}
-      </div>
-      <div className="oa-kpi-label">{label}</div>
-      <div className="oa-kpi-value">{value}</div>
-      {delta && (
-        <div className="oa-kpi-footer">
-          <div className={`oa-kpi-delta ${deltaDir === "down" ? "oa-delta-down" : deltaDir === "flat" ? "oa-delta-flat" : "oa-delta-up"}`}>
-            {deltaDir === "down" ? <ITrendDown style={{ width: 13, height: 13 }} /> : deltaDir === "flat" ? null : <ITrendUp style={{ width: 13, height: 13 }} />}
-            {delta}
+    <div className={`oa-kpi oa-kpi-v3 oa-kpi--${tone}`}>
+      <div className="oa-kpi-v3-inner">
+        <div className="oa-kpi-v3-main">
+          <div className="oa-kpi-label">{label}</div>
+          <div className="oa-kpi-v3-value-row">
+            <div className="oa-kpi-value">{value}</div>
+            {delta && (
+              <div className={`oa-kpi-delta ${deltaDir === "down" ? "oa-delta-down" : deltaDir === "flat" ? "oa-delta-flat" : "oa-delta-up"}`}>
+                {deltaDir === "down" ? <ITrendDown style={{ width: 9, height: 9 }} /> : deltaDir === "flat" ? null : <ITrendUp style={{ width: 9, height: 9 }} />}
+                {delta}
+              </div>
+            )}
           </div>
         </div>
-      )}
+        {sparkData && sparkData.length > 1 && (
+          <div className="oa-kpi-v3-spark">
+            <Sparkline data={sparkData} color={sparkColors[tone]} width={52} height={16} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -114,23 +115,41 @@ export function VisibilityBadge({ visibility }: { visibility: ReviewVisibility }
   return <span className={`oa-badge ${VIS_CLASS[visibility]}`}>{VIS_LABEL[visibility]}</span>;
 }
 
+const REVIEW_STATUS_LABEL: Record<ReviewStatus, string> = {
+  PENDING: "На модерации",
+  APPROVED: "Одобрен",
+  REJECTED: "Отклонён",
+};
+const REVIEW_STATUS_CLASS: Record<ReviewStatus, string> = {
+  PENDING: "oa-badge-pending",
+  APPROVED: "oa-badge-published",
+  REJECTED: "oa-badge-hidden",
+};
+export function ReviewStatusBadge({ status }: { status: ReviewStatus }) {
+  return (
+    <span className={`oa-badge ${REVIEW_STATUS_CLASS[status]}`}>
+      {REVIEW_STATUS_LABEL[status]}
+    </span>
+  );
+}
+
 /* ───────────────────────────  Avatar  ──────────────────────────────────── */
 export function Avatar({ name, size = 38, tone = "blue" }: { name: string; size?: number; tone?: string }) {
   const initials = name.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase();
   const gradients: Record<string, string> = {
-    blue: "linear-gradient(135deg,#3b82f6,#1d4ed8)",
-    violet: "linear-gradient(135deg,#8b5cf6,#3b82f6)",
-    green: "linear-gradient(135deg,#22c55e,#0891b2)",
-    amber: "linear-gradient(135deg,#f59e0b,#ef4444)",
+    blue: "linear-gradient(135deg,#5e6ad2,#4338ca)",
+    violet: "linear-gradient(135deg,#8b5cf6,#6d28d9)",
+    green: "linear-gradient(135deg,#30a46c,#059669)",
+    amber: "linear-gradient(135deg,#f5a623,#ea580c)",
   };
   return (
     <span style={{
       width: size, height: size, borderRadius: "50%", flexShrink: 0,
       background: gradients[tone] ?? gradients.blue, color: "#fff",
       display: "inline-flex", alignItems: "center", justifyContent: "center",
-      fontWeight: 700, fontSize: size * 0.36,
-      border: "2px solid rgba(212, 175, 55, 0.45)",
-      boxShadow: "0 2px 8px rgba(15, 23, 42, 0.08)",
+      fontWeight: 600, fontSize: size * 0.34,
+      border: "1px solid var(--oa-border-strong)",
+      boxShadow: "var(--oa-shadow-sm)",
     }}>
       {initials}
     </span>
@@ -140,7 +159,7 @@ export function Avatar({ name, size = 38, tone = "blue" }: { name: string; size?
 /* ───────────────────────────  Section header  ──────────────────────────── */
 export function SectionHeader({ title, sub, action }: { title: string; sub?: string; action?: ReactNode }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+    <div className="oa-section-header">
       <div>
         <div className="oa-section-title">{title}</div>
         {sub && <div className="oa-section-sub">{sub}</div>}

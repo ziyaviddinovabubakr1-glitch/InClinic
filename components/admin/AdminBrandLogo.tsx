@@ -1,17 +1,22 @@
 "use client";
 
-type Variant = "icon" | "full";
-type Size = "sm" | "md" | "lg" | "hero";
+import { useEffect, useState } from "react";
+import type { BrandAsset } from "@/lib/clinic-brand";
+import { getBrandAsset } from "@/lib/clinic-brand";
 
-const ICON_PX: Record<Size, number> = { sm: 38, md: 54, lg: 72, hero: 96 };
-const FULL_H: Record<Size, number> = { sm: 32, md: 44, lg: 56, hero: 72 };
+type Variant = "icon" | "full";
+type Size = "xs" | "sm" | "md" | "lg" | "hero";
+
+const ICON_PX: Record<Size, number> = { xs: 26, sm: 38, md: 54, lg: 72, hero: 96 };
+const FULL_H: Record<Size, number> = { xs: 28, sm: 32, md: 44, lg: 56, hero: 72 };
 
 interface Props {
-  /** icon — квадратная иконка; full — горизонтальный логотип с названием */
   variant?: Variant;
   size?: Size;
   animate?: boolean;
   className?: string;
+  /** admin — логотип панели; site — логотип публичного сайта */
+  context?: "admin" | "site";
 }
 
 export default function AdminBrandLogo({
@@ -19,8 +24,22 @@ export default function AdminBrandLogo({
   size = "md",
   animate = false,
   className = "",
+  context = "admin",
 }: Props) {
-  const src = variant === "full" ? "/logo-full.png" : "/logo-icon-512.png";
+  const [custom, setCustom] = useState<string | null>(null);
+
+  useEffect(() => {
+    const asset: BrandAsset = context === "admin"
+      ? (variant === "full" ? "adminLogo" : "adminLogo")
+      : (variant === "full" ? "siteLogo" : "siteLogo");
+    const read = () => setCustom(getBrandAsset(asset));
+    read();
+    window.addEventListener("inclinic-brand-updated", read);
+    return () => window.removeEventListener("inclinic-brand-updated", read);
+  }, [context, variant]);
+
+  const fallback = variant === "full" ? "/logo-full.png" : "/logo-icon-512.png";
+  const src = custom ?? fallback;
   const cls = [
     "oa-brand-logo",
     variant === "full" ? "oa-brand-logo--full" : "",

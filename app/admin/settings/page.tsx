@@ -7,6 +7,9 @@ import AdminBrandLogo from "@/components/admin/AdminBrandLogo";
 import OwnerAvatar from "@/components/admin/OwnerAvatar";
 import { IShield, IArchive, IDownload } from "@/components/admin/icons";
 import { getOwnerAvatarUrl, setOwnerAvatarUrl, clearOwnerAvatarUrl } from "@/lib/owner-avatar";
+import {
+  getBrandAsset, setBrandAsset, clearBrandAsset, type BrandAsset,
+} from "@/lib/clinic-brand";
 import { OWNER_NAME } from "@/lib/admin/owner";
 
 export default function SettingsPage() {
@@ -90,14 +93,39 @@ export default function SettingsPage() {
       </div>
 
       <div className="oa-card oa-card-pad">
+        <SectionHeader title="Брендинг" sub="Логотипы сайта, админки и иконка вкладки браузера" />
+        <div className="oa-brand-upload-grid">
+          <BrandUpload
+            asset="siteLogo"
+            title="Логотип сайта"
+            hint="Главная страница и публичные разделы. PNG или SVG, до 2 МБ."
+            previewVariant="full"
+          />
+          <BrandUpload
+            asset="adminLogo"
+            title="Логотип админки"
+            hint="Боковое меню панели владельца. Квадратная иконка или горизонтальный логотип."
+            previewVariant="icon"
+          />
+          <BrandUpload
+            asset="favicon"
+            title="Favicon"
+            hint="Иконка во вкладке браузера. Рекомендуется 64×64 или 512×512 PNG."
+            previewVariant="icon"
+            previewSize={48}
+          />
+        </div>
+      </div>
+
+      <div className="oa-card oa-card-pad">
         <SectionHeader title="Профиль клиники" sub="Основная информация и контакты" />
-        <div style={{ display: "flex", alignItems: "center", gap: 18, marginBottom: 20, padding: 16, background: "var(--oa-surface-2)", borderRadius: 14, border: "1px solid var(--oa-border)" }}>
-          <AdminBrandLogo variant="icon" size="md" />
-          <div>
-            <div style={{ fontWeight: 700, fontSize: 14 }}>Логотип клиники</div>
-            <div style={{ fontSize: 12.5, color: "var(--oa-text-faint)", marginTop: 2 }}>Используется на сайте и в панели владельца</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 18, marginBottom: 20, padding: 14, background: "var(--oa-surface-2)", borderRadius: 14, border: "1px solid var(--oa-border)" }}>
+          <AdminBrandLogo variant="icon" size="md" context="admin" />
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 700, fontSize: 14 }}>Текущий логотип админки</div>
+            <div style={{ fontSize: 12.5, color: "var(--oa-text-faint)", marginTop: 2 }}>Загрузите выше или используется стандартный</div>
           </div>
-          <AdminBrandLogo variant="full" size="md" className="oa-settings-wordmark" />
+          <AdminBrandLogo variant="full" size="md" context="admin" className="oa-settings-wordmark" />
         </div>
         <div className="oa-grid-2" style={{ gap: 14 }}>
           <Field label="Название клиники" value={name} onChange={setName} />
@@ -165,6 +193,84 @@ function Field({ label, value, onChange, type = "text" }: {
     <div>
       <label className="oa-label">{label}</label>
       <input className="oa-input" type={type} value={value} onChange={(e) => onChange(e.target.value)} />
+    </div>
+  );
+}
+
+function BrandUpload({
+  asset, title, hint, previewVariant, previewSize = 54,
+}: {
+  asset: BrandAsset;
+  title: string;
+  hint: string;
+  previewVariant: "icon" | "full";
+  previewSize?: number;
+}) {
+  const [url, setUrl] = useState<string | null>(null);
+  const [msg, setMsg] = useState("");
+
+  useEffect(() => {
+    const read = () => setUrl(getBrandAsset(asset));
+    read();
+    window.addEventListener("inclinic-brand-updated", read);
+    return () => window.removeEventListener("inclinic-brand-updated", read);
+  }, [asset]);
+
+  function onPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setMsg("Выберите изображение");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setMsg("Не больше 2 МБ");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        setBrandAsset(asset, reader.result);
+        setUrl(reader.result);
+        setMsg("Сохранено ✓");
+        setTimeout(() => setMsg(""), 2000);
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  }
+
+  const fallback = previewVariant === "full" ? "/logo-full.png" : "/logo-icon-512.png";
+  const src = url ?? fallback;
+
+  return (
+    <div className="oa-brand-upload">
+      <div className="oa-brand-upload-preview">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
+          alt={title}
+          style={previewVariant === "full"
+            ? { height: 40, width: "auto", maxWidth: "100%" }
+            : { width: previewSize, height: previewSize }}
+        />
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontWeight: 700, fontSize: 13.5 }}>{title}</div>
+        <div style={{ fontSize: 12, color: "var(--oa-text-faint)", marginTop: 4, lineHeight: 1.45 }}>{hint}</div>
+        <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+          <label className="oa-btn oa-btn-primary oa-btn-sm" style={{ cursor: "pointer" }}>
+            Загрузить
+            <input type="file" accept="image/*" onChange={onPick} style={{ display: "none" }} />
+          </label>
+          {url && (
+            <button type="button" className="oa-btn oa-btn-ghost oa-btn-sm" onClick={() => { clearBrandAsset(asset); setUrl(null); setMsg("Удалено"); setTimeout(() => setMsg(""), 2000); }}>
+              Сбросить
+            </button>
+          )}
+        </div>
+        {msg && <div style={{ fontSize: 12, color: "var(--oa-success)", marginTop: 6, fontWeight: 600 }}>{msg}</div>}
+      </div>
     </div>
   );
 }

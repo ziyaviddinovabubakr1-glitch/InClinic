@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import OwnerSessionGuard from "./OwnerSessionGuard";
 import AdminBrandLogo from "./AdminBrandLogo";
 import {
@@ -10,24 +11,10 @@ import {
   IReviews, IArchive, IReports, IExports, IContent, INotifications, ISettings,
   ILogout, IMenu, IClose, IPlus,
 } from "./icons";
-import { OWNER_NAME, OWNER_TITLE } from "@/lib/admin/owner";
+import { OWNER_NAME } from "@/lib/admin/owner";
 import AdminNotifyDropdown from "./AdminNotifyDropdown";
 import OwnerAvatar from "./OwnerAvatar";
-
-function greeting(): string {
-  const h = new Date().getHours();
-  if (h < 12) return "Доброе утро";
-  if (h < 18) return "Добрый день";
-  return "Добрый вечер";
-}
-
-function formatDate(): string {
-  return new Date().toLocaleDateString("ru-RU", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  });
-}
+import { NavIndicator } from "./motion";
 
 interface NavItem {
   href: string;
@@ -35,55 +22,44 @@ interface NavItem {
   Icon: (p: React.SVGProps<SVGSVGElement>) => JSX.Element;
 }
 
-const NAV_MAIN: NavItem[] = [
+const NAV_ITEMS: NavItem[] = [
   { href: "/admin/dashboard", label: "Дашборд", Icon: IDashboard },
   { href: "/admin/analytics", label: "Аналитика", Icon: IAnalytics },
-];
-const NAV_MANAGE: NavItem[] = [
   { href: "/admin/doctors", label: "Врачи", Icon: IDoctors },
   { href: "/admin/patients", label: "Пациенты", Icon: IPatients },
   { href: "/admin/appointments", label: "Записи", Icon: IAppointments },
   { href: "/admin/services", label: "Услуги", Icon: IServices },
   { href: "/admin/reviews", label: "Отзывы", Icon: IReviews },
-];
-const NAV_DATA: NavItem[] = [
   { href: "/admin/archive", label: "Архив", Icon: IArchive },
   { href: "/admin/reports", label: "Отчёты", Icon: IReports },
   { href: "/admin/exports", label: "Экспорт", Icon: IExports },
-];
-const NAV_SYSTEM: NavItem[] = [
   { href: "/admin/content", label: "Контент", Icon: IContent },
   { href: "/admin/notifications", label: "Уведомления", Icon: INotifications },
   { href: "/admin/settings", label: "Настройки", Icon: ISettings },
 ];
 
-function NavSection({
-  label, items, pathname, onNavigate,
-}: {
-  label: string;
-  items: NavItem[];
-  pathname: string;
-  onNavigate: () => void;
-}) {
-  return (
-    <div>
-      <div className="oa-nav-group-label">{label}</div>
-      {items.map(({ href, label: l, Icon }) => {
-        const active = pathname === href || pathname.startsWith(`${href}/`);
-        return (
-          <Link
-            key={href}
-            href={href}
-            onClick={onNavigate}
-            className={`oa-nav-item ${active ? "oa-nav-item-active" : ""}`}
-          >
-            <span className="oa-nav-icon-wrap"><Icon /></span>
-            <span className="oa-nav-label">{l}</span>
-          </Link>
-        );
-      })}
-    </div>
+const PAGE_TITLES: Record<string, string> = {
+  "/admin/dashboard": "Дашборд",
+  "/admin/analytics": "Аналитика",
+  "/admin/doctors": "Врачи",
+  "/admin/patients": "Пациенты",
+  "/admin/appointments": "Записи",
+  "/admin/services": "Услуги",
+  "/admin/archive": "Архив",
+  "/admin/reports": "Отчёты",
+  "/admin/exports": "Экспорт",
+  "/admin/content": "Контент",
+  "/admin/notifications": "Уведомления",
+  "/admin/settings": "Настройки",
+};
+
+function pageTitle(pathname: string): string {
+  if (/^\/admin\/doctors\/[^/]+\/analytics$/.test(pathname)) return "Аналитика врача";
+  if (/^\/admin\/patients\/[^/]+$/.test(pathname)) return "Профиль пациента";
+  const match = Object.keys(PAGE_TITLES).find(
+    (p) => pathname === p || pathname.startsWith(`${p}/`)
   );
+  return match ? PAGE_TITLES[match] : "Панель";
 }
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
@@ -99,6 +75,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     router.refresh();
   }
 
+  const title = pageTitle(pathname);
+
   return (
     <div className="oa-shell">
       <div
@@ -106,16 +84,16 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         onClick={() => setOpen(false)}
       />
 
-      <aside className={`oa-sidebar ${open ? "oa-sidebar-open" : ""}`}>
+      <aside className={`oa-sidebar oa-sidebar-linear ${open ? "oa-sidebar-open" : ""}`}>
         <Link href="/admin/dashboard" className="oa-sidebar-brand" style={{ textDecoration: "none", color: "inherit" }}>
-          <AdminBrandLogo size="sm" />
-          <div style={{ flex: 1 }}>
+          <AdminBrandLogo size="xs" context="admin" />
+          <div className="oa-sidebar-brand-text">
             <div className="oa-brand-title">
               In<span className="oa-brand-title-gold">Clinic</span>
             </div>
-            <div className="oa-brand-sub">Owner Panel</div>
           </div>
           <button
+            type="button"
             className="oa-btn oa-btn-icon oa-btn-ghost oa-sidebar-close"
             onClick={() => setOpen(false)}
             aria-label="Закрыть меню"
@@ -124,61 +102,77 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </button>
         </Link>
 
-        <nav className="oa-nav">
-          <NavSection label="Обзор" items={NAV_MAIN} pathname={pathname} onNavigate={() => setOpen(false)} />
-          <NavSection label="Управление" items={NAV_MANAGE} pathname={pathname} onNavigate={() => setOpen(false)} />
-          <NavSection label="Данные" items={NAV_DATA} pathname={pathname} onNavigate={() => setOpen(false)} />
-          <NavSection label="Система" items={NAV_SYSTEM} pathname={pathname} onNavigate={() => setOpen(false)} />
+        <nav className="oa-nav oa-nav-flat">
+          {NAV_ITEMS.map(({ href, label, Icon }) => {
+            const active = pathname === href || pathname.startsWith(`${href}/`);
+            return (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setOpen(false)}
+                className={`oa-nav-item ${active ? "oa-nav-item-active" : ""}`}
+              >
+                {active && <NavIndicator />}
+                <span className="oa-nav-icon-wrap"><Icon /></span>
+                <span className="oa-nav-label">{label}</span>
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="oa-sidebar-footer">
-          <div className="oa-sidebar-owner">
-            <OwnerAvatar size={40} />
-            <div>
-              <div className="oa-sidebar-owner-name">{OWNER_TITLE}</div>
-              <div className="oa-sidebar-owner-role">{OWNER_NAME}</div>
+          <div className="oa-sidebar-footer-row">
+            <div className="oa-sidebar-owner">
+              <OwnerAvatar size={22} />
+              <div className="oa-sidebar-owner-text">
+                <div className="oa-sidebar-owner-name">{OWNER_NAME}</div>
+              </div>
             </div>
+            <button
+              type="button"
+              className="oa-btn oa-btn-icon oa-btn-ghost oa-sidebar-logout"
+              onClick={handleLogout}
+              aria-label="Выйти"
+              title="Выйти"
+            >
+              <ILogout />
+            </button>
           </div>
-          <button
-            className="oa-nav-item"
-            style={{ width: "100%", marginTop: 8, background: "transparent" }}
-            onClick={handleLogout}
-          >
-            <ILogout />
-            <span>Выйти</span>
-          </button>
         </div>
       </aside>
 
       <div className="oa-main">
-        <header className="oa-topbar">
-          <button className="oa-burger" onClick={() => setOpen(true)} aria-label="Меню">
+        <header className="oa-topbar oa-topbar-linear">
+          <button type="button" className="oa-burger" onClick={() => setOpen(true)} aria-label="Меню">
             <IMenu />
           </button>
-          <Link href="/admin/dashboard" style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
-            <AdminBrandLogo size="sm" className="oa-topbar-logo" />
-          </Link>
-          <div className="oa-topbar-greeting">
-            <div className="oa-topbar-greeting-title">
-              {greeting()}, <span>{OWNER_NAME}</span>
-            </div>
-            <div className="oa-topbar-greeting-date">{formatDate()}</div>
+          <div className="oa-topbar-title-block">
+            <h1 className="oa-topbar-page-title">{title}</h1>
           </div>
           <div className="oa-topbar-spacer" />
           <div className="oa-topbar-actions">
-            <Link href="/admin/appointments" className="oa-btn oa-btn-gold oa-btn-sm" style={{ textDecoration: "none" }}>
-              <IPlus style={{ width: 16, height: 16 }} />
+            <Link href="/admin/appointments" className="oa-btn oa-btn-primary oa-btn-sm" style={{ textDecoration: "none" }}>
+              <IPlus style={{ width: 14, height: 14 }} />
               <span className="oa-btn-text-sm-hide">Новая запись</span>
             </Link>
             <AdminNotifyDropdown />
-            <span className="oa-owner-badge">
-              <span className="oa-badge-dot" /> {OWNER_NAME}
-            </span>
-            <OwnerAvatar size={40} />
+            <OwnerAvatar size={28} />
           </div>
         </header>
 
-        <main className="oa-content">{children}</main>
+        <main className="oa-content oa-content-linear">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
+        </main>
       </div>
 
       <OwnerSessionGuard />

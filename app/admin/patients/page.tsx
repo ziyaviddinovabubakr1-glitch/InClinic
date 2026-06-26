@@ -1,164 +1,187 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
-  listPatients, getPatientProfile, getSegmentCounts, money,
+  listPatients, getSegmentCounts, createPatient, money,
 } from "@/lib/admin/services";
-import type {
-  Patient, PatientProfile, PatientSegment,
-} from "@/lib/admin/types";
-import { Drawer } from "@/components/admin/Modal";
+import type { Patient, PatientSegment } from "@/lib/admin/types";
 import {
-  Avatar, SegmentBadge, StatusBadge, Stars, SkeletonRows, EmptyState,
-  StatTile, Pagination,
+  Avatar, SegmentBadge, SkeletonRows, Pagination, EmptyState,
 } from "@/components/admin/ui";
+import { DataTableShell } from "@/components/admin/DataTable";
 import { MotionPage } from "@/components/admin/motion";
-import { ISearch, IPatients, IPhone, IMail } from "@/components/admin/icons";
+import PageHeader from "@/components/admin/PageHeader";
+import PatientFormModal from "@/components/admin/PatientFormModal";
+import { ISearch, IPatients, IPlus, IChevronRight } from "@/components/admin/icons";
 
 const SEGMENTS: (PatientSegment | "ALL")[] = ["ALL", "NEW", "REGULAR", "VIP", "INACTIVE"];
 const SEG_LABEL: Record<string, string> = {
   ALL: "Все", NEW: "Новые", REGULAR: "Постоянные", VIP: "VIP", INACTIVE: "Неактивные",
 };
 
+type SortKey = "createdAt" | "name" | "totalPaid";
+
 export default function PatientsPage() {
+  const router = useRouter();
   const [rows, setRows] = useState<Patient[] | null>(null);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [segment, setSegment] = useState<PatientSegment | "ALL">("ALL");
+  const [sort, setSort] = useState<SortKey>("createdAt");
   const [counts, setCounts] = useState<Record<PatientSegment, number> | null>(null);
-
-  const [profile, setProfile] = useState<PatientProfile | null>(null);
-  const [profileOpen, setProfileOpen] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [error, setError] = useState("");
   const pageSize = 12;
 
   const refresh = useCallback(() => {
     setRows(null);
-    listPatients({ search, segment, page, pageSize }).then((r) => {
-      setRows(r.rows);
-      setTotal(r.total);
-    });
-  }, [search, segment, page]);
+    setError("");
+    listPatients({ search, segment, page, pageSize, sort })
+      .then((r) => {
+        setRows(r.rows);
+        setTotal(r.total);
+      })
+      .catch((e) => setError(e instanceof Error ? e.message : "Ошибка загрузки"));
+  }, [search, segment, page, sort]);
 
   useEffect(() => {
     const t = setTimeout(refresh, 180);
     return () => clearTimeout(t);
   }, [refresh]);
 
-  useEffect(() => { getSegmentCounts().then(setCounts); }, []);
-  useEffect(() => { setPage(1); }, [search, segment]);
-
-  async function openProfile(id: string) {
-    setProfileOpen(true);
-    setProfile(null);
-    setProfile(await getPatientProfile(id));
-  }
+  useEffect(() => { getSegmentCounts().then(setCounts).catch(() => {}); }, [rows]);
+  useEffect(() => { setPage(1); }, [search, segment, sort]);
 
   const pages = Math.max(1, Math.ceil(total / pageSize));
+  const totalPatients = counts
+    ? counts.NEW + counts.REGULAR + counts.VIP + counts.INACTIVE
+    : total;
 
   return (
-    <MotionPage style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      <div className="oa-toolbar">
-        <div className="oa-search" style={{ flex: 1, minWidth: 220 }}>
-          <ISearch />
-          <input className="oa-input" placeholder="Поиск по имени, телефону или email" value={search} onChange={(e) => setSearch(e.target.value)} />
-        </div>
-        <div className="oa-chips">
-          {SEGMENTS.map((s) => (
-            <button key={s} className={`oa-chip ${segment === s ? "oa-chip-active" : ""}`} onClick={() => setSegment(s)}>
-              {SEG_LABEL[s]}{s !== "ALL" && counts ? ` · ${counts[s as PatientSegment]}` : ""}
+    <MotionPage className="oa-patients-page">
+      <PageHeader
+        title="Пациенты"
+        sub="База пациентов клиники · PostgreSQL"
+        action={
+          <button type="button" className="oa-btn oa-btn-primary oa-btn-sm" onClick={() => setCreateOpen(true)}>
+            <IPlus style={{ width: 14, height: 14 }} /> Добавить
+          </button>
+        }
+      />
+
+      {error && <div className="oa-alert oa-alert-error">{error}</div>}
+
+      <div className="oa-segment-stats">
+        {SEGMENTS.map((s) => {
+          const count = s === "ALL" ? totalPatients : counts?.[s as PatientSegment] ?? 0;
+          return (
+            <button
+              key={s}
+              type="button"
+              className={`oa-segment-stat ${segment === s ? "oa-segment-stat-active" : ""}`}
+              onClick={() => setSegment(s)}
+            >
+              <div className="oa-segment-stat-value">{count}</div>
+              <div className="oa-segment-stat-label">{SEG_LABEL[s]}</div>
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
 
-      <div className="oa-card oa-table-card">
-        {!rows ? (
-          <div className="oa-card-pad"><SkeletonRows rows={8} /></div>
-        ) : rows.length === 0 ? (
-          <EmptyState icon={<IPatients />} title="Пациенты не найдены" sub="Измените условия поиска или фильтр." />
-        ) : (
-          <div className="oa-table-wrap oa-table-responsive">
-            <table className="oa-table">
-              <thead>
-                <tr>
-                  <th>Пациент</th><th>Контакты</th><th>Сегмент</th>
-                  <th>Визиты</th><th>Сумма оплат</th><th>Последний визит</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((p) => (
-                  <tr key={p.id} style={{ cursor: "pointer" }} onClick={() => openProfile(p.id)}>
-                    <td className="oa-table-col-patient-first" data-label="Пациент">
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <Avatar name={p.fullName} size={36} tone="violet" />
-                        <span className="oa-cell-strong">{p.fullName}</span>
-                      </div>
-                    </td>
-                    <td className="oa-cell-soft" style={{ fontSize: 12.5 }} data-label="Контакты">{p.phone}<br />{p.email}</td>
-                    <td data-label="Сегмент"><SegmentBadge segment={p.segment} /></td>
-                    <td className="oa-cell-strong" data-label="Визиты">{p.visitsCount}</td>
-                    <td className="oa-cell-strong" data-label="Сумма оплат">{money(p.totalPaid)}</td>
-                    <td className="oa-cell-soft" data-label="Последний визит">{p.lastVisitAt ? new Date(p.lastVisitAt).toLocaleDateString("ru-RU") : "—"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <DataTableShell
+        loading={!rows}
+        empty={
+          rows?.length === 0
+            ? { icon: <IPatients />, title: "Пациенты не найдены", sub: "Создайте пациента или измените фильтры." }
+            : undefined
+        }
+        toolbar={
+          <div className="oa-table-toolbar-inner">
+            <div className="oa-search" style={{ flex: 1, minWidth: 200 }}>
+              <ISearch />
+              <input
+                className="oa-input"
+                placeholder="Поиск по имени, телефону, email"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <select
+              className="oa-select oa-select-compact"
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortKey)}
+              aria-label="Сортировка"
+            >
+              <option value="createdAt">Новые первые</option>
+              <option value="name">По имени</option>
+              <option value="totalPaid">По сумме</option>
+            </select>
           </div>
-        )}
-      </div>
-
-      <Pagination page={page} pages={pages} onChange={setPage} />
-
-      <Drawer open={profileOpen} onClose={() => { setProfileOpen(false); setProfile(null); }}
-        title={profile?.fullName ?? "Профиль пациента"} sub={profile ? SEG_LABEL[profile.segment] : ""}>
-        {!profile ? <SkeletonRows rows={6} /> : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <span className="oa-badge oa-badge-neutral"><IPhone style={{ width: 13, height: 13 }} /> {profile.phone}</span>
-              <span className="oa-badge oa-badge-neutral"><IMail style={{ width: 13, height: 13 }} /> {profile.email}</span>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
-              <StatTile label="Визитов" value={String(profile.visitsCount)} large />
-              <StatTile label="Оплачено" value={money(profile.totalPaid)} large />
-              <StatTile label="Отзывов" value={String(profile.reviewsCount)} large />
-            </div>
-
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>История записей</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {profile.appointments.slice(0, 8).map((a) => (
-                  <div key={a.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "9px 12px", background: "var(--oa-surface-2)", borderRadius: 10 }}>
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: 13, fontWeight: 600 }}>{a.serviceName}</div>
-                      <div style={{ fontSize: 11.5, color: "var(--oa-text-faint)" }}>{a.doctorName} · {a.date}</div>
+        }
+        footer={<Pagination page={page} pages={pages} onChange={setPage} />}
+      >
+        <table className="oa-table oa-table-dense">
+          <thead>
+            <tr>
+              <th>Пациент</th>
+              <th>Контакты</th>
+              <th>Сегмент</th>
+              <th>Визиты</th>
+              <th>Сумма</th>
+              <th>Последний визит</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {rows?.map((p) => (
+              <tr key={p.id} className="oa-table-row-clickable">
+                <td>
+                  <Link href={`/admin/patients/${p.id}`} className="oa-cell-user oa-cell-link">
+                    <Avatar name={p.fullName} size={28} tone="violet" />
+                    <div>
+                      <div className="oa-cell-strong">{p.fullName}</div>
+                      {p.age != null && (
+                        <div className="oa-cell-soft">{p.age} лет</div>
+                      )}
                     </div>
-                    <StatusBadge status={a.status} />
-                  </div>
-                ))}
-                {profile.appointments.length === 0 && <span style={{ fontSize: 12.5, color: "var(--oa-text-faint)" }}>Нет записей</span>}
-              </div>
-            </div>
+                  </Link>
+                </td>
+                <td className="oa-cell-soft">
+                  <div>{p.phone}</div>
+                  {p.email && <div className="oa-cell-soft">{p.email}</div>}
+                </td>
+                <td><SegmentBadge segment={p.segment} /></td>
+                <td className="oa-cell-strong">{p.visitsCount}</td>
+                <td className="oa-cell-strong">{money(p.totalPaid)}</td>
+                <td className="oa-cell-soft">
+                  {p.lastVisitAt
+                    ? new Date(p.lastVisitAt).toLocaleDateString("ru-RU")
+                    : "—"}
+                </td>
+                <td>
+                  <Link href={`/admin/patients/${p.id}`} className="oa-link-sm">
+                    Профиль <IChevronRight style={{ width: 11, height: 11 }} />
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </DataTableShell>
 
-            {profile.reviews.length > 0 && (
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>Отзывы</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {profile.reviews.map((r) => (
-                    <div key={r.id} style={{ padding: "10px 12px", background: "var(--oa-surface-2)", borderRadius: 10 }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-                        <span style={{ fontSize: 12.5, fontWeight: 600 }}>{r.doctorName}</span>
-                        <Stars rating={r.rating} size={12} />
-                      </div>
-                      <div style={{ fontSize: 12.5, color: "var(--oa-text-soft)", marginTop: 3 }}>{r.comment}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </Drawer>
+      <PatientFormModal
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        title="Новый пациент"
+        onSave={async (data) => {
+          const patient = await createPatient(data);
+          refresh();
+          router.push(`/admin/patients/${patient.id}`);
+        }}
+      />
     </MotionPage>
   );
 }

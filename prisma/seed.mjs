@@ -191,6 +191,92 @@ async function main() {
   }
 
   console.log(`Seeded clinic "${clinic.slug}", owner "${username}", demo doctors/services`);
+
+  const linked = await backfillPatientsFromBookings(clinic.id);
+  if (linked > 0) {
+    console.log(`Linked ${linked} booking(s) to Patient records`);
+  }
+
+  const reviewsSeeded = await seedSampleReviews(clinic.id);
+  if (reviewsSeeded > 0) {
+    console.log(`Seeded ${reviewsSeeded} sample review(s)`);
+  }
+}
+
+async function backfillPatientsFromBookings(clinicId) {
+  const { createHash } = await import("crypto");
+  const hashPhone = (phone) =>
+    createHash("sha256").update(phone.replace(/\D/g, "")).digest("hex");
+
+  const orphans = await prisma.booking.findMany({
+    where: { clinicId, patientId: null },
+    orderBy: { createdAt: "asc" },
+  });
+
+  let linked = 0;
+  for (const b of orphans) {
+    const phoneHash = hashPhone(b.phone);
+    let patient = await prisma.patient.findUnique({
+      where: { clinicId_phoneHash: { clinicId, phoneHash } },
+    });
+    if (!patient) {
+      patient = await prisma.patient.create({
+        data: {
+          clinicId,
+          firstName: b.firstName,
+          lastName: b.lastName,
+          phone: b.phone,
+          phoneHash,
+        },
+      });
+    }
+    await prisma.booking.update({
+      where: { id: b.id },
+      data: { patientId: patient.id },
+    });
+    linked++;
+  }
+  return linked;
+}
+
+async function seedSampleReviews(clinicId) {
+  const completed = await prisma.booking.findMany({
+    where: {
+      clinicId,
+      status: "COMPLETED",
+      patientId: { not: null },
+      review: null,
+    },
+    take: 5,
+    orderBy: { updatedAt: "desc" },
+  });
+
+  const comments = [
+    "Отличный приём, врач внимательный.",
+    "Всё прошло быстро и профессионально.",
+    "Спасибо за помощь!",
+    "Хорошая клиника, рекомендую.",
+    "Приём прошёл комфортно.",
+  ];
+  const statuses = ["APPROVED", "APPROVED", "PENDING", "APPROVED", "REJECTED"];
+
+  let count = 0;
+  for (let i = 0; i < completed.length; i++) {
+    const b = completed[i];
+    await prisma.review.create({
+      data: {
+        clinicId,
+        patientId: b.patientId,
+        doctorId: b.doctorId,
+        bookingId: b.id,
+        rating: 4 + (i % 2),
+        comment: comments[i % comments.length],
+        status: statuses[i % statuses.length],
+      },
+    });
+    count++;
+  }
+  return count;
 }
 
 main()

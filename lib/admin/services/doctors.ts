@@ -1,77 +1,110 @@
-import type { Doctor, DoctorAnalytics, TimeSeriesPoint } from "@/lib/admin/types";
-import { getDataset } from "@/lib/admin/mock/dataset";
-import { clone, delay } from "./util";
-
-const MONTHS = [
-  "Янв", "Фев", "Мар", "Апр", "Май", "Июн",
-  "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек",
-];
+import type { Doctor, DoctorAnalytics } from "@/lib/admin/types";
+import { adminFetch } from "@/lib/admin/api-client";
+import {
+  mapDbDoctorToUi,
+  mapDoctorInputToDb,
+  type DbDoctorRow,
+} from "@/lib/admin/mappers";
+import { setDoctorCredentials, removeDoctorCredentials } from "@/lib/doctor-credentials";
 
 export interface DoctorQuery {
   search?: string;
   status?: Doctor["status"] | "ALL";
 }
 
-export function listDoctors(query: DoctorQuery = {}): Promise<Doctor[]> {
-  const { doctors } = getDataset();
-  let rows = [...doctors];
+type DoctorsResponse = {
+  doctors: Array<
+    DbDoctorRow & { averageRating?: number; reviewCount?: number }
+  >;
+};
 
-  if (query.status && query.status !== "ALL") {
-    rows = rows.filter((d) => d.status === query.status);
-  }
-  if (query.search) {
-    const q = query.search.toLowerCase();
-    rows = rows.filter(
-      (d) =>
-        d.fullName.toLowerCase().includes(q) ||
-        d.specialty.toLowerCase().includes(q),
+export function listDoctors(query: DoctorQuery = {}): Promise<Doctor[]> {
+  return adminFetch<DoctorsResponse>("/api/admin/doctors").then(({ doctors }) => {
+    let rows = doctors.map((d) =>
+      mapDbDoctorToUi(d, {
+        averageRating: d.averageRating,
+        reviewCount: d.reviewCount,
+      }),
     );
-  }
-  rows.sort((a, b) => b.revenueGenerated - a.revenueGenerated);
-  return delay(clone(rows));
+    if (query.status && query.status !== "ALL") {
+      rows = rows.filter((d) => d.status === query.status);
+    }
+    if (query.search) {
+      const q = query.search.toLowerCase();
+      rows = rows.filter(
+        (d) =>
+          d.fullName.toLowerCase().includes(q) ||
+          d.specialty.toLowerCase().includes(q) ||
+          d.phone.replace(/\D/g, "").includes(q.replace(/\D/g, "")),
+      );
+    }
+    rows.sort((a, b) => b.appointmentsCount - a.appointmentsCount);
+    return rows;
+  });
 }
 
 export function getDoctor(id: string): Promise<Doctor | null> {
-  const { doctors } = getDataset();
-  return delay(clone(doctors.find((d) => d.id === id) ?? null));
+  return listDoctors().then((rows) => rows.find((d) => d.id === id) ?? null);
 }
 
 export type DoctorInput = Omit<
   Doctor,
-  "id" | "rating" | "patientsCount" | "appointmentsCount" | "revenueGenerated" | "createdAt"
+  "id" | "rating" | "reviewCount" | "patientsCount" | "appointmentsCount" | "revenueGenerated" | "createdAt"
 >;
 
-export function createDoctor(input: DoctorInput): Promise<Doctor> {
-  const ds = getDataset();
-  const doctor: Doctor = {
-    ...input,
-    id: `doc-${Date.now()}`,
-    rating: 0,
-    patientsCount: 0,
-    appointmentsCount: 0,
-    revenueGenerated: 0,
-    createdAt: new Date().toISOString(),
-  };
-  ds.doctors.push(doctor);
-  return delay(clone(doctor));
+export async function createDoctor(
+  input: DoctorInput,
+  opts?: { password?: string },
+): Promise<Doctor> {
+  const body = mapDoctorInputToDb(input);
+  const data = await adminFetch<{ doctor: DbDoctorRow }>("/api/admin/doctors", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+  if (opts?.password?.trim() && input.phone) {
+    setDoctorCredentials(input.phone, opts.password.trim());
+  }
+  return mapDbDoctorToUi(data.doctor);
 }
 
-export function updateDoctor(
+export async function updateDoctor(
   id: string,
   patch: Partial<DoctorInput>,
 ): Promise<Doctor | null> {
-  const ds = getDataset();
-  const doctor = ds.doctors.find((d) => d.id === id);
-  if (!doctor) return delay(null);
-  Object.assign(doctor, patch);
-  return delay(clone(doctor));
+  const current = await getDoctor(id);
+  if (!current) return null;
+
+  const merged: DoctorInput = {
+    photoUrl: patch.photoUrl ?? current.photoUrl,
+    fullName: patch.fullName ?? current.fullName,
+    phone: patch.phone ?? current.phone,
+    specialty: patch.specialty ?? current.specialty,
+    experienceYears: patch.experienceYears ?? current.experienceYears,
+    education: patch.education ?? current.education,
+    languages: patch.languages ?? current.languages,
+    consultationPrice: patch.consultationPrice ?? current.consultationPrice,
+    workSchedule: patch.workSchedule ?? current.workSchedule,
+    status: patch.status ?? current.status,
+  };
+
+  const data = await adminFetch<{ doctor: DbDoctorRow }>(`/api/admin/doctors/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(mapDoctorInputToDb(merged)),
+  });
+  return mapDbDoctorToUi(data.doctor);
 }
 
-export function deleteDoctor(id: string): Promise<{ ok: boolean }> {
-  const ds = getDataset();
-  const idx = ds.doctors.findIndex((d) => d.id === id);
-  if (idx >= 0) ds.doctors.splice(idx, 1);
-  return delay({ ok: idx >= 0 });
+export async function deleteDoctor(id: string): Promise<{ ok: boolean }> {
+  const current = await getDoctor(id);
+  try {
+    await adminFetch<{ success: boolean }>(`/api/admin/doctors/${id}`, {
+      method: "DELETE",
+    });
+    if (current?.phone) removeDoctorCredentials(current.phone);
+    return { ok: true };
+  } catch {
+    return { ok: false };
+  }
 }
 
 export function setDoctorStatus(
@@ -81,47 +114,13 @@ export function setDoctorStatus(
   return updateDoctor(id, { status });
 }
 
-export function getDoctorAnalytics(id: string): Promise<DoctorAnalytics | null> {
-  const { doctors, appointments, reviews } = getDataset();
-  const doctor = doctors.find((d) => d.id === id);
-  if (!doctor) return delay(null);
-
-  const docAppts = appointments.filter((a) => a.doctorId === id);
-  const completed = docAppts.filter((a) => a.status === "COMPLETED");
-  const docReviews = reviews.filter((r) => r.doctorId === id);
-
-  // Repeat patients: those with >1 completed appointment
-  const byPatient = new Map<string, number>();
-  for (const a of completed) byPatient.set(a.patientId, (byPatient.get(a.patientId) ?? 0) + 1);
-  const repeatPatients = Array.from(byPatient.values()).filter((c) => c > 1).length;
-
-  // Monthly performance (revenue) for last 6 months
-  const performance: TimeSeriesPoint[] = [];
-  const now = new Date(2026, 5, 14);
-  for (let i = 5; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const value = completed
-      .filter((a) => {
-        const ad = new Date(`${a.date}T00:00:00`);
-        return ad.getMonth() === d.getMonth() && ad.getFullYear() === d.getFullYear();
-      })
-      .reduce((s, a) => s + a.price, 0);
-    performance.push({ label: MONTHS[d.getMonth()], value });
+export async function getDoctorAnalytics(id: string): Promise<DoctorAnalytics | null> {
+  try {
+    const data = await adminFetch<{ analytics: DoctorAnalytics }>(
+      `/api/admin/doctors/${id}/analytics`,
+    );
+    return data.analytics;
+  } catch {
+    return null;
   }
-
-  const slots = doctor.workSchedule.days.length * 6 * 26; // rough capacity ~6mo
-  const load = Math.min(100, Math.round((completed.length / Math.max(1, slots)) * 100));
-
-  return delay(
-    clone({
-      doctorId: id,
-      revenue: doctor.revenueGenerated,
-      appointments: docAppts.length,
-      patients: doctor.patientsCount,
-      rating: doctor.rating,
-      repeatPatients,
-      load,
-      performance,
-    }),
-  );
 }

@@ -25,7 +25,12 @@ export type DoctorStatus = "ACTIVE" | "HIDDEN";
 
 export type PatientSegment = "NEW" | "REGULAR" | "VIP" | "INACTIVE";
 
+export type PatientGender = "MALE" | "FEMALE" | "OTHER" | "UNKNOWN";
+
 export type ReviewVisibility = "PUBLISHED" | "PENDING" | "HIDDEN";
+
+/** PostgreSQL Review.status */
+export type ReviewStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 export type NotificationType =
   | "patient"
@@ -47,6 +52,8 @@ export interface Doctor {
   id: string;
   photoUrl: string | null;
   fullName: string;
+  /** Телефон — логин для входа врача на сайте (не админка). */
+  phone: string;
   specialty: string;
   experienceYears: number;
   education: string;
@@ -54,8 +61,9 @@ export interface Doctor {
   consultationPrice: number;
   workSchedule: WorkSchedule;
   status: DoctorStatus;
-  /** Derived analytics (computed from historical data in a real backend). */
-  rating: number; // 0–5
+  /** Average rating from approved reviews (0–5). */
+  rating: number;
+  reviewCount: number;
   patientsCount: number;
   appointmentsCount: number;
   revenueGenerated: number;
@@ -64,25 +72,44 @@ export interface Doctor {
 
 export interface DoctorAnalytics {
   doctorId: string;
+  doctorName?: string;
+  doctorSpecialty?: string;
+  photoUrl?: string | null;
   revenue: number;
   appointments: number;
+  completedVisits: number;
+  cancelledVisits: number;
   patients: number;
   rating: number;
+  reviewCount: number;
   repeatPatients: number;
   /** Utilisation 0–100 (% of available slots booked). */
   load: number;
-  /** Monthly performance series for charts. */
+  /** Monthly revenue series (6 months). */
   performance: TimeSeriesPoint[];
+  /** Daily visits — last 14 days. */
+  visitsSeries: TimeSeriesPoint[];
+  /** Daily revenue — last 14 days. */
+  revenueSeries: TimeSeriesPoint[];
+  /** Cumulative unique patients — last 6 months. */
+  patientsGrowth: TimeSeriesPoint[];
 }
 
 /* ─────────────────────────────  Patient  ────────────────────────────────── */
 export interface Patient {
   id: string;
+  firstName: string;
+  lastName: string;
   fullName: string;
   phone: string;
   email: string;
-  registeredAt: string; // ISO
-  lastVisitAt: string | null; // ISO
+  birthDate: string | null;
+  gender: PatientGender | null;
+  address: string | null;
+  notes: string | null;
+  age: number | null;
+  registeredAt: string;
+  lastVisitAt: string | null;
   segment: PatientSegment;
   totalPaid: number;
   visitsCount: number;
@@ -92,6 +119,8 @@ export interface Patient {
 
 export interface PatientProfile extends Patient {
   appointments: Appointment[];
+  upcomingAppointments: Appointment[];
+  pastAppointments: Appointment[];
   payments: PaymentRecord[];
   reviews: Review[];
 }
@@ -109,6 +138,7 @@ export interface Appointment {
   id: string;
   patientId: string;
   patientName: string;
+  patientPhone: string;
   doctorId: string;
   doctorName: string;
   serviceId: string;
@@ -124,7 +154,8 @@ export interface Appointment {
 /* ─────────────────────────────  Review  ─────────────────────────────────── */
 export interface Review {
   id: string;
-  /** A review can only exist for a COMPLETED appointment. */
+  bookingId: string;
+  /** Alias for bookingId — used in archive/history views. */
   appointmentId: string;
   doctorId: string;
   doctorName: string;
@@ -135,8 +166,7 @@ export interface Review {
   rating: number; // 1–5
   comment: string;
   date: string; // ISO
-  visibility: ReviewVisibility;
-  reply: string | null;
+  status: ReviewStatus;
 }
 
 /* ─────────────────────────────  Service  ────────────────────────────────── */
@@ -155,6 +185,9 @@ export interface Service {
 
 /* ──────────────────────────  Dashboard / KPIs  ──────────────────────────── */
 export interface DashboardKpis {
+  totalPatients: number;
+  newPatientsToday: number;
+  returningPatients: number;
   patientsToday: number;
   appointmentsToday: number;
   newPatients: number;
@@ -165,6 +198,9 @@ export interface DashboardKpis {
   avgCheck: number;
   /** Clinic load today 0–100 (% capacity). */
   clinicLoad: number;
+  averageClinicRating: number;
+  reviewsThisMonth: number;
+  pendingReviews: number;
 }
 
 /** Lifetime / executive metrics that never reset. */
@@ -183,6 +219,7 @@ export interface SmartOverview {
   busiestDay: { label: string; metric: string };
   mostProfitableMonth: { label: string; metric: string };
   clinicRating: number; // 0–5
+  topRatedDoctor: { id: string; name: string; rating: number; reviews: number };
 }
 
 export interface DashboardData {
@@ -210,6 +247,8 @@ export interface CategoryPoint {
 export interface ReviewAnalytics {
   clinicRating: number; // 0–5
   totalReviews: number;
+  pendingCount: number;
+  approvedCount: number;
   ratingDistribution: { stars: number; count: number }[];
   bestDoctors: { id: string; name: string; rating: number; reviews: number }[];
   lowestDoctors: { id: string; name: string; rating: number; reviews: number }[];

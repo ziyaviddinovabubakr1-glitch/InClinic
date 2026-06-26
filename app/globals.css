@@ -210,6 +210,7 @@
     height: 100dvh;
     max-height: 100dvh;
     min-height: 100dvh;
+    font-size: 13px;
   }
   @supports (height: 100dvh) {
     .app-shell-root { height: 100dvh; }
@@ -295,7 +296,88 @@
   .site-page {
     position: relative;
     z-index: 1;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
   }
+
+  /* Compact clinic UI — sidebar, cards, booking */
+  .app-shell-sidebar {
+    width: 13.25rem;
+  }
+  .sidebar-neon-header {
+    padding: 0.5rem 0.625rem !important;
+  }
+  .sidebar-neon-brand {
+    font-size: 0.95rem !important;
+  }
+  .sidebar-nav-item {
+    padding: 0.4rem 0.55rem !important;
+    font-size: 0.8125rem !important;
+    gap: 0.5rem !important;
+    border-radius: 0.5rem !important;
+  }
+  .sidebar-nav-item svg {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+  .lang-switcher {
+    margin-left: 0.375rem !important;
+    margin-right: 0.375rem !important;
+    padding: 0.125rem !important;
+  }
+  .lang-switcher button {
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.35rem !important;
+    font-size: 0.65rem !important;
+  }
+  .glass-card {
+    border-radius: 0.75rem;
+  }
+  .center-frost-panel {
+    padding: 1.25rem 1rem !important;
+  }
+  @media (min-width: 768px) {
+    .center-frost-panel {
+      padding: 1.5rem 1.25rem !important;
+    }
+  }
+  .service-row-ios {
+    padding: 0.65rem 0.75rem !important;
+    border-radius: 0.65rem;
+  }
+  .bk-doctor-card {
+    padding: 0.65rem 0.75rem !important;
+  }
+  .doctor-avatar-3d--size-md { --da-w: 52px; }
+  .doctor-avatar-3d--size-lg { --da-w: 64px; }
+  .doctor-avatar-3d--size-xl { --da-w: 72px; }
+  .bk-week {
+    padding: 0.65rem 0.55rem 0.55rem;
+    border-radius: 0.75rem;
+  }
+  .bk-week-head { margin-bottom: 0.5rem; }
+  .bk-week-nav { width: 32px; height: 32px; border-radius: 8px; }
+  .bk-week-title-main { font-size: 0.78rem; }
+  .bk-week-day {
+    min-height: 3.5rem;
+    padding: 0.3rem 0.15rem;
+    border-radius: 9px;
+  }
+  .bk-week-day-num { font-size: 1rem; }
+  .bk-week-day-name { font-size: 0.58rem; }
+  .bk-time { padding: 0.65rem; border-radius: 0.75rem; }
+  .bk-time-grid {
+    grid-template-columns: repeat(auto-fill, minmax(3.75rem, 1fr));
+    gap: 0.35rem;
+  }
+  .bk-time-slot {
+    min-height: 2.35rem;
+    padding: 0.28rem 0.2rem;
+    border-radius: 8px;
+  }
+  .bk-time-slot-time { font-size: 0.75rem; }
+  .btn-primary { padding: 0.5rem 1rem; font-size: 0.8125rem; border-radius: 0.5rem; }
+  .btn-primary-lg { padding: 0.65rem 1.25rem; font-size: 0.9375rem; border-radius: 0.65rem; }
 
   ::selection {
     background: var(--selection-bg);
@@ -1977,4 +2059,187 @@
   .doctor-card-banner { height: 4.25rem; }
   .doctor-card-banner-inner { bottom: -2rem; }
   .doctor-card-body { padding-top: 2.15rem; }
+}
+
+/* ── Doctor portal (public site, not admin) ── */
+.doctor-portal-root { min-height: 100dvh; }
+.doctor-login-page {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+.doctor-login-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 28px 24px;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+}
+.doctor-login-head h1 {
+  margin: 10px 0 6px;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+.doctor-login-head p {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(203, 213, 225, 0.75);
+  line-height: 1.45;
+}
+.doctor-login-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fcd34d;
+}
+.doctor-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+}
+.doctor-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(203, 213, 225, 0.85);
+  margin-top: 6px;
+}
+.doctor-input {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.6);
+  color: #f8fafc;
+  font-size: 14px;
+}
+.doctor-input:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+.doctor-btn {
+  margin-top: 10px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+.doctor-btn:disabled { opacity: 0.65; cursor: not-allowed; }
+.doctor-btn-ghost {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.doctor-error {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #f87171;
+}
+.doctor-login-foot {
+  margin: 18px 0 0;
+  font-size: 12px;
+  color: rgba(148, 163, 184, 0.85);
+  line-height: 1.55;
+}
+.doctor-login-foot code {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 11px;
+}
+.doctor-login-foot a { color: #93c5fd; text-decoration: none; }
+.doctor-dash {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+}
+.doctor-dash-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.doctor-dash-eyebrow {
+  margin: 0 0 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fcd34d;
+}
+.doctor-dash-head h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #f8fafc;
+}
+.doctor-dash-head p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: rgba(203, 213, 225, 0.75);
+}
+.doctor-dash-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.doctor-dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.doctor-stat {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}
+.doctor-stat-label {
+  display: block;
+  font-size: 11.5px;
+  color: rgba(148, 163, 184, 0.9);
+  margin-bottom: 4px;
+}
+.doctor-stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+.doctor-dash-chart,
+.doctor-dash-info {
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  margin-bottom: 16px;
+}
+.doctor-dash-chart h2,
+.doctor-dash-info h2 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+.doctor-dash-info p {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(203, 213, 225, 0.8);
 }

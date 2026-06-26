@@ -3,8 +3,7 @@ import type {
   AppointmentStatus,
   Paginated,
 } from "@/lib/admin/types";
-import { getDataset } from "@/lib/admin/mock/dataset";
-import { clone, delay } from "./util";
+import { adminFetch } from "@/lib/admin/api-client";
 
 export interface AppointmentQuery {
   search?: string;
@@ -14,45 +13,12 @@ export interface AppointmentQuery {
   pageSize?: number;
 }
 
-export function listAppointments(
-  query: AppointmentQuery = {},
-): Promise<Paginated<Appointment>> {
-  const { appointments } = getDataset();
-  let rows = [...appointments];
+type BookingsResponse = {
+  bookings: Appointment[];
+  pagination: { total: number; page: number; pages: number; pageSize: number };
+};
 
-  if (query.status && query.status !== "ALL") {
-    rows = rows.filter((a) => a.status === query.status);
-  }
-  if (query.doctorId) {
-    rows = rows.filter((a) => a.doctorId === query.doctorId);
-  }
-  if (query.search) {
-    const q = query.search.toLowerCase();
-    rows = rows.filter(
-      (a) =>
-        a.patientName.toLowerCase().includes(q) ||
-        a.doctorName.toLowerCase().includes(q) ||
-        a.serviceName.toLowerCase().includes(q),
-    );
-  }
-  rows.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.time < b.time ? 1 : -1));
-
-  const page = query.page ?? 1;
-  const pageSize = query.pageSize ?? 12;
-  const total = rows.length;
-  const start = (page - 1) * pageSize;
-
-  return delay(
-    clone({
-      rows: rows.slice(start, start + pageSize),
-      total,
-      page,
-      pageSize,
-    }),
-  );
-}
-
-/** Allowed transitions. COMPLETED is terminal and cannot move or be deleted. */
+/** Allowed transitions in admin UI terms. */
 const TRANSITIONS: Record<AppointmentStatus, AppointmentStatus[]> = {
   PENDING: ["CONFIRMED", "CANCELLED"],
   CONFIRMED: ["COMPLETED", "CANCELLED"],
@@ -64,32 +30,48 @@ export function allowedTransitions(status: AppointmentStatus): AppointmentStatus
   return TRANSITIONS[status];
 }
 
-export function updateAppointmentStatus(
+export async function listAppointments(
+  query: AppointmentQuery = {},
+): Promise<Paginated<Appointment>> {
+  const params = new URLSearchParams();
+  if (query.status && query.status !== "ALL") params.set("status", query.status);
+  if (query.search) params.set("search", query.search);
+  if (query.page) params.set("page", String(query.page));
+  if (query.pageSize) params.set("pageSize", String(query.pageSize));
+
+  const data = await adminFetch<BookingsResponse>(`/api/admin/bookings?${params}`);
+
+  let rows = data.bookings;
+  if (query.doctorId) {
+    rows = rows.filter((a) => a.doctorId === query.doctorId);
+  }
+
+  return {
+    rows,
+    total: data.pagination.total,
+    page: data.pagination.page,
+    pageSize: data.pagination.pageSize,
+  };
+}
+
+export async function updateAppointmentStatus(
   id: string,
   status: AppointmentStatus,
 ): Promise<{ ok: boolean; appointment?: Appointment; error?: string }> {
-  const ds = getDataset();
-  const appt = ds.appointments.find((a) => a.id === id);
-  if (!appt) return delay({ ok: false, error: "not_found" });
-
-  if (!TRANSITIONS[appt.status].includes(status)) {
-    return delay({ ok: false, error: "invalid_transition" });
-  }
-
-  appt.status = status;
-  if (status === "COMPLETED") {
-    // Historical preservation: lock in revenue + completion timestamp.
-    appt.completedAt = new Date().toISOString();
-    const exists = ds.payments.some((p) => p.appointmentId === id);
-    if (!exists) {
-      ds.payments.push({
-        id: `pay-${id}`,
-        appointmentId: id,
-        amount: appt.price,
-        date: appt.completedAt,
-        serviceName: appt.serviceName,
-      });
+  try {
+    const data = await adminFetch<{ booking: Appointment }>("/api/admin/bookings", {
+      method: "PATCH",
+      body: JSON.stringify({ id, status }),
+    });
+    return { ok: true, appointment: data.booking };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "unknown";
+    if (msg.includes("422") || msg.includes("Нельзя")) {
+      return { ok: false, error: "invalid_transition" };
     }
+    if (msg.includes("404")) {
+      return { ok: false, error: "not_found" };
+    }
+    return { ok: false, error: msg };
   }
-  return delay({ ok: true, appointment: clone(appt) });
 }

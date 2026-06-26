@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { getArchiveSummary, money } from "@/lib/admin/services";
 import type { ArchiveSummary } from "@/lib/admin/services";
-import { SectionHeader, SkeletonCard } from "@/components/admin/ui";
+import { SkeletonCard } from "@/components/admin/ui";
 import { MotionPage, MotionGrid, MotionItem } from "@/components/admin/motion";
 import {
-  IArchive, IAppointments, IPatients, IMoney, IReviews, IDoctors, IShield,
+  IAppointments, IPatients, IMoney, IReviews, IDoctors, IShield,
 } from "@/components/admin/icons";
 
 export default function ArchivePage() {
@@ -36,27 +36,6 @@ export default function ArchivePage() {
           <MotionItem><ArchiveCard icon={IDoctors} tone="blue" label="Снимков врачей" value={String(summary.doctorPerformanceSnapshots)} /></MotionItem>
         </MotionGrid>
       )}
-
-      <div className="oa-card oa-card-pad">
-        <SectionHeader title="Хранилище архива" sub="Категории данных под защитой от удаления" />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 10 }}>
-          {[
-            "Завершённые записи", "История пациентов", "История доходов",
-            "История отзывов", "Эффективность врачей", "История изменений",
-          ].map((c) => (
-            <div key={c} style={{ display: "flex", alignItems: "center", gap: 10, padding: "11px 14px", background: "var(--oa-surface-2)", border: "1px solid var(--oa-border)", borderRadius: 11 }}>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--oa-success)" }} />
-              <span style={{ fontSize: 13 }}>{c}</span>
-              <IArchive style={{ width: 15, height: 15, color: "var(--oa-text-faint)", marginLeft: "auto" }} />
-            </div>
-          ))}
-        </div>
-        {summary?.since && (
-          <p style={{ fontSize: 12, color: "var(--oa-text-faint)", marginTop: 14 }}>
-            Самая ранняя запись в архиве: {new Date(summary.since).toLocaleDateString("ru-RU")}
-          </p>
-        )}
-      </div>
     </MotionPage>
   );
 }

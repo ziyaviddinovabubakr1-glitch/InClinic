@@ -9,6 +9,7 @@ import {
   validateBookingRequest,
 } from "@/lib/booking-rules";
 import { createTelegramActionToken } from "@/lib/telegram-actions";
+import { findOrCreatePatient } from "@/lib/patients";
 import { writeAudit } from "@/lib/audit";
 import { getClientIp } from "@/lib/auth-guard";
 import { MOCK_SERVICES, MOCK_DOCTORS } from "@/lib/mockData";
@@ -103,9 +104,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: rules.error }, { status: rules.status });
     }
 
+    const patient = await findOrCreatePatient({
+      clinicId,
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      phone: phone.trim(),
+    });
+
     const booking = await prisma.booking.create({
       data: {
         clinicId,
+        patientId: patient.id,
         serviceId,
         doctorId,
         date,
@@ -157,6 +166,7 @@ export async function POST(request: NextRequest) {
       entity: "booking",
       entityId: booking.id,
       ip,
+      metadata: { patientId: patient.id },
     });
 
     return NextResponse.json(

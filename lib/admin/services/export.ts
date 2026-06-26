@@ -1,20 +1,10 @@
 /**
- * Export architecture (V1 = service layer only).
- *
- * The owner will be able to export every data category in multiple formats.
- * V1 ships the interface + a working CSV generator (client-safe) so the wiring
- * is real; XLSX and PDF are declared and stubbed so the UI and future backend
- * can adopt them without redesign.
+ * Export — reads live data from admin API routes (PostgreSQL).
  */
-import type {
-  Appointment,
-  Doctor,
-  Patient,
-  Review,
-  Service,
-} from "@/lib/admin/types";
-import { getDataset } from "@/lib/admin/mock/dataset";
-import { delay } from "./util";
+import type { Appointment, Doctor, Patient, Review, Service } from "@/lib/admin/types";
+import { adminFetch } from "@/lib/admin/api-client";
+import { listDoctors } from "./doctors";
+import { listServices } from "./services";
 
 export type ExportFormat = "CSV" | "XLSX" | "PDF";
 
@@ -48,7 +38,6 @@ export interface ExportRequest {
 export interface ExportResult {
   filename: string;
   mime: string;
-  /** Populated for CSV in V1; XLSX/PDF return an empty body with `pending: true`. */
   content: string;
   pending: boolean;
 }
@@ -67,68 +56,94 @@ function toCsv(rows: Record<string, unknown>[]): string {
   return lines.join("\n");
 }
 
-function categoryRows(category: ExportCategory): Record<string, unknown>[] {
-  const ds = getDataset();
+async function categoryRows(category: ExportCategory): Promise<Record<string, unknown>[]> {
   switch (category) {
-    case "patients":
-      return ds.patients.map((p: Patient) => ({
-        id: p.id, fullName: p.fullName, phone: p.phone, email: p.email,
-        segment: p.segment, visits: p.visitsCount, totalPaid: p.totalPaid,
+    case "patients": {
+      const data = await adminFetch<{ rows: Patient[] }>("/api/admin/patients?pageSize=500");
+      return data.rows.map((p) => ({
+        id: p.id,
+        fullName: p.fullName,
+        phone: p.phone,
+        segment: p.segment,
+        visits: p.visitsCount,
+        totalPaid: p.totalPaid,
         registeredAt: p.registeredAt,
       }));
-    case "doctors":
-      return ds.doctors.map((d: Doctor) => ({
-        id: d.id, fullName: d.fullName, specialty: d.specialty,
-        experienceYears: d.experienceYears, rating: d.rating,
-        patients: d.patientsCount, appointments: d.appointmentsCount,
-        revenue: d.revenueGenerated, status: d.status,
+    }
+    case "doctors": {
+      const doctors = await listDoctors();
+      return doctors.map((d: Doctor) => ({
+        id: d.id,
+        fullName: d.fullName,
+        specialty: d.specialty,
+        appointments: d.appointmentsCount,
+        revenue: d.revenueGenerated,
+        status: d.status,
       }));
-    case "appointments":
-      return ds.appointments.map((a: Appointment) => ({
-        id: a.id, date: a.date, time: a.time, patient: a.patientName,
-        doctor: a.doctorName, service: a.serviceName, status: a.status,
+    }
+    case "appointments": {
+      const data = await adminFetch<{ bookings: Appointment[] }>(
+        "/api/admin/bookings?pageSize=500",
+      );
+      return data.bookings.map((a) => ({
+        id: a.id,
+        date: a.date,
+        time: a.time,
+        patient: a.patientName,
+        doctor: a.doctorName,
+        service: a.serviceName,
+        status: a.status,
         price: a.price,
       }));
+    }
     case "reviews":
-      return ds.reviews.map((r: Review) => ({
-        id: r.id, date: r.date, doctor: r.doctorName, patient: r.patientName,
-        service: r.serviceName, rating: r.rating, visibility: r.visibility,
-        comment: r.comment,
+      return [];
+    case "revenue": {
+      const data = await adminFetch<{ bookings: Appointment[] }>(
+        "/api/admin/bookings?status=COMPLETED&pageSize=500",
+      );
+      return data.bookings.map((a) => ({
+        id: a.id,
+        date: a.completedAt ?? a.date,
+        service: a.serviceName,
+        amount: a.price,
+        appointmentId: a.id,
       }));
-    case "revenue":
-      return ds.payments.map((p) => ({
-        id: p.id, date: p.date, service: p.serviceName, amount: p.amount,
-        appointmentId: p.appointmentId,
+    }
+    case "services": {
+      const services = await listServices();
+      return services.map((s: Service) => ({
+        id: s.id,
+        name: s.name,
+        price: s.price,
+        sales: s.salesCount,
+        revenue: s.revenue,
+        active: s.active,
       }));
-    case "services":
-      return ds.services.map((s: Service) => ({
-        id: s.id, name: s.name, price: s.price, sales: s.salesCount,
-        revenue: s.revenue, popularity: s.popularity, active: s.active,
-      }));
+    }
   }
 }
 
-export function exportData(request: ExportRequest): Promise<ExportResult> {
-  const rows = categoryRows(request.category);
+export async function exportData(request: ExportRequest): Promise<ExportResult> {
+  const rows = await categoryRows(request.category);
   const stamp = new Date().toISOString().slice(0, 10);
   const base = `inclinic-${request.category}-${stamp}`;
 
   if (request.format === "CSV") {
-    return delay({
+    return {
       filename: `${base}.csv`,
       mime: "text/csv;charset=utf-8",
       content: toCsv(rows),
       pending: false,
-    });
+    };
   }
 
-  // XLSX / PDF: architecture is ready; generation arrives with backend.
-  return delay({
+  return {
     filename: `${base}.${request.format.toLowerCase()}`,
     mime: request.format === "XLSX"
       ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       : "application/pdf",
     content: "",
     pending: true,
-  });
+  };
 }

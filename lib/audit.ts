@@ -9,6 +9,8 @@ export interface AuditEntry {
   entityId?: string | null;
   ip?: string | null;
   metadata?: Prisma.InputJsonValue | null;
+  oldData?: Prisma.InputJsonValue | null;
+  newData?: Prisma.InputJsonValue | null;
 }
 
 export async function writeAudit(entry: AuditEntry): Promise<void> {
@@ -22,6 +24,8 @@ export async function writeAudit(entry: AuditEntry): Promise<void> {
         entityId: entry.entityId ?? null,
         ip: entry.ip ?? null,
         metadata: entry.metadata ?? undefined,
+        oldData: entry.oldData ?? undefined,
+        newData: entry.newData ?? undefined,
       },
     });
   } catch (e) {

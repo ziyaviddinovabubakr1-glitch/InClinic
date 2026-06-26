@@ -19,26 +19,26 @@ export function Modal({
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
   }, [open, onClose]);
 
   if (!open) return null;
   return (
     <div className="oa-modal-backdrop" onClick={onClose}>
-      <div className="oa-modal" style={{ maxWidth }} onClick={(e) => e.stopPropagation()}>
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, padding: "20px 22px 14px", borderBottom: "1px solid var(--oa-border)" }}>
+      <div className="oa-modal" style={{ maxWidth }} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+        <div className="oa-modal-head">
           <div>
-            <div style={{ fontSize: 17, fontWeight: 750, letterSpacing: "-0.01em" }}>{title}</div>
-            {sub && <div style={{ fontSize: 12.5, color: "var(--oa-text-faint)", marginTop: 2 }}>{sub}</div>}
+            <div className="oa-modal-title">{title}</div>
+            {sub && <div className="oa-modal-sub">{sub}</div>}
           </div>
           <button className="oa-btn oa-btn-icon oa-btn-ghost" onClick={onClose} aria-label="Закрыть"><IClose /></button>
         </div>
-        <div style={{ padding: 22 }}>{children}</div>
-        {footer && (
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, padding: "14px 22px", borderTop: "1px solid var(--oa-border)", background: "var(--oa-surface-2)", borderRadius: "0 0 20px 20px" }}>
-            {footer}
-          </div>
-        )}
+        <div className="oa-modal-body">{children}</div>
+        {footer && <div className="oa-modal-foot">{footer}</div>}
       </div>
     </div>
   );
@@ -62,16 +62,16 @@ export function Drawer({
 
   if (!open) return null;
   return (
-    <div className="oa-modal-backdrop" style={{ justifyContent: "flex-end", padding: 0 }} onClick={onClose}>
+    <div className="oa-modal-backdrop oa-drawer-backdrop" onClick={onClose}>
       <div className="oa-drawer" onClick={(e) => e.stopPropagation()}>
-        <div style={{ position: "sticky", top: 0, background: "var(--oa-surface)", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, padding: "20px 22px 16px", borderBottom: "1px solid var(--oa-border)", zIndex: 2 }}>
+        <div className="oa-drawer-head">
           <div>
-            <div style={{ fontSize: 17, fontWeight: 750, letterSpacing: "-0.01em" }}>{title}</div>
-            {sub && <div style={{ fontSize: 12.5, color: "var(--oa-text-faint)", marginTop: 2 }}>{sub}</div>}
+            <div className="oa-modal-title">{title}</div>
+            {sub && <div className="oa-modal-sub">{sub}</div>}
           </div>
           <button className="oa-btn oa-btn-icon oa-btn-ghost" onClick={onClose} aria-label="Закрыть"><IClose /></button>
         </div>
-        <div style={{ padding: 22 }}>{children}</div>
+        <div className="oa-drawer-body">{children}</div>
       </div>
     </div>
   );
@@ -98,7 +98,7 @@ export function ConfirmDialog({
           </button>
         </>
       }>
-      <p style={{ fontSize: 13.5, color: "var(--oa-text-soft)", lineHeight: 1.55 }}>{message}</p>
+      <p style={{ fontSize: 13.5, color: "var(--oa-text-soft)", lineHeight: 1.55, margin: 0 }}>{message}</p>
     </Modal>
   );
 }

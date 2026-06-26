@@ -7,8 +7,8 @@ import {
 import type { Service } from "@/lib/admin/types";
 import type { ServiceInput } from "@/lib/admin/services";
 import { Modal, ConfirmDialog } from "@/components/admin/Modal";
-import { SectionHeader, SkeletonRows, EmptyState, StatTile } from "@/components/admin/ui";
-import { MotionPage, MotionGrid, MotionItem } from "@/components/admin/motion";
+import { SkeletonRows, EmptyState } from "@/components/admin/ui";
+import { MotionPage } from "@/components/admin/motion";
 import { IPlus, ISearch, IEdit, ITrash, IEye, IEyeOff, IServices } from "@/components/admin/icons";
 
 const EMPTY: ServiceInput = { name: "", description: "", price: 100, durationMin: 30, active: true };
@@ -58,49 +58,62 @@ export default function ServicesPage() {
         <button className="oa-btn oa-btn-primary" onClick={openCreate}><IPlus /> Добавить услугу</button>
       </div>
 
-      {!services ? (
-        <div className="oa-card oa-card-pad"><SkeletonRows rows={6} /></div>
-      ) : services.length === 0 ? (
-        <div className="oa-card"><EmptyState icon={<IServices />} title="Услуги не найдены" sub="Добавьте первую услугу." /></div>
-      ) : (
-        <MotionGrid style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 18 }}>
-          {services.map((s) => (
-            <MotionItem key={s.id}>
-            <div className="oa-card oa-card-pad oa-card-hover">
-              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10 }}>
-                <div style={{ minWidth: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontWeight: 700, fontSize: 14.5 }}>{s.name}</span>
-                    {!s.active && <span className="oa-badge oa-badge-hidden">скрыта</span>}
-                  </div>
-                  <div style={{ fontSize: 12.5, color: "var(--oa-text-soft)", marginTop: 3, lineHeight: 1.45 }}>{s.description}</div>
-                </div>
-                <span style={{ fontSize: 16, fontWeight: 800, whiteSpace: "nowrap" }}>{money(s.price)}</span>
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginTop: 14 }}>
-                <StatTile label="Продажи" value={String(s.salesCount)} />
-                <StatTile label="Доход" value={money(s.revenue)} />
-                <StatTile label="Длит." value={`${s.durationMin}м`} />
-              </div>
-
-              <div style={{ marginTop: 12 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11.5, color: "var(--oa-text-faint)", marginBottom: 4 }}>
-                  <span>Популярность</span><span>{s.popularity}%</span>
-                </div>
-                <div className="oa-progress"><div className="oa-progress-bar" style={{ width: `${s.popularity}%` }} /></div>
-              </div>
-
-              <div style={{ display: "flex", gap: 7, marginTop: 14 }}>
-                <button className="oa-btn oa-btn-soft oa-btn-sm" style={{ flex: 1 }} onClick={() => openEdit(s)}><IEdit style={{ width: 14, height: 14 }} /> Изменить</button>
-                <button className="oa-btn oa-btn-ghost oa-btn-icon" onClick={async () => { await setServiceActive(s.id, !s.active); refresh(); }} aria-label="Скрыть/показать">{s.active ? <IEyeOff /> : <IEye />}</button>
-                <button className="oa-btn oa-btn-danger oa-btn-icon" onClick={() => setToDelete(s)} aria-label="Удалить"><ITrash /></button>
-              </div>
-            </div>
-            </MotionItem>
-          ))}
-        </MotionGrid>
-      )}
+      <div className="oa-card oa-table-card">
+        {!services ? (
+          <div className="oa-card-pad"><SkeletonRows rows={8} /></div>
+        ) : services.length === 0 ? (
+          <EmptyState icon={<IServices />} title="Услуги не найдены" sub="Добавьте первую услугу." />
+        ) : (
+          <div className="oa-table-wrap oa-table-responsive">
+            <table className="oa-table">
+              <thead>
+                <tr>
+                  <th>Услуга</th>
+                  <th>Цена</th>
+                  <th>Длительность</th>
+                  <th>Продажи</th>
+                  <th>Доход</th>
+                  <th>Популярность</th>
+                  <th>Статус</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {services.map((s) => (
+                  <tr key={s.id}>
+                    <td className="oa-table-col-patient-first" data-label="Услуга">
+                      <div className="oa-cell-strong">{s.name}</div>
+                      <div style={{ fontSize: 12, color: "var(--oa-text-faint)", marginTop: 2, maxWidth: 280, lineHeight: 1.4 }}>{s.description}</div>
+                    </td>
+                    <td className="oa-cell-strong" data-label="Цена">{money(s.price)}</td>
+                    <td className="oa-cell-soft" data-label="Длительность">{s.durationMin} мин</td>
+                    <td className="oa-cell-strong" data-label="Продажи">{s.salesCount}</td>
+                    <td className="oa-cell-strong" data-label="Доход">{money(s.revenue)}</td>
+                    <td data-label="Популярность" style={{ minWidth: 100 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <div className="oa-progress oa-progress-sm" style={{ flex: 1 }}><div className="oa-progress-bar" style={{ width: `${s.popularity}%` }} /></div>
+                        <span style={{ fontSize: 11.5, color: "var(--oa-text-faint)", width: 32 }}>{s.popularity}%</span>
+                      </div>
+                    </td>
+                    <td data-label="Статус">
+                      {s.active
+                        ? <span className="oa-badge oa-badge-confirmed">активна</span>
+                        : <span className="oa-badge oa-badge-hidden">скрыта</span>}
+                    </td>
+                    <td data-label="Действия">
+                      <div className="oa-table-actions">
+                        <button className="oa-btn oa-btn-soft oa-btn-sm" onClick={() => openEdit(s)} title="Изменить"><IEdit style={{ width: 14, height: 14 }} /></button>
+                        <button className="oa-btn oa-btn-ghost oa-btn-icon" onClick={async () => { await setServiceActive(s.id, !s.active); refresh(); }} aria-label="Скрыть/показать">{s.active ? <IEyeOff /> : <IEye />}</button>
+                        <button className="oa-btn oa-btn-danger oa-btn-icon" onClick={() => setToDelete(s)} aria-label="Удалить"><ITrash /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
       <Modal open={formOpen} onClose={() => setFormOpen(false)} title={editing ? "Редактировать услугу" : "Новая услуга"}
         footer={

@@ -5,6 +5,7 @@ import { assertAdminApiSession } from "@/lib/admin-api-guard";
 import { rateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { getClientIp } from "@/lib/auth-guard";
 import { writeAudit } from "@/lib/audit";
+import { loadDoctorReviewStats } from "@/lib/reviews";
 
 function validateDoctor(body: Record<string, unknown>) {
   const errors: string[] = [];
@@ -51,15 +52,25 @@ export async function GET(request: NextRequest) {
   const clinicId = await requireClinicId(request);
 
   try {
-    const doctors = await prisma.doctor.findMany({
-      where: { clinicId },
-      orderBy: { nameRu: "asc" },
-      include: {
-        services: { include: { service: { select: { id: true, nameRu: true } } } },
-        _count: { select: { bookings: true } },
-      },
+    const [doctors, reviewStats] = await Promise.all([
+      prisma.doctor.findMany({
+        where: { clinicId },
+        orderBy: { nameRu: "asc" },
+        include: {
+          services: { include: { service: { select: { id: true, nameRu: true } } } },
+          _count: { select: { bookings: true } },
+        },
+      }),
+      loadDoctorReviewStats(clinicId),
+    ]);
+
+    return NextResponse.json({
+      doctors: doctors.map((d) => ({
+        ...d,
+        averageRating: reviewStats.get(d.id)?.averageRating ?? 0,
+        reviewCount: reviewStats.get(d.id)?.reviewCount ?? 0,
+      })),
     });
-    return NextResponse.json({ doctors });
   } catch {
     return NextResponse.json({ error: "Ошибка загрузки" }, { status: 500 });
   }

@@ -6,6 +6,10 @@ import { assertAdminApiSession } from "@/lib/admin-api-guard";
 import { rateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { getClientIp } from "@/lib/auth-guard";
 import { writeAudit } from "@/lib/audit";
+import { uiStatusToDb, mapBookingToAppointment } from "@/lib/admin/mappers";
+import type { AppointmentStatus } from "@/lib/admin/types";
+
+export const dynamic = "force-dynamic";
 
 const ALLOWED_STATUS = new Set<BookingStatus>([
   "PENDING",
@@ -35,12 +39,19 @@ export async function GET(request: NextRequest) {
   const clinicId = await requireClinicId(request);
   const { searchParams } = request.nextUrl;
   const statusParam = searchParams.get("status");
-  const status =
-    statusParam && ALLOWED_STATUS.has(statusParam as BookingStatus)
-      ? (statusParam as BookingStatus)
-      : null;
-  const page = Math.max(1, Math.min(1000, parseInt(searchParams.get("page") ?? "1", 10) || 1));
-  const limit = 20;
+  const search = (searchParams.get("search") ?? "").trim().toLowerCase();
+  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10) || 1);
+  const pageSize = Math.min(50, Math.max(1, parseInt(searchParams.get("pageSize") ?? "20", 10) || 20));
+
+  let dbStatus: BookingStatus | null = null;
+  if (statusParam && statusParam !== "ALL") {
+    const uiStatus = statusParam as AppointmentStatus;
+    if (["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"].includes(uiStatus)) {
+      dbStatus = uiStatusToDb(uiStatus);
+    } else if (ALLOWED_STATUS.has(statusParam as BookingStatus)) {
+      dbStatus = statusParam as BookingStatus;
+    }
+  }
 
   try {
     const now = new Date();
@@ -49,18 +60,45 @@ export async function GET(request: NextRequest) {
     const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()).toISOString().slice(0, 10);
     const yearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate()).toISOString().slice(0, 10);
 
-    const where = { clinicId, ...(status ? { status } : {}) };
+    const where = {
+      clinicId,
+      ...(dbStatus ? { status: dbStatus } : {}),
+      ...(search
+        ? {
+            OR: [
+              { firstName: { contains: search, mode: "insensitive" as const } },
+              { lastName: { contains: search, mode: "insensitive" as const } },
+              { phone: { contains: search } },
+              { service: { nameRu: { contains: search, mode: "insensitive" as const } } },
+              { doctor: { nameRu: { contains: search, mode: "insensitive" as const } } },
+              {
+                patient: {
+                  OR: [
+                    { firstName: { contains: search, mode: "insensitive" as const } },
+                    { lastName: { contains: search, mode: "insensitive" as const } },
+                    { phone: { contains: search } },
+                    { email: { contains: search, mode: "insensitive" as const } },
+                  ],
+                },
+              },
+            ],
+          }
+        : {}),
+    };
 
     const [bookings, total, statsToday, statsWeek, statsMonth, statsYear] =
       await Promise.all([
         prisma.booking.findMany({
           where,
           orderBy: [{ date: "desc" }, { timeSlot: "desc" }],
-          skip: (page - 1) * limit,
-          take: limit,
+          skip: (page - 1) * pageSize,
+          take: pageSize,
           include: {
             service: { select: { nameRu: true, price: true } },
             doctor: { select: { nameRu: true } },
+            patient: {
+              select: { id: true, firstName: true, lastName: true, phone: true },
+            },
           },
         }),
         prisma.booking.count({ where }),
@@ -87,8 +125,8 @@ export async function GET(request: NextRequest) {
     ]);
 
     return NextResponse.json({
-      bookings,
-      pagination: { total, page, pages: Math.ceil(total / limit) },
+      bookings: bookings.map(mapBookingToAppointment),
+      pagination: { total, page, pages: Math.ceil(total / pageSize), pageSize },
       stats: {
         bookings: { today: statsToday, week: statsWeek, month: statsMonth, year: statsYear },
         revenue: { day: revDay, week: revWeek, month: revMonth, year: revYear },
@@ -112,15 +150,24 @@ export async function PATCH(request: NextRequest) {
 
   const clinicId = await requireClinicId(request);
 
-  let body: { id?: string; status?: BookingStatus; rejectionReason?: string };
+  let body: { id?: string; status?: AppointmentStatus | BookingStatus; rejectionReason?: string };
   try {
     body = (await request.json()) as typeof body;
   } catch {
     return NextResponse.json({ error: "Неверный запрос" }, { status: 400 });
   }
 
-  const { id, status, rejectionReason } = body;
-  if (!id || !status || !ALLOWED_STATUS.has(status)) {
+  const { id, rejectionReason } = body;
+  let status: BookingStatus | undefined;
+  if (body.status) {
+    if (["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"].includes(body.status as string)) {
+      status = uiStatusToDb(body.status as AppointmentStatus);
+    } else if (ALLOWED_STATUS.has(body.status as BookingStatus)) {
+      status = body.status as BookingStatus;
+    }
+  }
+
+  if (!id || !status) {
     return NextResponse.json({ error: "Требуются id и корректный status" }, { status: 400 });
   }
 
@@ -147,8 +194,11 @@ export async function PATCH(request: NextRequest) {
         ...(rejectionReason ? { rejectionReason: rejectionReason.slice(0, 500) } : {}),
       },
       include: {
-        service: { select: { nameRu: true } },
+        service: { select: { nameRu: true, price: true } },
         doctor: { select: { nameRu: true } },
+        patient: {
+          select: { id: true, firstName: true, lastName: true, phone: true },
+        },
       },
     });
 
@@ -162,7 +212,9 @@ export async function PATCH(request: NextRequest) {
       metadata: { status, from: current.status },
     });
 
-    return NextResponse.json({ booking });
+    return NextResponse.json({
+      booking: mapBookingToAppointment(booking),
+    });
   } catch {
     return NextResponse.json({ error: "Ошибка обновления" }, { status: 500 });
   }

@@ -12,37 +12,41 @@ export type Action =
   | "service:create"
   | "service:update"
   | "service:delete"
+  | "patient:read"
+  | "patient:create"
+  | "patient:update"
+  | "patient:delete"
+  | "dashboard:read"
+  | "analytics:read"
   | "audit:read"
   | "clinic:manage";
 
 const ROLE_PERMISSIONS: Record<UserRole, ReadonlySet<Action>> = {
   OWNER: new Set([
-    "booking:read",
-    "booking:update",
-    "booking:delete",
-    "doctor:read",
-    "doctor:create",
-    "doctor:update",
-    "doctor:delete",
-    "service:read",
-    "service:create",
-    "service:update",
-    "service:delete",
-    "audit:read",
-    "clinic:manage",
+    "booking:read", "booking:update", "booking:delete",
+    "doctor:read", "doctor:create", "doctor:update", "doctor:delete",
+    "service:read", "service:create", "service:update", "service:delete",
+    "patient:read", "patient:create", "patient:update", "patient:delete",
+    "dashboard:read", "analytics:read",
+    "audit:read", "clinic:manage",
   ]),
   ADMIN: new Set([
-    "booking:read",
-    "booking:update",
-    "doctor:read",
-    "doctor:create",
-    "doctor:update",
-    "service:read",
-    "service:create",
-    "service:update",
+    "booking:read", "booking:update",
+    "doctor:read", "doctor:create", "doctor:update",
+    "service:read", "service:create", "service:update",
+    "patient:read", "patient:create", "patient:update",
+    "dashboard:read", "analytics:read",
     "audit:read",
   ]),
-  DOCTOR: new Set(["booking:read", "booking:update", "doctor:read"]),
+  DOCTOR: new Set([
+    "booking:read", "booking:update",
+    "doctor:read",
+    "patient:read",
+  ]),
+  RECEPTIONIST: new Set([
+    "booking:read", "booking:update",
+    "patient:read", "patient:create", "patient:update",
+  ]),
 };
 
 export interface AuthSubject {
@@ -71,7 +75,6 @@ export class ForbiddenError extends Error {
   }
 }
 
-/** Map HTTP route + method to required action. */
 export function actionForAdminRoute(
   pathname: string,
   method: string
@@ -91,6 +94,18 @@ export function actionForAdminRoute(
     if (method === "POST") return "service:create";
     if (method === "PUT") return "service:update";
     if (method === "DELETE") return "service:delete";
+  }
+  if (pathname.startsWith("/api/admin/patients")) {
+    if (method === "GET") return "patient:read";
+    if (method === "POST") return "patient:create";
+    if (method === "PATCH") return "patient:update";
+    if (method === "DELETE") return "patient:delete";
+  }
+  if (pathname === "/api/admin/dashboard") {
+    if (method === "GET") return "dashboard:read";
+  }
+  if (pathname === "/api/admin/analytics") {
+    if (method === "GET") return "analytics:read";
   }
   return null;
 }

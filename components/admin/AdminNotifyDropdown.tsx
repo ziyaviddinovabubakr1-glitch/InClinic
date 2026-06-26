@@ -3,29 +3,23 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { INotifications } from "./icons";
-
-interface PendingBooking {
-  id: string;
-  firstName: string;
-  lastName: string;
-  date: string;
-  timeSlot: string;
-  service: { nameRu: string };
-  doctor: { nameRu: string };
-}
+import type { Appointment } from "@/lib/admin/types";
 
 export default function AdminNotifyDropdown() {
   const [open, setOpen] = useState(false);
-  const [items, setItems] = useState<PendingBooking[]>([]);
+  const [items, setItems] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   async function load() {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/bookings?status=PENDING", { credentials: "include" });
+      const res = await fetch("/api/admin/bookings?status=PENDING&pageSize=8", {
+        credentials: "include",
+        cache: "no-store",
+      });
       if (!res.ok) return;
-      const data = (await res.json()) as { bookings?: PendingBooking[] };
+      const data = (await res.json()) as { bookings?: Appointment[] };
       setItems(data.bookings ?? []);
     } catch {
       /* ignore */
@@ -74,21 +68,19 @@ export default function AdminNotifyDropdown() {
             <div className="oa-notify-empty">Нет ожидающих заявок</div>
           ) : (
             <ul className="oa-notify-list">
-              {items.slice(0, 8).map((b) => (
+              {items.map((b) => (
                 <li key={b.id}>
                   <Link
                     href="/admin/appointments"
                     className="oa-notify-item"
                     onClick={() => setOpen(false)}
                   >
-                    <div className="oa-notify-item-title">
-                      {b.firstName} {b.lastName}
-                    </div>
+                    <div className="oa-notify-item-title">{b.patientName}</div>
                     <div className="oa-notify-item-sub">
-                      {b.service.nameRu} · {b.doctor.nameRu}
+                      {b.serviceName} · {b.doctorName}
                     </div>
                     <div className="oa-notify-item-meta">
-                      {b.date.slice(8, 10)}.{b.date.slice(5, 7)} · {b.timeSlot}
+                      {b.date.slice(8, 10)}.{b.date.slice(5, 7)} · {b.time}
                     </div>
                   </Link>
                 </li>

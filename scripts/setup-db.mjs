@@ -31,6 +31,8 @@ export async function setupDatabase() {
     console.log("→ База уже настроена, синхронизация схемы...");
     execSync("npx prisma generate", { stdio: "inherit", env: process.env });
     execSync("npx prisma db push", { stdio: "inherit", env: process.env });
+    console.log("→ Backfill patients from bookings...");
+    execSync("node scripts/backfill-patients.mjs", { stdio: "inherit", env: process.env });
     return;
   }
 

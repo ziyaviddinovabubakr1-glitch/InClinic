@@ -7,10 +7,26 @@ import { MotionPage } from "@/components/admin/motion";
 import { IContent } from "@/components/admin/icons";
 
 const TABS = [
-  { id: "contacts", label: "Контакты" },
-  { id: "hero", label: "Главная" },
-  { id: "social", label: "Соцсети" },
-  { id: "promo", label: "Акции" },
+  {
+    id: "contacts",
+    label: "Контакты",
+    hint: "Телефон, email и адрес на странице «Контакты» и в подвале сайта. После изменения нажмите «Сохранить».",
+  },
+  {
+    id: "hero",
+    label: "Главная",
+    hint: "Текст на главной странице: слоган и блок «О клинике». Логотип настраивается в Настройках.",
+  },
+  {
+    id: "social",
+    label: "Соцсети",
+    hint: "Ссылки на Telegram и Instagram — отображаются иконками в шапке и подвале сайта.",
+  },
+  {
+    id: "promo",
+    label: "Акции",
+    hint: "Баннер акции на главной: заголовок и короткий текст. Можно отключить, очистив поля.",
+  },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -28,6 +44,8 @@ export default function ContentPage() {
   const [promoText, setPromoText] = useState("Действует до конца месяца для новых пациентов.");
   const [saved, setSaved] = useState(false);
 
+  const activeTab = TABS.find((t) => t.id === tab)!;
+
   function save() {
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -37,11 +55,16 @@ export default function ContentPage() {
     <MotionPage style={{ display: "flex", flexDirection: "column", gap: 18, maxWidth: 860, margin: "0 auto", width: "100%" }}>
       <div className="oa-card oa-card-pad">
         <SectionHeader
-          title="Управление контентом"
-          sub="Редактирование публичного сайта без кода"
-          action={<span className="oa-badge oa-badge-confirmed"><span className="oa-badge-dot" /> UI готов</span>}
+          title="Контент сайта"
+          sub="Редактируйте тексты и контакты — изменения появятся на публичном сайте"
         />
-        <div className="oa-chips" style={{ marginBottom: 18 }}>
+
+        <div className="oa-hint-box" style={{ marginBottom: 16 }}>
+          <strong>Как пользоваться:</strong> выберите раздел ниже, измените поля и нажмите «Сохранить изменения».
+          Логотип, favicon и бренд — в разделе <strong>Настройки</strong>.
+        </div>
+
+        <div className="oa-chips" style={{ marginBottom: 14 }}>
           {TABS.map((t) => (
             <button key={t.id} type="button" className={`oa-chip ${tab === t.id ? "oa-chip-active" : ""}`} onClick={() => setTab(t.id)}>
               {t.label}
@@ -49,25 +72,27 @@ export default function ContentPage() {
           ))}
         </div>
 
+        <p className="oa-tab-hint">{activeTab.hint}</p>
+
         {tab === "contacts" && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-            <Field label="Телефон" value={phone} onChange={setPhone} />
-            <Field label="Email" value={email} onChange={setEmail} />
+            <Field label="Телефон на сайте" value={phone} onChange={setPhone} />
+            <Field label="Email на сайте" value={email} onChange={setEmail} />
             <div style={{ gridColumn: "1 / -1" }}>
-              <Field label="Адрес" value={address} onChange={setAddress} />
+              <Field label="Адрес клиники" value={address} onChange={setAddress} />
             </div>
           </div>
         )}
 
         {tab === "hero" && (
           <div style={{ display: "grid", gap: 14 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 16, padding: 16, background: "var(--oa-surface-2)", borderRadius: 14, border: "1px solid var(--oa-border)" }}>
-              <AdminBrandLogo variant="full" size="md" />
-              <div style={{ fontSize: 12.5, color: "var(--oa-text-soft)" }}>Логотип и бренд на главной странице</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 16, padding: 14, background: "var(--oa-surface-2)", borderRadius: 12, border: "1px solid var(--oa-border)" }}>
+              <AdminBrandLogo variant="full" size="md" context="site" />
+              <div style={{ fontSize: 12.5, color: "var(--oa-text-soft)" }}>Так логотип выглядит на главной (меняется в Настройках)</div>
             </div>
-            <Field label="Слоган" value={tagline} onChange={setTagline} />
+            <Field label="Слоган на главной" value={tagline} onChange={setTagline} />
             <div>
-              <label className="oa-label">О клинике</label>
+              <label className="oa-label">Текст «О клинике»</label>
               <textarea className="oa-textarea" rows={4} value={about} onChange={(e) => setAbout(e.target.value)} />
             </div>
           </div>
@@ -75,8 +100,8 @@ export default function ContentPage() {
 
         {tab === "social" && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-            <Field label="Telegram" value={telegram} onChange={setTelegram} />
-            <Field label="Instagram" value={instagram} onChange={setInstagram} />
+            <Field label="Ссылка Telegram" value={telegram} onChange={setTelegram} />
+            <Field label="Ссылка Instagram" value={instagram} onChange={setInstagram} />
           </div>
         )}
 

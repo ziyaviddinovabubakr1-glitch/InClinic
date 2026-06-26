@@ -27,6 +27,7 @@ import {
   Menu,
   ChevronRight,
   ChevronDown,
+  ChevronLeft,
   Check,
   Eye,
   EyeOff,
@@ -91,6 +92,7 @@ export const IClose = wrap(X);
 export const IMenu = wrap(Menu);
 export const IChevronRight = wrap(ChevronRight);
 export const IChevronDown = wrap(ChevronDown);
+export const IArrowLeft = wrap(ChevronLeft);
 export const ICheck = wrap(Check);
 export const IEye = wrap(Eye);
 export const IEyeOff = wrap(EyeOff);

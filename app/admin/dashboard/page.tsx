@@ -6,17 +6,40 @@ import { getDashboardData, money } from "@/lib/admin/services";
 import type { DashboardData } from "@/lib/admin/types";
 import { AreaChart, BarChart, Gauge } from "@/components/admin/charts";
 import {
-  KpiCard, Stars, StatusBadge, Avatar, SectionHeader, SkeletonCard, SkeletonRows,
+  KpiCard, Stars, StatusBadge, Avatar, SkeletonCard, ReviewStatusBadge,
 } from "@/components/admin/ui";
-import { MotionPage, MotionGrid, MotionItem } from "@/components/admin/motion";
+import { MotionPage, StaggerGrid, StaggerItem } from "@/components/admin/motion";
+import PageHeader from "@/components/admin/PageHeader";
 import {
-  IPatients, IAppointments, IMoney, ISpark, IHeart, ITrendUp, IDoctors, IReviews,
-  IServices, ICalendar, IChevronRight, IActivity,
+  IDoctors, IAppointments, IMoney, IServices, ICalendar, IChevronRight, IReviews,
 } from "@/components/admin/icons";
 
 function toSpark(series: { value: number }[]) {
   return series.map((p) => p.value);
 }
+
+const PRIMARY_KPIS = (data: DashboardData, revenueSpark: number[], apptSpark: number[]) => [
+  { label: "Доход за месяц", value: money(data.kpis.revenueMonth), tone: "green" as const, delta: "+12%", deltaDir: "up" as const, spark: revenueSpark },
+  { label: "Новых сегодня", value: String(data.kpis.newPatientsToday), tone: "blue" as const, delta: "регистрации", deltaDir: "up" as const, spark: apptSpark },
+  { label: "Записей сегодня", value: String(data.kpis.appointmentsToday), tone: "violet" as const, delta: `${data.kpis.cancelledAppointments} отм.`, deltaDir: (data.kpis.cancelledAppointments ? "down" : "flat") as "down" | "flat", spark: apptSpark },
+  { label: "Всего пациентов", value: String(data.kpis.totalPatients), tone: "sky" as const, delta: `${data.kpis.returningPatients} повтор.`, deltaDir: "flat" as const, spark: revenueSpark },
+  { label: "Health Score", value: String(data.executive.clinicHealthScore), tone: "amber" as const, delta: "из 100", deltaDir: "up" as const, spark: apptSpark },
+];
+
+const REVIEW_KPIS = (data: DashboardData, revenueSpark: number[]) => [
+  { label: "Рейтинг клиники", value: data.kpis.averageClinicRating.toFixed(1), tone: "amber" as const, delta: "из 5", deltaDir: "up" as const, spark: revenueSpark },
+  { label: "Отзывов за месяц", value: String(data.kpis.reviewsThisMonth), tone: "violet" as const, delta: `${data.kpis.pendingReviews} ожид.`, deltaDir: "flat" as const, spark: revenueSpark },
+  { label: "Лучший врач", value: data.overview.topRatedDoctor.name.split(" ")[0] ?? "—", tone: "blue" as const, delta: `${data.overview.topRatedDoctor.rating.toFixed(1)} ★`, deltaDir: "up" as const, spark: revenueSpark },
+];
+
+const SECONDARY_KPIS = (data: DashboardData, revenueSpark: number[], apptSpark: number[]) => [
+  { label: "Доход сегодня", value: money(data.kpis.revenueToday), tone: "green" as const, spark: revenueSpark },
+  { label: "Доход за неделю", value: money(data.kpis.revenueWeek), tone: "blue" as const, spark: revenueSpark },
+  { label: "Новых за неделю", value: String(data.kpis.newPatients), tone: "violet" as const, delta: "регистрации", deltaDir: "up" as const, spark: revenueSpark },
+  { label: "С визитами сегодня", value: String(data.kpis.patientsToday), tone: "amber" as const, spark: apptSpark },
+  { label: "Средний чек", value: money(data.kpis.avgCheck), tone: "sky" as const, spark: revenueSpark },
+  { label: "Загрузка", value: `${data.kpis.clinicLoad}%`, tone: "red" as const, spark: apptSpark },
+];
 
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -31,204 +54,196 @@ export default function DashboardPage() {
   const revenueSpark = toSpark(revenueSeries);
   const apptSpark = toSpark(appointmentsSeries);
 
+  const insights = [
+    { icon: IDoctors, tone: "blue", title: "Лучший врач", name: overview.bestDoctor.name, metric: overview.bestDoctor.metric },
+    { icon: IServices, tone: "green", title: "Топ услуга", name: overview.topService.name, metric: overview.topService.metric },
+    { icon: IAppointments, tone: "violet", title: "Загрузка", name: overview.busiestDoctor.name, metric: overview.busiestDoctor.metric },
+    { icon: ICalendar, tone: "amber", title: "Пиковый день", name: overview.busiestDay.label, metric: overview.busiestDay.metric },
+    { icon: IMoney, tone: "sky", title: "Лучший месяц", name: overview.mostProfitableMonth.label, metric: overview.mostProfitableMonth.metric },
+    { icon: IReviews, tone: "amber", title: "Топ врач", name: overview.topRatedDoctor.name, metric: `${overview.topRatedDoctor.rating.toFixed(1)} ★ · ${overview.topRatedDoctor.reviews} отз.` },
+  ];
+
   return (
-    <MotionPage className="oa-dashboard" style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-      {/* Главное для владельца — компактный обзор (мобильный) */}
-      <MotionItem>
-        <div className="oa-owner-spotlight">
-          <div className="oa-owner-spotlight-top">
-            <div>
-              <p className="oa-owner-spotlight-eyebrow">Главное сегодня</p>
-              <p className="oa-owner-spotlight-title">Доход за месяц</p>
-              <p className="oa-owner-spotlight-value">{money(kpis.revenueMonth)}</p>
-              <p className="oa-owner-spotlight-delta">+12% к прошлому месяцу</p>
+    <MotionPage className="oa-dash-v3">
+      <PageHeader
+        title="Обзор клиники"
+        sub={`${kpis.appointmentsToday} записей сегодня · загрузка ${kpis.clinicLoad}%`}
+        action={
+          <Link href="/admin/analytics" className="oa-btn oa-btn-ghost oa-btn-sm" style={{ textDecoration: "none" }}>
+            Аналитика <IChevronRight style={{ width: 12, height: 12 }} />
+          </Link>
+        }
+      />
+
+      <section className="oa-dash-v3-kpi">
+        <StaggerGrid className="oa-kpi-strip">
+          {PRIMARY_KPIS(data, revenueSpark, apptSpark).map((k) => (
+            <StaggerItem key={k.label}>
+              <KpiCard label={k.label} value={k.value} tone={k.tone} delta={k.delta} deltaDir={k.deltaDir} sparkData={k.spark} />
+            </StaggerItem>
+          ))}
+        </StaggerGrid>
+        <StaggerGrid className="oa-kpi-strip oa-kpi-strip--muted">
+          {REVIEW_KPIS(data, revenueSpark).map((k) => (
+            <StaggerItem key={k.label}>
+              <KpiCard label={k.label} value={k.value} tone={k.tone} delta={k.delta} deltaDir={k.deltaDir} sparkData={k.spark} />
+            </StaggerItem>
+          ))}
+        </StaggerGrid>
+        <StaggerGrid className="oa-kpi-strip oa-kpi-strip--muted">
+          {SECONDARY_KPIS(data, revenueSpark, apptSpark).map((k) => (
+            <StaggerItem key={k.label}>
+              <KpiCard label={k.label} value={k.value} tone={k.tone} delta={k.delta} deltaDir={k.deltaDir} sparkData={k.spark} />
+            </StaggerItem>
+          ))}
+        </StaggerGrid>
+      </section>
+
+      <section className="oa-dash-v3-body">
+        <div className="oa-dash-v3-main">
+          <div className="oa-dash-v3-charts">
+            <div className="oa-panel oa-panel-chart">
+              <div className="oa-panel-head">
+                <span className="oa-panel-title">Доход</span>
+                <span className="oa-panel-meta">14 дней</span>
+              </div>
+              <AreaChart data={revenueSeries} color="#30a46c" height={72} />
             </div>
-            <div className="oa-owner-spotlight-gauge">
-              <Gauge value={executive.clinicHealthScore} size={112} label="Health" />
+            <div className="oa-panel oa-panel-chart">
+              <div className="oa-panel-head">
+                <span className="oa-panel-title">Записи</span>
+                <span className="oa-panel-meta">14 дней</span>
+              </div>
+              <BarChart data={appointmentsSeries} height={72} />
             </div>
           </div>
-          <div className="oa-owner-spotlight-stats">
-            <div className="oa-owner-spotlight-stat">
-              <span className="oa-owner-spotlight-stat-val">{kpis.patientsToday}</span>
-              <span className="oa-owner-spotlight-stat-lbl">Пациентов</span>
-            </div>
-            <div className="oa-owner-spotlight-stat">
-              <span className="oa-owner-spotlight-stat-val">{kpis.appointmentsToday}</span>
-              <span className="oa-owner-spotlight-stat-lbl">Записей</span>
-            </div>
-            <div className="oa-owner-spotlight-stat">
-              <span className="oa-owner-spotlight-stat-val">{overview.clinicRating.toFixed(1)}</span>
-              <span className="oa-owner-spotlight-stat-lbl">Рейтинг</span>
-            </div>
-          </div>
-        </div>
-      </MotionItem>
 
-      {/* Executive KPI hero row */}
-      <MotionGrid className="oa-kpi-hero-grid">
-        <MotionItem>
-          <KpiCard hero label="Доход за месяц" value={money(kpis.revenueMonth)} icon={IMoney} tone="green" delta="+12% к прошлому" deltaDir="up" sparkData={revenueSpark} />
-        </MotionItem>
-        <MotionItem>
-          <KpiCard hero label="Пациентов сегодня" value={String(kpis.patientsToday)} icon={IPatients} tone="blue" delta="за сутки" deltaDir="flat" sparkData={apptSpark} />
-        </MotionItem>
-        <MotionItem>
-          <KpiCard hero label="Записей сегодня" value={String(kpis.appointmentsToday)} icon={IAppointments} tone="sky" delta={`${kpis.cancelledAppointments} отменён.`} deltaDir={kpis.cancelledAppointments ? "down" : "flat"} sparkData={apptSpark} />
-        </MotionItem>
-        <MotionItem>
-          <KpiCard hero label="Рейтинг клиники" value={overview.clinicRating.toFixed(1)} icon={IReviews} tone="amber" delta="средняя оценка" deltaDir="up" sparkData={revenueSpark} />
-        </MotionItem>
-        <MotionItem>
-          <KpiCard hero label="Health Score" value={String(executive.clinicHealthScore)} icon={IActivity} tone="green" delta="из 100" deltaDir="up" sparkData={apptSpark} />
-        </MotionItem>
-      </MotionGrid>
-
-      {/* Secondary metrics */}
-      <MotionGrid className="oa-kpi-grid-secondary">
-        <MotionItem><KpiCard label="Доход сегодня" value={money(kpis.revenueToday)} icon={IMoney} tone="green" sparkData={revenueSpark} /></MotionItem>
-        <MotionItem><KpiCard label="Доход за неделю" value={money(kpis.revenueWeek)} icon={ITrendUp} tone="blue" sparkData={revenueSpark} /></MotionItem>
-        <MotionItem><KpiCard label="Новых пациентов" value={String(kpis.newPatients)} icon={ISpark} tone="violet" delta="за неделю" deltaDir="up" sparkData={revenueSpark} /></MotionItem>
-        <MotionItem><KpiCard label="Средний чек" value={money(kpis.avgCheck)} icon={IServices} tone="amber" sparkData={revenueSpark} /></MotionItem>
-        <MotionItem><KpiCard label="Загрузка клиники" value={`${kpis.clinicLoad}%`} icon={IHeart} tone="red" sparkData={apptSpark} /></MotionItem>
-      </MotionGrid>
-
-      {/* Lifetime executive panel */}
-      <MotionItem>
-        <div className="oa-executive-panel">
-          <SectionHeader title="Итоговые показатели" sub="Накопительные данные за всё время работы клиники" />
-          <div className="oa-executive-panel-inner">
-            <div className="oa-health-block">
-              <Gauge value={executive.clinicHealthScore} size={168} label="Health Score" />
-              <span className="oa-health-label">Индекс здоровья клиники</span>
-            </div>
-            <div className="oa-lifetime-grid">
-              <LifetimeStat label="Общий доход" value={money(executive.totalLifetimeRevenue)} tone="green" />
-              <LifetimeStat label="Всего пациентов" value={String(executive.totalLifetimePatients)} tone="blue" />
-              <LifetimeStat label="Завершённых приёмов" value={String(executive.totalCompletedAppointments)} tone="violet" />
-              <LifetimeStat label="Средний рейтинг врачей" value={executive.averageDoctorRating.toFixed(1)} tone="amber" />
-            </div>
-          </div>
-        </div>
-      </MotionItem>
-
-      <div>
-        <SectionHeader title="Бизнес-обзор" sub="Ключевые лидеры и закономерности" />
-        <MotionGrid className="oa-grid-auto">
-          <MotionItem><OverviewCard icon={IDoctors} tone="blue" title="Лучший врач" name={overview.bestDoctor.name} metric={overview.bestDoctor.metric} /></MotionItem>
-          <MotionItem><OverviewCard icon={IServices} tone="green" title="Прибыльная услуга" name={overview.topService.name} metric={overview.topService.metric} /></MotionItem>
-          <MotionItem><OverviewCard icon={IAppointments} tone="violet" title="Самый загруженный врач" name={overview.busiestDoctor.name} metric={overview.busiestDoctor.metric} /></MotionItem>
-          <MotionItem><OverviewCard icon={ICalendar} tone="amber" title="Загруженный день" name={overview.busiestDay.label} metric={overview.busiestDay.metric} /></MotionItem>
-          <MotionItem><OverviewCard icon={IMoney} tone="sky" title="Прибыльный месяц" name={overview.mostProfitableMonth.label} metric={overview.mostProfitableMonth.metric} /></MotionItem>
-          <MotionItem><OverviewCard icon={IReviews} tone="amber" title="Рейтинг клиники" name={`${overview.clinicRating.toFixed(1)} из 5`} metric="средняя оценка" /></MotionItem>
-        </MotionGrid>
-      </div>
-
-      <div className="oa-grid-charts">
-        <MotionItem>
-          <div className="oa-chart-card">
-            <SectionHeader title="Доход" sub="Последние 14 дней" />
-            <AreaChart data={revenueSeries} color="#059669" />
-          </div>
-        </MotionItem>
-        <MotionItem>
-          <div className="oa-chart-card">
-            <SectionHeader title="Записи" sub="Последние 14 дней" />
-            <BarChart data={appointmentsSeries} />
-          </div>
-        </MotionItem>
-      </div>
-
-      <div className="oa-grid-charts">
-        <MotionItem>
-          <div className="oa-card">
-            <div className="oa-card-pad" style={{ paddingBottom: 4 }}>
-              <SectionHeader title="Последние записи" action={<Link href="/admin/appointments" className="oa-btn oa-btn-soft oa-btn-sm">Все <IChevronRight style={{ width: 14, height: 14 }} /></Link>} />
-            </div>
-            <div className="oa-table-wrap">
-              <table className="oa-table">
-                <tbody>
-                  {recentAppointments.map((a) => (
-                    <tr key={a.id}>
-                      <td>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                          <Avatar name={a.patientName} size={34} />
-                          <div>
-                            <div className="oa-cell-strong">{a.patientName}</div>
-                            <div className="oa-cell-soft" style={{ fontSize: 12 }}>{a.serviceName}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="oa-cell-soft">{a.date}</td>
-                      <td><StatusBadge status={a.status} /></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </MotionItem>
-
-        <MotionItem>
-          <div className="oa-card">
-            <div className="oa-card-pad" style={{ paddingBottom: 4 }}>
-              <SectionHeader title="Последние отзывы" action={<Link href="/admin/reviews" className="oa-btn oa-btn-soft oa-btn-sm">Все <IChevronRight style={{ width: 14, height: 14 }} /></Link>} />
-            </div>
-            <div style={{ padding: "4px 22px 18px", display: "flex", flexDirection: "column", gap: 12 }}>
-              {latestReviews.map((r) => (
-                <div key={r.id} style={{ display: "flex", gap: 11, paddingBottom: 12, borderBottom: "1px solid var(--oa-border)" }}>
-                  <Avatar name={r.patientName} size={34} tone="violet" />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-                      <span className="oa-cell-strong" style={{ fontSize: 13 }}>{r.patientName}</span>
-                      <Stars rating={r.rating} size={13} />
-                    </div>
-                    <div className="oa-cell-soft" style={{ fontSize: 12.5, marginTop: 3 }}>{r.comment}</div>
-                    <div style={{ fontSize: 11.5, color: "var(--oa-text-faint)", marginTop: 3 }}>→ {r.doctorName}</div>
-                  </div>
+          <div className="oa-dash-v3-insights">
+            {insights.map(({ icon: Icon, tone, title, name, metric }) => (
+              <div key={title} className="oa-insight-tile">
+                <div className={`oa-insight-icon oa-tone-${tone}`}>
+                  <Icon style={{ width: 12, height: 12 }} />
                 </div>
-              ))}
+                <div className="oa-insight-body">
+                  <div className="oa-insight-label">{title}</div>
+                  <div className="oa-insight-name">{name}</div>
+                  <div className="oa-insight-metric">{metric}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <aside className="oa-dash-v3-rail">
+          <div className="oa-panel oa-panel-rail">
+            <div className="oa-panel-head">
+              <span className="oa-panel-title">Показатели</span>
+            </div>
+            <div className="oa-rail-gauge">
+              <Gauge value={executive.clinicHealthScore} size={64} label="Health" />
+            </div>
+            <div className="oa-rail-stats">
+              <RailStat label="Общий доход" value={money(executive.totalLifetimeRevenue)} tone="green" />
+              <RailStat label="Всего пациентов" value={String(kpis.totalPatients)} tone="blue" />
+              <RailStat label="Приёмов" value={String(executive.totalCompletedAppointments)} tone="violet" />
+              <RailStat label="Рейтинг врачей" value={executive.averageDoctorRating.toFixed(1)} tone="amber" />
             </div>
           </div>
-        </MotionItem>
-      </div>
+        </aside>
+      </section>
+
+      <section className="oa-dash-v3-split">
+        <div className="oa-panel oa-panel-table">
+          <div className="oa-panel-head oa-panel-head--row">
+            <span className="oa-panel-title">Последние записи</span>
+            <Link href="/admin/appointments" className="oa-link-sm">
+              Все <IChevronRight style={{ width: 11, height: 11 }} />
+            </Link>
+          </div>
+          <div className="oa-table-wrap">
+            <table className="oa-table oa-table-dense">
+              <thead>
+                <tr>
+                  <th>Пациент</th>
+                  <th>Дата</th>
+                  <th>Статус</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentAppointments.map((a) => (
+                  <tr key={a.id}>
+                    <td>
+                      <div className="oa-cell-user">
+                        <Avatar name={a.patientName} size={24} />
+                        <div>
+                          {a.patientId ? (
+                            <Link href={`/admin/patients/${a.patientId}`} className="oa-cell-link oa-cell-strong">
+                              {a.patientName}
+                            </Link>
+                          ) : (
+                            <div className="oa-cell-strong">{a.patientName}</div>
+                          )}
+                          <div className="oa-cell-soft">{a.patientPhone} · {a.serviceName}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="oa-cell-soft">{a.date}</td>
+                    <td><StatusBadge status={a.status} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="oa-panel oa-panel-table">
+          <div className="oa-panel-head oa-panel-head--row">
+            <span className="oa-panel-title">Последние отзывы</span>
+            <Link href="/admin/reviews" className="oa-link-sm">
+              Все <IChevronRight style={{ width: 11, height: 11 }} />
+            </Link>
+          </div>
+          <div className="oa-reviews-dense">
+            {latestReviews.map((r) => (
+              <div key={r.id} className="oa-review-dense">
+                <Avatar name={r.patientName} size={24} tone="violet" />
+                <div className="oa-review-dense-body">
+                  <div className="oa-review-dense-top">
+                    <span className="oa-cell-strong">{r.patientName}</span>
+                    <Stars rating={r.rating} size={10} />
+                  <ReviewStatusBadge status={r.status} />
+                  </div>
+                  <div className="oa-cell-soft oa-review-dense-text">{r.comment}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </MotionPage>
   );
 }
 
-
-function LifetimeStat({ label, value, tone }: { label: string; value: string; tone: string }) {
+function RailStat({ label, value, tone }: { label: string; value: string; tone: string }) {
   return (
-    <div className="oa-lifetime-stat">
-      <div style={{ fontSize: 12.5, color: "var(--oa-text-soft)", fontWeight: 500 }}>{label}</div>
-      <div className={`oa-lifetime-stat-value oa-lifetime-stat-value--${tone}`}>{value}</div>
-    </div>
-  );
-}
-
-function OverviewCard({ icon: Icon, tone, title, name, metric }: {
-  icon: (p: React.SVGProps<SVGSVGElement>) => JSX.Element; tone: string; title: string; name: string; metric: string;
-}) {
-  return (
-    <div className="oa-overview-card" style={{ width: "100%", height: "100%" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
-        <div className={`oa-kpi-icon oa-tone-${tone}`} style={{ margin: 0, width: 40, height: 40 }}>
-          <Icon style={{ width: 19, height: 19 }} />
-        </div>
-        <span style={{ fontSize: 12.5, color: "var(--oa-text-faint)", fontWeight: 600, letterSpacing: "0.02em" }}>{title}</span>
-      </div>
-      <div className="oa-overview-card-name">{name}</div>
-      <div style={{ fontSize: 13, color: "var(--oa-text-soft)", marginTop: 5 }}>{metric}</div>
+    <div className="oa-rail-stat">
+      <span className="oa-rail-stat-label">{label}</span>
+      <span className={`oa-rail-stat-value oa-rail-stat-value--${tone}`}>{value}</span>
     </div>
   );
 }
 
 function DashboardSkeleton() {
   return (
-    <div className="oa-dashboard" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      <SkeletonCard height={200} />
-      <div className="oa-kpi-hero-grid">{Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} height={152} />)}</div>
-      <div className="oa-kpi-grid-secondary">{Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} height={132} />)}</div>
-      <SkeletonCard height={220} />
+    <div className="oa-dash-v3">
+      <SkeletonCard height={36} />
+      <div className="oa-kpi-strip">
+        {Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} height={44} />)}
+      </div>
+      <div className="oa-dash-v3-body">
+        <SkeletonCard height={180} />
+        <SkeletonCard height={180} />
+      </div>
     </div>
   );
 }

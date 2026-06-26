@@ -26,18 +26,18 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="flex flex-col px-4 sm:px-6 py-6 sm:py-8 md:py-12 site-page">
+    <div className="flex flex-col px-3 sm:px-4 py-4 sm:py-5 md:py-6 site-page">
 
-      <div className="flex-1 flex flex-col items-center justify-center text-center max-w-2xl mx-auto w-full">
-        <AnimatedSection animate className="center-frost-panel w-full px-5 py-10 sm:px-8 sm:py-12 md:px-12 md:py-14">
+      <div className="flex-1 flex flex-col items-center justify-center text-center max-w-xl mx-auto w-full">
+        <AnimatedSection animate className="center-frost-panel w-full px-4 py-6 sm:px-6 sm:py-8">
 
-        <div className="mb-8">
-          <BrandLogo size="md" />
+        <div className="mb-4">
+          <BrandLogo size="sm" />
         </div>
 
         <h1
-          className="neon-title mb-3 text-theme"
-          style={{ fontSize: "clamp(2.2rem, 5.5vw, 3.6rem)" }}
+          className="neon-title mb-2 text-theme"
+          style={{ fontSize: "clamp(1.65rem, 4vw, 2.35rem)" }}
         >
           <span className="brand-in font-bold">In</span>
           <span className="brand-clinic font-bold">Clinic</span>

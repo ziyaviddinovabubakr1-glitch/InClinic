@@ -1,0 +1,77 @@
+/* InClinic Admin — Design Tokens (8px grid · dense) */
+
+.owner-admin {
+  --oa-space-0: 0;
+  --oa-space-1: 4px;
+  --oa-space-2: 8px;
+  --oa-space-3: 12px;
+  --oa-space-4: 16px;
+  --oa-space-5: 20px;
+  --oa-space-6: 24px;
+  --oa-space-8: 32px;
+
+  --oa-text-2xs: 10px;
+  --oa-text-xs: 11px;
+  --oa-text-sm: 12px;
+  --oa-text-base: 13px;
+  --oa-text-lg: 14px;
+  --oa-text-xl: 16px;
+  --oa-text-2xl: 18px;
+
+  --oa-sidebar-w: 200px;
+  --oa-topbar-h: 44px;
+  --oa-nav-item-h: 26px;
+  --oa-input-h: 30px;
+  --oa-table-row-h: 36px;
+  --oa-kpi-min-h: 44px;
+
+  --oa-radius-xs: 4px;
+  --oa-radius-sm: 5px;
+  --oa-radius: 6px;
+  --oa-radius-lg: 8px;
+  --oa-radius-xl: 10px;
+  --oa-radius-full: 9999px;
+
+  --oa-bg: #09090b;
+  --oa-bg-2: #0c0c0e;
+  --oa-bg-3: #131316;
+  --oa-surface: rgba(18, 18, 20, 0.92);
+  --oa-surface-2: rgba(24, 24, 27, 0.88);
+  --oa-surface-solid: #141416;
+  --oa-surface-hover: rgba(255, 255, 255, 0.045);
+  --oa-border: rgba(255, 255, 255, 0.08);
+  --oa-border-strong: rgba(255, 255, 255, 0.12);
+  --oa-text: #fafafa;
+  --oa-text-soft: #a1a1aa;
+  --oa-text-faint: #71717a;
+
+  --oa-primary: #5e6ad2;
+  --oa-primary-hover: #7c85db;
+  --oa-accent: #5e6ad2;
+  --oa-accent-soft: rgba(94, 106, 210, 0.14);
+  --oa-accent-glow: rgba(94, 106, 210, 0.2);
+  --oa-accent-2: #a5b4fc;
+
+  --oa-gold: #f59e0b;
+  --oa-gold-light: #fbbf24;
+  --oa-gold-soft: rgba(245, 158, 11, 0.1);
+
+  --oa-success: #30a46c;
+  --oa-success-soft: rgba(48, 164, 108, 0.12);
+  --oa-warning: #f5a623;
+  --oa-warning-soft: rgba(245, 166, 35, 0.12);
+  --oa-danger: #e5484d;
+  --oa-danger-soft: rgba(229, 72, 77, 0.1);
+  --oa-violet: #8b5cf6;
+
+  --oa-shadow-sm: 0 0 0 1px var(--oa-border);
+  --oa-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.24);
+  --oa-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.28);
+
+  --oa-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --oa-duration-fast: 0.12s;
+  --oa-duration: 0.18s;
+
+  font-size: var(--oa-text-base);
+  line-height: 1.4;
+}

@@ -110,6 +110,7 @@ function build(): Dataset {
       id: `doc-${i + 1}`,
       photoUrl: null,
       fullName: `${last} ${first}`,
+      phone: `+992 90 ${100 + i} 00 ${pad(i + 1)}`,
       specialty: SPECIALTIES[i % SPECIALTIES.length],
       experienceYears: rngInt(rng, 3, 28),
       education: rngPick(rng, EDUCATION),
@@ -122,6 +123,7 @@ function build(): Dataset {
       },
       status: i === 8 ? "HIDDEN" : "ACTIVE",
       rating: 0,
+      reviewCount: 0,
       patientsCount: 0,
       appointmentsCount: 0,
       revenueGenerated: 0,
@@ -136,9 +138,16 @@ function build(): Dataset {
     const registeredDaysAgo = rngInt(rng, 0, 720);
     return {
       id: `pat-${i + 1}`,
+      firstName: first,
+      lastName: last,
       fullName: `${last} ${first}`,
       phone: `+992 ${rngInt(rng, 90, 98)} ${rngInt(rng, 100, 999)}-${rngInt(rng, 10, 99)}-${rngInt(rng, 10, 99)}`,
       email: `patient${i + 1}@mail.tj`,
+      birthDate: isoDaysAgo(rngInt(rng, 6570, 25550)),
+      gender: rngPick(rng, ["MALE", "FEMALE", "OTHER", "UNKNOWN"] as const),
+      address: null,
+      notes: null,
+      age: rngInt(rng, 18, 70),
       registeredAt: isoDaysAgo(registeredDaysAgo),
       lastVisitAt: null,
       segment: "NEW",
@@ -185,6 +194,7 @@ function build(): Dataset {
         id,
         patientId: patient.id,
         patientName: patient.fullName,
+        patientPhone: patient.phone,
         doctorId: doctor.id,
         doctorName: doctor.fullName,
         serviceId: service.id,
@@ -220,11 +230,12 @@ function build(): Dataset {
         // ~55% of completed appointments get a review
         if (rng() < 0.55) {
           const rating = rngPick(rng, [3, 4, 4, 5, 5, 5, 5, 2]);
-          const visibility = rngPick<ReviewVisibility>(rng, [
-            "PUBLISHED", "PUBLISHED", "PUBLISHED", "PENDING", "HIDDEN",
+          const status = rngPick<import("@/lib/admin/types").ReviewStatus>(rng, [
+            "APPROVED", "APPROVED", "APPROVED", "PENDING", "REJECTED",
           ]);
           reviews.push({
             id: `rev-${id}`,
+            bookingId: id,
             appointmentId: id,
             doctorId: doctor.id,
             doctorName: doctor.fullName,
@@ -235,8 +246,7 @@ function build(): Dataset {
             rating,
             comment: REVIEW_COMMENTS[rating] ?? "Спасибо за приём.",
             date: completedAt as string,
-            visibility,
-            reply: rng() < 0.25 ? "Благодарим за ваш отзыв! Ждём вас снова." : null,
+            status,
           });
           patient.reviewsCount++;
         }
@@ -252,9 +262,11 @@ function build(): Dataset {
     const docReviews = reviews.filter((r) => r.doctorId === doctor.id);
     doctor.rating = docReviews.length
       ? Math.round(
-          (docReviews.reduce((s, r) => s + r.rating, 0) / docReviews.length) * 10,
+          (docReviews.filter((r) => r.status === "APPROVED").reduce((s, r) => s + r.rating, 0) /
+            Math.max(1, docReviews.filter((r) => r.status === "APPROVED").length)) * 10,
         ) / 10
       : rngFloat(rng, 4.2, 4.9, 1);
+    doctor.reviewCount = docReviews.filter((r) => r.status === "APPROVED").length;
     doctor.patientsCount = new Set(
       appointments.filter((a) => a.doctorId === doctor.id).map((a) => a.patientId),
     ).size;
