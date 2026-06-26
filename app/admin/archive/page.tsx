@@ -6,11 +6,20 @@ import { SkeletonCard } from "@/components/admin/ui";
 import { MotionPage, MotionGrid, MotionItem } from "@/components/admin/motion";
 import AdminIcon3d from "@/components/admin/AdminIcon3d";
 import PageHeader from "@/components/admin/PageHeader";
+import ArchiveGate from "@/components/admin/ArchiveGate";
 import {
   IAppointments, IPatients, IMoney, IReviews, IDoctors,
 } from "@/components/admin/icons";
 
 export default function ArchivePage() {
+  return (
+    <ArchiveGate>
+      <ArchiveContent />
+    </ArchiveGate>
+  );
+}
+
+function ArchiveContent() {
   const { data: summary, isLoading } = useArchiveSummary();
 
   return (

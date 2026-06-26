@@ -15,6 +15,7 @@ import type { ServiceInput } from "@/lib/admin/services";
 import { Modal, ConfirmDialog } from "@/components/admin/Modal";
 import { SkeletonRows, EmptyState } from "@/components/admin/ui";
 import { MotionPage } from "@/components/admin/motion";
+import SegmentedControl from "@/components/admin/SegmentedControl";
 import { IPlus, ISearch, IEdit, ITrash, IEye, IEyeOff, IServices } from "@/components/admin/icons";
 
 const EMPTY: ServiceInput = { name: "", description: "", price: 100, durationMin: 30, active: true };
@@ -147,10 +148,14 @@ export default function ServicesPage() {
             <div><label className="oa-label">Длит. (мин)</label><input className="oa-input" type="number" min={5} value={form.durationMin} onChange={(e) => setForm({ ...form, durationMin: Number(e.target.value) })} /></div>
             <div>
               <label className="oa-label">Статус</label>
-              <select className="oa-select" value={form.active ? "1" : "0"} onChange={(e) => setForm({ ...form, active: e.target.value === "1" })}>
-                <option value="1">Активна</option>
-                <option value="0">Скрыта</option>
-              </select>
+              <SegmentedControl
+                options={[
+                  { id: "1", label: "Активна" },
+                  { id: "0", label: "Скрыта" },
+                ]}
+                value={form.active ? "1" : "0"}
+                onChange={(v) => setForm({ ...form, active: v === "1" })}
+              />
             </div>
           </div>
         </div>

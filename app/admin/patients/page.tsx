@@ -16,6 +16,7 @@ import {
 import { DataTableShell } from "@/components/admin/DataTable";
 import { MotionPage } from "@/components/admin/motion";
 import PageHeader from "@/components/admin/PageHeader";
+import SegmentedControl from "@/components/admin/SegmentedControl";
 import PatientFormModal from "@/components/admin/PatientFormModal";
 import { ISearch, IPatients, IPlus, IChevronRight } from "@/components/admin/icons";
 
@@ -25,6 +26,12 @@ const SEG_LABEL: Record<string, string> = {
 };
 
 type SortKey = "createdAt" | "name" | "totalPaid";
+
+const SORT_OPTIONS: { id: SortKey; label: string }[] = [
+  { id: "createdAt", label: "Новые первые" },
+  { id: "name", label: "По имени" },
+  { id: "totalPaid", label: "По сумме" },
+];
 
 export default function PatientsPage() {
   const router = useRouter();
@@ -109,16 +116,7 @@ export default function PatientsPage() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            <select
-              className="oa-select oa-select-compact"
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SortKey)}
-              aria-label="Сортировка"
-            >
-              <option value="createdAt">Новые первые</option>
-              <option value="name">По имени</option>
-              <option value="totalPaid">По сумме</option>
-            </select>
+            <SegmentedControl options={SORT_OPTIONS} value={sort} onChange={setSort} />
           </div>
         }
         footer={<Pagination page={page} pages={pages} onChange={setPage} />}

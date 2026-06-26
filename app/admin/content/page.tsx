@@ -4,6 +4,7 @@ import { useState } from "react";
 import AdminBrandLogo from "@/components/admin/AdminBrandLogo";
 import { SectionHeader } from "@/components/admin/ui";
 import { MotionPage } from "@/components/admin/motion";
+import SegmentedControl from "@/components/admin/SegmentedControl";
 import { IContent } from "@/components/admin/icons";
 
 const TABS = [
@@ -54,13 +55,12 @@ export default function ContentPage() {
       <div className="oa-card oa-card-pad">
         <SectionHeader title="Контент сайта" sub="Редактируйте тексты и контакты для публичного сайта" />
 
-        <div className="oa-chips" style={{ marginBottom: 14 }}>
-          {TABS.map((t) => (
-            <button key={t.id} type="button" className={`oa-chip ${tab === t.id ? "oa-chip-active" : ""}`} onClick={() => setTab(t.id)}>
-              {t.label}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          options={TABS.map((t) => ({ id: t.id, label: t.label }))}
+          value={tab}
+          onChange={setTab}
+          className="oa-segmented-fluid oa-segmented-block"
+        />
 
         {tab === "contacts" && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>

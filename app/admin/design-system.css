@@ -315,8 +315,9 @@
 .owner-admin .oa-kpi-strip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: var(--oa-card-gap);
   width: 100%;
+  align-items: stretch;
 }
 
 .owner-admin .oa-kpi-strip > * {
@@ -428,9 +429,7 @@
 }
 
 .owner-admin .oa-dash-v3-kpi {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: block;
   margin-bottom: 4px;
 }
 
@@ -443,7 +442,7 @@
 
 .owner-admin .oa-dash-v3-body {
   display: grid;
-  grid-template-columns: 1fr minmax(168px, 188px);
+  grid-template-columns: 1fr minmax(180px, 204px);
   gap: 12px;
   align-items: start;
 }
@@ -458,13 +457,15 @@
 .owner-admin .oa-dash-v3-charts {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: var(--oa-card-gap);
+  align-items: stretch;
 }
 
 .owner-admin .oa-dash-v3-insights {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 8px;
+  gap: var(--oa-card-gap);
+  align-items: stretch;
 }
 
 .owner-admin .oa-insight-tile {
@@ -473,8 +474,10 @@
   padding: 8px 10px;
   background: var(--oa-surface-solid);
   border: 1px solid var(--oa-border);
-  border-radius: var(--oa-radius);
+  border-radius: var(--oa-card-radius);
   min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .owner-admin .oa-insight-icon {
@@ -711,14 +714,17 @@
 .owner-admin .oa-analytics-v3-summary {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
+  gap: var(--oa-card-gap);
+  align-items: stretch;
 }
 
 .owner-admin .oa-metric-pill {
   padding: 8px 12px;
   background: var(--oa-surface-solid);
   border: 1px solid var(--oa-border);
-  border-radius: var(--oa-radius);
+  border-radius: var(--oa-card-radius);
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .owner-admin .oa-metric-pill-label {
@@ -742,13 +748,15 @@
 .owner-admin .oa-analytics-v3-charts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: var(--oa-card-gap);
+  align-items: stretch;
 }
 
 .owner-admin .oa-analytics-v3-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: var(--oa-card-gap);
+  align-items: stretch;
 }
 
 /* ═══ CONTROLS ═══ */
@@ -855,14 +863,14 @@
 @media (min-width: 769px) {
   .owner-admin .oa-kpi-hero-grid,
   .owner-admin .oa-kpi-grid-secondary,
-  .owner-admin .oa-kpi-strip {
-    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  .owner-admin .oa-kpi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
   .owner-admin .oa-kpi-hero-grid .oa-kpi,
   .owner-admin .oa-kpi-grid-secondary .oa-kpi {
     min-height: var(--oa-kpi-min-h) !important;
-    max-height: 48px !important;
+    max-height: none !important;
     padding: 8px 10px !important;
   }
 }
@@ -897,6 +905,7 @@
 
 @media (max-width: 900px) {
   .owner-admin .oa-kpi-strip,
+  .owner-admin .oa-kpi-grid,
   .owner-admin .oa-analytics-v3-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -922,7 +931,8 @@
     overflow-y: auto !important;
   }
 
-  .owner-admin .oa-kpi-strip {
+  .owner-admin .oa-kpi-strip,
+  .owner-admin .oa-kpi-grid {
     grid-template-columns: 1fr !important;
   }
 

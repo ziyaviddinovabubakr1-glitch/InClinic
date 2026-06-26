@@ -6,16 +6,19 @@ import { exportData, money } from "@/lib/admin/services";
 import { SectionHeader, SkeletonCard, StatTile } from "@/components/admin/ui";
 import { MotionPage, MotionGrid, MotionItem } from "@/components/admin/motion";
 import { AreaChart } from "@/components/admin/charts";
+import AdminIcon3d from "@/components/admin/AdminIcon3d";
 import { IReports, IDownload } from "@/components/admin/icons";
 
 type ReportKind = "daily" | "weekly" | "monthly" | "yearly";
 
 const REPORTS: { id: ReportKind; label: string; sub: string; preset: "today" | "week" | "month" | "year" }[] = [
+  { id: "monthly", label: "Ежемесячный отчёт", sub: "Полная картина текущего месяца — доход, записи и рейтинг", preset: "month" },
   { id: "daily", label: "Ежедневный отчёт", sub: "Доход, записи и пациенты за сегодня", preset: "today" },
   { id: "weekly", label: "Еженедельный отчёт", sub: "Сводка за последние 7 дней", preset: "week" },
-  { id: "monthly", label: "Ежемесячный отчёт", sub: "Полная картина текущего месяца", preset: "month" },
   { id: "yearly", label: "Годовой отчёт", sub: "Тренды и итоги за 12 месяцев", preset: "year" },
 ];
+
+const REPORT_ORDER: ReportKind[] = ["monthly", "daily", "weekly", "yearly"];
 
 export default function ReportsPage() {
   const { data: dashboard, isLoading: dashLoading } = useDashboard();
@@ -47,6 +50,9 @@ export default function ReportsPage() {
   }
 
   const activeMeta = REPORTS.find((r) => r.id === active)!;
+  const secondaryReports = REPORT_ORDER.filter((id) => id !== active).map(
+    (id) => REPORTS.find((r) => r.id === id)!,
+  );
 
   return (
     <MotionPage style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 980, margin: "0 auto", width: "100%" }}>
@@ -56,28 +62,33 @@ export default function ReportsPage() {
           sub="Автоматические сводки по доходам, пациентам, записям и рейтингам"
           action={<span className="oa-badge oa-badge-confirmed"><span className="oa-badge-dot" /> Актуально</span>}
         />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(210px,1fr))", gap: 12 }}>
-          {REPORTS.map((r) => (
-            <button
-              key={r.id}
-              type="button"
-              onClick={() => setActive(r.id)}
-              className="oa-card oa-card-hover"
-              style={{
-                padding: 18,
-                textAlign: "left",
-                cursor: "pointer",
-                borderColor: active === r.id ? "rgba(212,175,55,0.45)" : undefined,
-                boxShadow: active === r.id ? "0 0 0 1px rgba(212,175,55,0.25)" : undefined,
-              }}
-            >
-              <div className="oa-kpi-icon oa-tone-gold" style={{ margin: 0, width: 36, height: 36 }}>
-                <IReports style={{ width: 18, height: 18 }} />
-              </div>
-              <div style={{ fontWeight: 700, fontSize: 14, marginTop: 12 }}>{r.label}</div>
-              <div style={{ fontSize: 12.5, color: "var(--oa-text-soft)", marginTop: 4 }}>{r.sub}</div>
-            </button>
-          ))}
+        <div className="oa-reports-picker">
+          <button
+            type="button"
+            className="oa-report-card oa-report-card--hero"
+            onClick={() => setActive(activeMeta.id)}
+          >
+            <AdminIcon3d icon={IReports} size={44} iconSize={20} />
+            <div className="oa-report-card-body">
+              <span className="oa-report-card-badge">Основной отчёт</span>
+              <div className="oa-report-card-title">{activeMeta.label}</div>
+              <div className="oa-report-card-sub">{activeMeta.sub}</div>
+            </div>
+          </button>
+          <div className="oa-reports-picker-row">
+            {secondaryReports.map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                onClick={() => setActive(r.id)}
+                className="oa-report-card oa-report-card--compact"
+              >
+                <AdminIcon3d icon={IReports} size={32} iconSize={15} />
+                <div className="oa-report-card-title">{r.label}</div>
+                <div className="oa-report-card-sub">{r.sub}</div>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

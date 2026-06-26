@@ -13,6 +13,11 @@ import {
   getRefreshTokenTtlSec,
 } from "@/lib/env";
 
+import {
+  ARCHIVE_UNLOCK_COOKIE,
+  clearArchiveUnlockCookieOptions,
+} from "@/lib/archive-access";
+
 function setAuthCookies(
   response: NextResponse,
   accessToken: string,
@@ -198,5 +203,6 @@ export async function DELETE(request: NextRequest) {
 
   const response = NextResponse.json({ success: true });
   clearAuthCookies(response);
+  response.cookies.set(ARCHIVE_UNLOCK_COOKIE, "", clearArchiveUnlockCookieOptions());
   return response;
 }

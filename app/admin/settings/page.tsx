@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { SectionHeader } from "@/components/admin/ui";
 import { MotionPage } from "@/components/admin/motion";
+import SegmentedControl from "@/components/admin/SegmentedControl";
 import AdminBrandLogo from "@/components/admin/AdminBrandLogo";
 import OwnerAvatar from "@/components/admin/OwnerAvatar";
 import AdminIcon3d from "@/components/admin/AdminIcon3d";
@@ -11,6 +13,16 @@ import { getOwnerAvatarUrl, setOwnerAvatarUrl, clearOwnerAvatarUrl } from "@/lib
 import {
   getBrandAsset, setBrandAsset, clearBrandAsset, type BrandAsset,
 } from "@/lib/clinic-brand";
+import {
+  backupMetaFromPayload,
+  createClinicBackup,
+  downloadClinicBackup,
+  loadBackupLocally,
+  parseBackupFile,
+  restoreClinicBackupFromFile,
+  type BackupMeta,
+} from "@/lib/admin/services";
+import { ConfirmDialog } from "@/components/admin/Modal";
 import { OWNER_NAME } from "@/lib/admin/owner";
 
 export default function SettingsPage() {
@@ -143,17 +155,27 @@ export default function SettingsPage() {
           <Field label="Закрытие" value={close} onChange={setClose} type="time" />
           <div>
             <label className="oa-label">Язык по умолчанию</label>
-            <select className="oa-select" value={language} onChange={(e) => setLanguage(e.target.value)}>
-              <option value="ru">Русский</option>
-              <option value="tj">Таджикский</option>
-            </select>
+            <SegmentedControl
+              options={[
+                { id: "ru", label: "Русский" },
+                { id: "tj", label: "Таджикский" },
+              ]}
+              value={language}
+              onChange={setLanguage}
+              className="oa-segmented-fluid"
+            />
           </div>
           <div>
             <label className="oa-label">Валюта</label>
-            <select className="oa-select" value={currency} onChange={(e) => setCurrency(e.target.value)}>
-              <option value="TJS">Сомони (TJS)</option>
-              <option value="USD">Доллар (USD)</option>
-            </select>
+            <SegmentedControl
+              options={[
+                { id: "TJS", label: "Сомони" },
+                { id: "USD", label: "Доллар" },
+              ]}
+              value={currency}
+              onChange={setCurrency}
+              className="oa-segmented-fluid"
+            />
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 18 }}>
@@ -163,27 +185,182 @@ export default function SettingsPage() {
       </div>
 
       {/* Backup Center */}
-      <div className="oa-card oa-card-pad">
-        <SectionHeader title="Центр резервных копий" sub="Резервное копирование данных клиники" />
-        <div className="oa-grid-auto">
-          {[
-            { icon: IArchive, label: "Создать копию" },
-            { icon: IDownload, label: "Скачать копию" },
-            { icon: IShield, label: "Восстановить" },
-          ].map((b, i) => {
-            const Icon = b.icon;
-            return (
-              <button key={i} className="oa-card oa-card-hover" disabled style={{ padding: 16, textAlign: "left", cursor: "not-allowed", opacity: 0.7, background: "var(--oa-surface-2)" }}>
-                <AdminIcon3d icon={Icon} size={30} iconSize={14} />
-                <div style={{ fontWeight: 650, fontSize: 13.5, marginTop: 10 }}>{b.label}</div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <BackupCenterCard />
+
+      <ArchiveVaultCard />
 
       <PasswordChangeCard />
     </MotionPage>
+  );
+}
+
+function BackupCenterCard() {
+  const [meta, setMeta] = useState<BackupMeta | null>(() => {
+    const local = loadBackupLocally();
+    return local ? backupMetaFromPayload(local) : null;
+  });
+  const [busy, setBusy] = useState<"create" | "download" | "restore" | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [restoreOpen, setRestoreOpen] = useState(false);
+  const [pendingRestore, setPendingRestore] = useState<string | null>(null);
+
+  function showOk(text: string) {
+    setError(null);
+    setMessage(text);
+    setTimeout(() => setMessage(null), 5000);
+  }
+
+  async function handleCreate() {
+    setBusy("create");
+    setError(null);
+    try {
+      const { meta: next } = await createClinicBackup();
+      setMeta(next);
+      showOk(
+        `Копия создана: ${next.counts.patients} пациентов, ${next.counts.bookings} записей, ${next.counts.services} услуг`,
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Ошибка создания копии");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function handleDownload() {
+    setBusy("download");
+    setError(null);
+    try {
+      const local = loadBackupLocally();
+      const next = await downloadClinicBackup(local);
+      setMeta(next);
+      showOk(`Файл inclinic-backup-${next.createdAt.slice(0, 10)}.json загружен`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Ошибка скачивания");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  function handleRestorePick() {
+    setError(null);
+    document.getElementById("oa-backup-restore-input")?.click();
+  }
+
+  function onRestoreFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== "string") return;
+      try {
+        parseBackupFile(reader.result);
+        setPendingRestore(reader.result);
+        setRestoreOpen(true);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Неверный файл");
+      }
+    };
+    reader.readAsText(file, "utf-8");
+  }
+
+  async function confirmRestore() {
+    if (!pendingRestore) return;
+    setBusy("restore");
+    setError(null);
+    setRestoreOpen(false);
+    try {
+      const backup = parseBackupFile(pendingRestore);
+      const { counts } = await restoreClinicBackupFromFile(backup);
+      setMeta(backupMetaFromPayload(backup));
+      showOk(
+        `Восстановлено: ${counts.services} услуг, ${counts.doctors} врачей, ${counts.patients} пациентов, ${counts.bookings} записей`,
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Ошибка восстановления");
+    } finally {
+      setBusy(null);
+      setPendingRestore(null);
+    }
+  }
+
+  const actions = [
+    { id: "create" as const, icon: IArchive, label: "Создать копию", hint: "Снимок всех данных клиники", onClick: handleCreate },
+    { id: "download" as const, icon: IDownload, label: "Скачать копию", hint: "JSON-файл на компьютер", onClick: handleDownload },
+    { id: "restore" as const, icon: IShield, label: "Восстановить", hint: "Загрузить файл копии", onClick: handleRestorePick },
+  ];
+
+  return (
+    <div className="oa-card oa-card-pad oa-backup-center">
+      <SectionHeader title="Центр резервных копий" sub="Резервное копирование данных клиники" />
+      {meta && (
+        <p className="oa-backup-center-meta">
+          Последняя копия: {new Date(meta.createdAt).toLocaleString("ru-RU")}
+          {" · "}
+          {meta.counts.patients} пац., {meta.counts.bookings} зап., {meta.counts.services} усл.
+        </p>
+      )}
+      <div className="oa-backup-center-grid">
+        {actions.map(({ id, icon: Icon, label, hint, onClick }) => (
+          <button
+            key={id}
+            type="button"
+            className="oa-backup-action"
+            onClick={onClick}
+            disabled={!!busy}
+          >
+            <AdminIcon3d icon={Icon} size={30} iconSize={14} />
+            <div className="oa-backup-action-title">{label}</div>
+            <div className="oa-backup-action-hint">{hint}</div>
+            {busy === id && <span className="oa-backup-action-busy">…</span>}
+          </button>
+        ))}
+      </div>
+      <input
+        id="oa-backup-restore-input"
+        type="file"
+        accept="application/json,.json"
+        style={{ display: "none" }}
+        onChange={onRestoreFile}
+      />
+      {message && <p className="oa-backup-center-msg oa-backup-center-msg--ok">{message}</p>}
+      {error && <p className="oa-backup-center-msg oa-backup-center-msg--err">{error}</p>}
+
+      <ConfirmDialog
+        open={restoreOpen}
+        onClose={() => { setRestoreOpen(false); setPendingRestore(null); }}
+        onConfirm={() => { void confirmRestore(); }}
+        title="Восстановить из копии?"
+        message="Данные из файла будут объединены с текущими (услуги, врачи, пациенты, записи). Продолжить?"
+        confirmLabel="Восстановить"
+        danger
+      />
+    </div>
+  );
+}
+
+function ArchiveVaultCard() {
+  return (
+    <div className="oa-card oa-card-pad oa-archive-vault-settings">
+      <div className="oa-archive-vault-settings-head">
+        <AdminIcon3d icon={IArchive} size={36} iconSize={16} />
+        <div>
+          <SectionHeader
+            title="Защищённый архив"
+            sub="Завершённые приёмы, доход и история — отдельный раздел с дополнительной защитой"
+          />
+        </div>
+      </div>
+      <p className="oa-archive-vault-settings-note">
+        Архив не отображается в боковом меню. Откройте его, когда нужно — потребуется пароль
+        входа в вашу учётную запись владельца.
+      </p>
+      <Link href="/admin/archive" className="oa-btn oa-btn-primary" style={{ textDecoration: "none", alignSelf: "flex-start" }}>
+        <IArchive style={{ width: 16, height: 16 }} />
+        Открыть архив
+      </Link>
+    </div>
   );
 }
 

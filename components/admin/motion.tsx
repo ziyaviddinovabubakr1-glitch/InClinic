@@ -76,7 +76,7 @@ export function StaggerItem({ children, className }: { children: ReactNode; clas
   return (
     <motion.div
       className={className}
-      style={{ width: "100%", minWidth: 0 }}
+      style={{ width: "100%", minWidth: 0, height: "100%", display: "flex", flexDirection: "column" }}
       variants={
         reduce
           ? undefined

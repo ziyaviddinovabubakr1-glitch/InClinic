@@ -9,6 +9,7 @@ import {
 import type { AdminNotification } from "@/lib/admin/services/notifications";
 import { SectionHeader, SkeletonRows, EmptyState } from "@/components/admin/ui";
 import { MotionPage } from "@/components/admin/motion";
+import SegmentedControl from "@/components/admin/SegmentedControl";
 import {
   INotifications, IPatients, IAppointments, IReviews, IArchive, IDoctors, ICalendar,
 } from "@/components/admin/icons";
@@ -75,14 +76,15 @@ export default function NotificationsPage() {
           }
         />
 
-        <div className="oa-chips" style={{ marginBottom: 16 }}>
-          <button type="button" className={`oa-chip ${filter === "all" ? "oa-chip-active" : ""}`} onClick={() => setFilter("all")}>
-            Все
-          </button>
-          <button type="button" className={`oa-chip ${filter === "unread" ? "oa-chip-active" : ""}`} onClick={() => setFilter("unread")}>
-            Непрочитанные {unread > 0 ? `(${unread})` : ""}
-          </button>
-        </div>
+        <SegmentedControl
+          options={[
+            { id: "all", label: "Все" },
+            { id: "unread", label: unread > 0 ? `Непрочитанные (${unread})` : "Непрочитанные" },
+          ]}
+          value={filter}
+          onChange={setFilter}
+          className="oa-segmented-block"
+        />
 
         {isLoading ? (
           <SkeletonRows rows={6} />

@@ -24,6 +24,9 @@
   --oa-input-h: 30px;
   --oa-table-row-h: 36px;
   --oa-kpi-min-h: 44px;
+  --oa-card-gap: 12px;
+  --oa-card-radius: 10px;
+  --oa-kpi-row-h: 76px;
 
   --oa-radius-xs: 4px;
   --oa-radius-sm: 5px;

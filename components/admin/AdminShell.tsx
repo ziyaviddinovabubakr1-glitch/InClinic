@@ -9,7 +9,7 @@ import OwnerSessionGuard from "./OwnerSessionGuard";
 import AdminBrandLogo from "./AdminBrandLogo";
 import {
   IDashboard, IAnalytics, IDoctors, IPatients, IAppointments, IServices,
-  IReviews, IArchive, IReports, IExports, IContent, INotifications, ISettings,
+  IReviews, IReports, IExports, IContent, INotifications, ISettings,
   ILogout, IMenu, IClose, IPlus, IActivity,
 } from "./icons";
 import { OWNER_NAME, OWNER_TITLE } from "@/lib/admin/owner";
@@ -35,7 +35,6 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/admin/services", label: "Услуги", Icon: IServices },
   { href: "/admin/reviews", label: "Отзывы", Icon: IReviews },
   { href: "/admin/activity", label: "Активность", Icon: IActivity },
-  { href: "/admin/archive", label: "Архив", Icon: IArchive },
   { href: "/admin/reports", label: "Отчёты", Icon: IReports },
   { href: "/admin/exports", label: "Экспорт", Icon: IExports },
   { href: "/admin/content", label: "Контент", Icon: IContent },

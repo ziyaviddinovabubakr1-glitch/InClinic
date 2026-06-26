@@ -288,61 +288,73 @@ export function Sparkline({ data, color = ACCENT, width = 110, height = 36 }: {
 }
 
 /* ───────────────────────────  Gauge (radial)  ──────────────────────────── */
-export function Gauge({ value, size = 150, label }: { value: number; size?: number; label?: string }) {
+export function Gauge({
+  value, size = 150, label, captionBelow = false,
+}: { value: number; size?: number; label?: string; captionBelow?: boolean }) {
   const gid = useId().replace(/:/g, "");
-  const r = (size - 14) / 2;
+  const r = (size - 16) / 2;
   const c = 2 * Math.PI * r;
   const pct = Math.max(0, Math.min(100, value));
   const dash = (pct / 100) * c;
-  const track = "rgba(255, 255, 255, 0.08)";
+  const track = "rgba(255, 255, 255, 0.1)";
   const gold = "#e4b84a";
   const goldHi = "#fce588";
-  const thickness = Math.max(7, size * 0.11);
+  const thickness = Math.max(5, size * 0.09);
+  const cx = size / 2;
+  const cy = size / 2;
+
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="oa-gauge" aria-hidden="true">
-      <defs>
-        <linearGradient id={`oa-gauge-gold-${gid}`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={goldHi} />
-          <stop offset="55%" stopColor={gold} />
-          <stop offset="100%" stopColor="#9a6b14" />
-        </linearGradient>
-      </defs>
-      <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={track} strokeWidth={thickness} />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          fill="none"
-          stroke={`url(#oa-gauge-gold-${gid})`}
-          strokeWidth={thickness}
-          strokeDasharray={`${dash} ${c - dash}`}
-          strokeLinecap="round"
-        />
-      </g>
-      <text
-        x="50%"
-        y="44%"
-        textAnchor="middle"
-        fontSize={size * 0.22}
-        fontWeight="800"
-        fill="#fafafa"
-      >
-        {pct}
-      </text>
-      {label && (
+    <div className={`oa-gauge-block${captionBelow ? " oa-gauge-block--stacked" : ""}`}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="oa-gauge" aria-hidden="true">
+        <defs>
+          <linearGradient id={`oa-gauge-gold-${gid}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor={goldHi} />
+            <stop offset="55%" stopColor={gold} />
+            <stop offset="100%" stopColor="#9a6b14" />
+          </linearGradient>
+        </defs>
+        <circle cx={cx} cy={cy} r={r} fill="rgba(0,0,0,0.35)" />
+        <g transform={`rotate(-90 ${cx} ${cy})`}>
+          <circle cx={cx} cy={cy} r={r} fill="none" stroke={track} strokeWidth={thickness} />
+          <circle
+            cx={cx}
+            cy={cy}
+            r={r}
+            fill="none"
+            stroke={`url(#oa-gauge-gold-${gid})`}
+            strokeWidth={thickness}
+            strokeDasharray={`${dash} ${c - dash}`}
+            strokeLinecap="round"
+          />
+        </g>
         <text
-          x="50%"
-          y="58%"
+          x={cx}
+          y={cy}
+          dominantBaseline="middle"
           textAnchor="middle"
-          fontSize={Math.max(10, size * 0.14)}
-          fontWeight="600"
-          fill="#e4b84a"
+          fontSize={size * 0.26}
+          fontWeight="800"
+          fill="#fafafa"
         >
-          {label}
+          {pct}
         </text>
+        {!captionBelow && label && (
+          <text
+            x={cx}
+            y={cy + size * 0.14}
+            textAnchor="middle"
+            fontSize={Math.max(9, size * 0.12)}
+            fontWeight="600"
+            fill="#e4b84a"
+          >
+            {label}
+          </text>
+        )}
+      </svg>
+      {captionBelow && label && (
+        <div className="oa-gauge-caption">{label}</div>
       )}
-    </svg>
+    </div>
   );
 }
 

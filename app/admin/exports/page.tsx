@@ -5,6 +5,7 @@ import { exportData, EXPORT_CATEGORIES, EXPORT_FORMATS } from "@/lib/admin/servi
 import type { ExportCategory, ExportFormat } from "@/lib/admin/services";
 import { SectionHeader } from "@/components/admin/ui";
 import { MotionPage } from "@/components/admin/motion";
+import SegmentedControl from "@/components/admin/SegmentedControl";
 import AdminIcon3d from "@/components/admin/AdminIcon3d";
 import { IExports, IPatients, IDoctors, IAppointments, IReviews, IMoney, IServices } from "@/components/admin/icons";
 
@@ -67,13 +68,11 @@ export default function ExportsPage() {
 
       <div className="oa-card oa-card-pad">
         <SectionHeader title="Формат" sub="CSV, Excel или PDF" />
-        <div className="oa-chips">
-          {EXPORT_FORMATS.map((f) => (
-            <button key={f} className={`oa-chip ${format === f ? "oa-chip-active" : ""}`} onClick={() => setFormat(f)}>
-              {f}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          options={EXPORT_FORMATS.map((f) => ({ id: f, label: f }))}
+          value={format}
+          onChange={setFormat}
+        />
 
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 20, flexWrap: "wrap" }}>
           <button className="oa-btn oa-btn-primary" onClick={run} disabled={busy}>

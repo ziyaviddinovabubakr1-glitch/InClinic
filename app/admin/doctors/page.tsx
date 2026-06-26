@@ -19,10 +19,18 @@ import {
   doctorPerformanceScore,
 } from "@/components/admin/ui";
 import { MotionPage } from "@/components/admin/motion";
+import SegmentedControl from "@/components/admin/SegmentedControl";
+import SegmentedMultiToggle from "@/components/admin/SegmentedMultiToggle";
 import {
   IPlus, ISearch, IEdit, ITrash, IEye, IEyeOff, IAnalytics, IDoctors,
 } from "@/components/admin/icons";
 import { setDoctorCredentials } from "@/lib/doctor-credentials";
+
+const STATUS_FILTERS = [
+  { id: "ALL" as const, label: "Все" },
+  { id: "ACTIVE" as const, label: "Активные" },
+  { id: "HIDDEN" as const, label: "Скрытые" },
+];
 
 const EMPTY_FORM: DoctorInput = {
   photoUrl: null,
@@ -132,13 +140,11 @@ export default function DoctorsPage() {
             <ISearch style={{ width: 16, height: 16 }} />
           </button>
         </form>
-        <div className="oa-chips">
-          {(["ALL", "ACTIVE", "HIDDEN"] as const).map((s) => (
-            <button key={s} className={`oa-chip ${statusFilter === s ? "oa-chip-active" : ""}`} onClick={() => setStatusFilter(s)}>
-              {s === "ALL" ? "Все" : s === "ACTIVE" ? "Активные" : "Скрытые"}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          options={STATUS_FILTERS}
+          value={statusFilter}
+          onChange={setStatusFilter}
+        />
         {canCreate && (
           <button className="oa-btn oa-btn-primary" onClick={openCreate}><IPlus /> Добавить врача</button>
         )}
@@ -298,41 +304,40 @@ function DoctorForm({
           <div><label className="oa-label">Образование</label><textarea className="oa-textarea" rows={2} value={form.education} onChange={(e) => set({ education: e.target.value })} placeholder="Университет, год" /></div>
           <div>
             <label className="oa-label">Языки</label>
-            <div className="oa-chips">
-              {ALL_LANGS.map((l) => {
-                const on = form.languages.includes(l);
-                return (
-                  <button key={l} type="button" className={`oa-chip ${on ? "oa-chip-active" : ""}`}
-                    onClick={() => set({ languages: on ? form.languages.filter((x) => x !== l) : [...form.languages, l] })}>
-                    {l}
-                  </button>
-                );
-              })}
-            </div>
+            <SegmentedMultiToggle
+              options={ALL_LANGS.map((l) => ({ id: l, label: l }))}
+              value={form.languages}
+              onChange={(languages) => set({ languages })}
+            />
           </div>
           <div>
             <label className="oa-label">Рабочие дни</label>
-            <div className="oa-chips">
-              {WEEKDAYS.map((d) => {
-                const on = form.workSchedule.days.includes(d.n);
-                return (
-                  <button key={d.n} type="button" className={`oa-chip ${on ? "oa-chip-active" : ""}`}
-                    onClick={() => set({ workSchedule: { ...form.workSchedule, days: on ? form.workSchedule.days.filter((x) => x !== d.n) : [...form.workSchedule.days, d.n].sort() } })}>
-                    {d.l}
-                  </button>
-                );
-              })}
-            </div>
+            <SegmentedMultiToggle
+              options={WEEKDAYS.map((d) => ({ id: String(d.n), label: d.l }))}
+              value={form.workSchedule.days.map(String)}
+              onChange={(days) =>
+                set({
+                  workSchedule: {
+                    ...form.workSchedule,
+                    days: days.map(Number).sort((a, b) => a - b),
+                  },
+                })
+              }
+            />
           </div>
           <div className="oa-grid-3" style={{ alignItems: "end" }}>
             <div><label className="oa-label">Начало</label><input className="oa-input" type="time" value={form.workSchedule.start} onChange={(e) => set({ workSchedule: { ...form.workSchedule, start: e.target.value } })} /></div>
             <div><label className="oa-label">Конец</label><input className="oa-input" type="time" value={form.workSchedule.end} onChange={(e) => set({ workSchedule: { ...form.workSchedule, end: e.target.value } })} /></div>
             <div>
               <label className="oa-label">Статус</label>
-              <select className="oa-select" value={form.status} onChange={(e) => set({ status: e.target.value as DoctorStatus })}>
-                <option value="ACTIVE">Активен</option>
-                <option value="HIDDEN">Скрыт</option>
-              </select>
+              <SegmentedControl
+                options={[
+                  { id: "ACTIVE", label: "Активен" },
+                  { id: "HIDDEN", label: "Скрыт" },
+                ]}
+                value={form.status}
+                onChange={(status) => set({ status })}
+              />
             </div>
           </div>
         </>

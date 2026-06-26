@@ -13,6 +13,7 @@ export * from "./services";
 export * from "./analytics";
 export * from "./export";
 export * from "./archive";
+export * from "./backup";
 export * from "./notifications";
 export * from "./activity";
 export { money } from "./util";

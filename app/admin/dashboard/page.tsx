@@ -23,7 +23,6 @@ const PRIMARY_KPIS = (data: DashboardData, revenueSpark: number[], apptSpark: nu
   { label: "Новых сегодня", value: String(data.kpis.newPatientsToday), tone: "blue" as const, delta: "регистрации", deltaDir: "up" as const, spark: apptSpark },
   { label: "Записей сегодня", value: String(data.kpis.appointmentsToday), tone: "violet" as const, delta: `${data.kpis.cancelledAppointments} отм.`, deltaDir: (data.kpis.cancelledAppointments ? "down" : "flat") as "down" | "flat", spark: apptSpark },
   { label: "Всего пациентов", value: String(data.kpis.totalPatients), tone: "sky" as const, delta: `${data.kpis.returningPatients} повтор.`, deltaDir: "flat" as const, spark: revenueSpark },
-  { label: "Health Score", value: String(data.executive.clinicHealthScore), tone: "amber" as const, delta: "из 100", deltaDir: "up" as const, spark: apptSpark },
 ];
 
 const REVIEW_KPIS = (data: DashboardData, revenueSpark: number[]) => [
@@ -40,6 +39,14 @@ const SECONDARY_KPIS = (data: DashboardData, revenueSpark: number[], apptSpark: 
   { label: "Средний чек", value: money(data.kpis.avgCheck), tone: "sky" as const, spark: revenueSpark },
   { label: "Загрузка", value: `${data.kpis.clinicLoad}%`, tone: "red" as const, spark: apptSpark },
 ];
+
+function DASHBOARD_KPIS(data: DashboardData, revenueSpark: number[], apptSpark: number[]) {
+  return [
+    ...PRIMARY_KPIS(data, revenueSpark, apptSpark),
+    ...REVIEW_KPIS(data, revenueSpark),
+    ...SECONDARY_KPIS(data, revenueSpark, apptSpark),
+  ];
+}
 
 export default function DashboardPage() {
   const { data, isLoading } = useDashboard();
@@ -72,22 +79,8 @@ export default function DashboardPage() {
       />
 
       <section className="oa-dash-v3-kpi">
-        <StaggerGrid className="oa-kpi-strip oa-kpi-strip--hero">
-          {PRIMARY_KPIS(data, revenueSpark, apptSpark).map((k) => (
-            <StaggerItem key={k.label}>
-              <KpiCard label={k.label} value={k.value} tone={k.tone} delta={k.delta} deltaDir={k.deltaDir} sparkData={k.spark} />
-            </StaggerItem>
-          ))}
-        </StaggerGrid>
-        <StaggerGrid className="oa-kpi-strip oa-kpi-strip--muted oa-kpi-strip--3 oa-kpi-strip--mid">
-          {REVIEW_KPIS(data, revenueSpark).map((k) => (
-            <StaggerItem key={k.label}>
-              <KpiCard label={k.label} value={k.value} tone={k.tone} delta={k.delta} deltaDir={k.deltaDir} sparkData={k.spark} />
-            </StaggerItem>
-          ))}
-        </StaggerGrid>
-        <StaggerGrid className="oa-kpi-strip oa-kpi-strip--muted oa-kpi-strip--3">
-          {SECONDARY_KPIS(data, revenueSpark, apptSpark).map((k) => (
+        <StaggerGrid className="oa-kpi-grid">
+          {DASHBOARD_KPIS(data, revenueSpark, apptSpark).map((k) => (
             <StaggerItem key={k.label}>
               <KpiCard label={k.label} value={k.value} tone={k.tone} delta={k.delta} deltaDir={k.deltaDir} sparkData={k.spark} />
             </StaggerItem>
@@ -136,7 +129,7 @@ export default function DashboardPage() {
               <span className="oa-panel-title">Показатели</span>
             </div>
             <div className="oa-rail-gauge">
-              <Gauge value={executive.clinicHealthScore} size={52} label="Здоровье" />
+              <Gauge value={executive.clinicHealthScore} size={58} label="Здоровье" captionBelow />
             </div>
             <div className="oa-rail-stats">
               <RailStat label="Общий доход" value={money(executive.totalLifetimeRevenue)} tone="green" />
@@ -236,8 +229,10 @@ function DashboardSkeleton() {
   return (
     <div className="oa-dash-v3">
       <SkeletonCard height={36} />
-      <div className="oa-kpi-strip">
-        {Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} height={44} />)}
+      <div className="oa-dash-v3-kpi">
+        <div className="oa-kpi-grid">
+          {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} height={76} />)}
+        </div>
       </div>
       <div className="oa-dash-v3-body">
         <SkeletonCard height={180} />
