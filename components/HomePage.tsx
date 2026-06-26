@@ -85,14 +85,14 @@ export default function HomePage() {
             href={`tel:${clinicPhone.replace(/\s/g, "")}`}
             className="flex items-center justify-center gap-3 group"
           >
-            <IconPhone size={22} className="text-sky-400 opacity-90" />
+            <IconPhone size={22} className="text-theme-accent opacity-90" />
             <span className="text-theme text-lg font-semibold group-hover:opacity-90 transition-opacity">
               {clinicPhone}
             </span>
           </a>
 
           <div className="flex items-center justify-center gap-3">
-            <IconLocation size={22} className="text-sky-400 opacity-90" />
+            <IconLocation size={22} className="text-theme-accent opacity-90" />
             <span className="text-theme text-sm md:text-base">
               {t.address}
             </span>

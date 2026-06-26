@@ -160,22 +160,22 @@
 }
 
 .owner-admin .oa-sidebar-footer {
-  padding: 10px !important;
+  padding: 7px 8px 8px !important;
   border-top: 1px solid var(--oa-border) !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 8px !important;
+  gap: 6px !important;
   flex-shrink: 0 !important;
 }
 
 .owner-admin .oa-sidebar-owner-card {
   display: flex !important;
   align-items: center !important;
-  gap: 10px !important;
-  padding: 8px 10px !important;
+  gap: 8px !important;
+  padding: 7px 9px !important;
   background: rgba(255, 255, 255, 0.04) !important;
   border: 1px solid var(--oa-border) !important;
-  border-radius: var(--oa-radius-lg) !important;
+  border-radius: 8px !important;
   min-width: 0 !important;
 }
 
@@ -192,10 +192,10 @@
 }
 
 .owner-admin .oa-sidebar-owner-name {
-  font-size: var(--oa-text-lg) !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   color: var(--oa-text) !important;
-  line-height: 1.25 !important;
+  line-height: 1.2 !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -203,11 +203,11 @@
 
 .owner-admin .oa-sidebar-owner-role {
   display: block !important;
-  font-size: var(--oa-text-xs) !important;
+  font-size: 9px !important;
   font-weight: 500 !important;
   color: var(--oa-gold-light) !important;
-  margin-top: 2px !important;
-  line-height: 1.2 !important;
+  margin-top: 1px !important;
+  line-height: 1.15 !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -217,15 +217,15 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 8px !important;
+  gap: 5px !important;
   width: 100% !important;
-  min-height: 36px !important;
-  padding: 8px 12px !important;
+  min-height: 28px !important;
+  padding: 5px 10px !important;
   border: 1px solid rgba(229, 72, 77, 0.28) !important;
-  border-radius: var(--oa-radius-lg) !important;
+  border-radius: 8px !important;
   background: rgba(229, 72, 77, 0.08) !important;
   color: #f4a4a7 !important;
-  font-size: var(--oa-text-lg) !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;

@@ -17,7 +17,7 @@ import { Modal, ConfirmDialog } from "@/components/admin/Modal";
 import {
   Avatar, Stars, SkeletonRows, EmptyState,
 } from "@/components/admin/ui";
-import { MotionPage } from "@/components/admin/motion";
+import { MotionPage, StaggerGrid, StaggerItem } from "@/components/admin/motion";
 import SegmentedControl from "@/components/admin/SegmentedControl";
 import SegmentedMultiToggle from "@/components/admin/SegmentedMultiToggle";
 import {
@@ -149,85 +149,71 @@ export default function DoctorsPage() {
         )}
       </div>
 
-      <div className="oa-card oa-table-card">
+      <div className="oa-entity-grid-wrap">
         {isLoading && !doctors ? (
-          <div className="oa-card-pad"><SkeletonRows rows={8} /></div>
+          <div className="oa-card oa-card-pad"><SkeletonRows rows={6} /></div>
         ) : !doctors?.length ? (
-          <EmptyState icon={<IDoctors />} title="Врачи не найдены" sub="Измените фильтры или добавьте нового врача." />
+          <div className="oa-card"><EmptyState icon={<IDoctors />} title="Врачи не найдены" sub="Измените фильтры или добавьте нового врача." /></div>
         ) : (
-          <div className="oa-table-wrap oa-table-no-scroll">
-            <table className="oa-table oa-table-compact oa-table-doctors">
-              <colgroup>
-                <col className="oa-col-doctor" />
-                <col className="oa-col-rate" />
-                <col className="oa-col-num" />
-                <col className="oa-col-num" />
-                <col className="oa-col-money" />
-                <col className="oa-col-status" />
-                <col className="oa-col-actions" />
-              </colgroup>
-              <thead>
-                <tr>
-                  <th>Врач</th>
-                  <th>Рейтинг</th>
-                  <th>Пац.</th>
-                  <th>Приёмы</th>
-                  <th>Доход</th>
-                  <th>Статус</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {doctors.map((d) => (
-                    <tr key={d.id}>
-                      <td className="oa-table-col-patient-first" data-label="Врач">
-                        <div className="oa-doctor-cell">
-                          <Avatar name={d.fullName} size={26} tone={d.status === "ACTIVE" ? "blue" : "amber"} />
-                          <div className="oa-doctor-cell-text">
-                            <div className="oa-doctor-cell-name" title={d.fullName}>{d.fullName}</div>
-                            <div className="oa-doctor-cell-meta">{d.specialty} · {d.phone}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td data-label="Рейтинг">
-                        <div className="oa-doctor-rating">
-                          <Stars rating={d.rating} size={9} />
-                          <span className="oa-cell-strong">{d.rating.toFixed(1)}</span>
-                        </div>
-                      </td>
-                      <td className="oa-cell-strong oa-cell-num" data-label="Пациенты">{d.patientsCount}</td>
-                      <td className="oa-cell-strong oa-cell-num" data-label="Приёмы">{d.appointmentsCount}</td>
-                      <td className="oa-cell-strong oa-cell-money" data-label="Доход">{money(d.revenueGenerated)}</td>
-                      <td data-label="Статус">
-                        {d.status === "HIDDEN"
-                          ? <span className="oa-badge oa-badge-hidden">скрыт</span>
-                          : <span className="oa-badge oa-badge-confirmed">активен</span>}
-                      </td>
-                      <td data-label="Действия">
-                        <div className="oa-table-actions">
-                          <Link
-                            href={`/admin/doctors/${d.id}/analytics`}
-                            className="oa-btn oa-btn-soft oa-btn-sm"
-                            title="Аналитика"
-                          >
-                            <IAnalytics style={{ width: 14, height: 14 }} />
-                          </Link>
-                          {canManage && (
-                            <button className="oa-btn oa-btn-ghost oa-btn-icon" onClick={() => openEdit(d)} aria-label="Редактировать"><IEdit /></button>
-                          )}
-                          {canManage && (
-                            <button className="oa-btn oa-btn-ghost oa-btn-icon" onClick={() => toggleStatus(d)} aria-label="Скрыть/показать">{d.status === "ACTIVE" ? <IEyeOff /> : <IEye />}</button>
-                          )}
-                          {canDelete && (
-                            <button className="oa-btn oa-btn-danger oa-btn-icon" onClick={() => setToDelete(d)} aria-label="Удалить"><ITrash /></button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <StaggerGrid className="oa-entity-grid">
+            {doctors.map((d) => (
+              <StaggerItem key={d.id}>
+                <article className="oa-entity-card oa-doctor-card">
+                  <div className="oa-doctor-card-header">
+                    <Avatar name={d.fullName} size={40} tone={d.status === "ACTIVE" ? "blue" : "amber"} />
+                    <div className="oa-doctor-cell-text" style={{ flex: 1, minWidth: 0 }}>
+                      <div className="oa-doctor-card-name" title={d.fullName}>{d.fullName}</div>
+                      <div className="oa-doctor-card-specialty">{d.specialty}</div>
+                      <div className="oa-doctor-cell-meta">{d.phone}</div>
+                    </div>
+                    <div className="oa-doctor-card-rating">
+                      <Stars rating={d.rating} size={10} />
+                      <span className="oa-doctor-card-rating-value">{d.rating.toFixed(1)}</span>
+                    </div>
+                  </div>
+
+                  <div className="oa-entity-stat-grid oa-entity-stat-grid--3">
+                    <div className="oa-entity-stat">
+                      <div className="oa-entity-stat-value">{d.patientsCount}</div>
+                      <div className="oa-entity-stat-label">Пациенты</div>
+                    </div>
+                    <div className="oa-entity-stat">
+                      <div className="oa-entity-stat-value">{d.appointmentsCount}</div>
+                      <div className="oa-entity-stat-label">Приёмы</div>
+                    </div>
+                    <div className="oa-entity-stat">
+                      <div className="oa-entity-stat-value">{money(d.revenueGenerated)}</div>
+                      <div className="oa-entity-stat-label">Доход</div>
+                    </div>
+                  </div>
+
+                  <div className="oa-entity-card-foot">
+                    {d.status === "HIDDEN"
+                      ? <span className="oa-badge oa-badge-hidden">скрыт</span>
+                      : <span className="oa-badge oa-badge-confirmed">активен</span>}
+                    <div className="oa-entity-card-actions">
+                      <Link
+                        href={`/admin/doctors/${d.id}/analytics`}
+                        className="oa-btn oa-btn-soft oa-btn-sm"
+                        title="Аналитика"
+                      >
+                        <IAnalytics style={{ width: 14, height: 14 }} />
+                      </Link>
+                      {canManage && (
+                        <button className="oa-btn oa-btn-ghost oa-btn-icon" onClick={() => openEdit(d)} aria-label="Редактировать"><IEdit /></button>
+                      )}
+                      {canManage && (
+                        <button className="oa-btn oa-btn-ghost oa-btn-icon" onClick={() => toggleStatus(d)} aria-label="Скрыть/показать">{d.status === "ACTIVE" ? <IEyeOff /> : <IEye />}</button>
+                      )}
+                      {canDelete && (
+                        <button className="oa-btn oa-btn-danger oa-btn-icon" onClick={() => setToDelete(d)} aria-label="Удалить"><ITrash /></button>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              </StaggerItem>
+            ))}
+          </StaggerGrid>
         )}
       </div>
 

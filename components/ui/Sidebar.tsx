@@ -77,7 +77,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
                 <Icon size={16} />
                 <span className="flex-1 truncate">{item.label}</span>
                 {badge != null && badge > 0 && (
-                  <span className="min-w-[1.1rem] h-4 px-1 rounded-full text-[9px] font-bold flex items-center justify-center bg-sky-500/25 text-sky-300">
+                  <span className="min-w-[1.1rem] h-4 px-1 rounded-full text-[9px] font-bold flex items-center justify-center theme-pill text-theme-accent">
                     {badge}
                   </span>
                 )}

@@ -1562,3 +1562,200 @@
 .owner-admin .oa-reviews-page .oa-data-table-card {
   overflow: visible !important;
 }
+
+/* ── Entity cards: services & doctors grids ── */
+.owner-admin .oa-entity-grid-wrap {
+  min-height: 120px;
+}
+
+.owner-admin .oa-entity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--oa-card-gap);
+  padding: 4px 2px 8px;
+}
+
+.owner-admin .oa-entity-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 100%;
+  padding: 16px;
+  background: linear-gradient(165deg, rgba(16, 14, 11, 0.98) 0%, rgba(8, 8, 8, 0.98) 100%);
+  border: 1px solid rgba(228, 184, 74, 0.22);
+  border-radius: var(--oa-card-radius);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 220, 0.07),
+    0 2px 14px rgba(0, 0, 0, 0.24);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.owner-admin .oa-entity-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(228, 184, 74, 0.45), transparent);
+  pointer-events: none;
+}
+
+.owner-admin .oa-entity-card:hover {
+  border-color: rgba(228, 184, 74, 0.42);
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 220, 0.1),
+    0 8px 24px rgba(0, 0, 0, 0.32);
+}
+
+.owner-admin .oa-entity-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.owner-admin .oa-entity-card-head-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.owner-admin .oa-service-card .oa-service-name {
+  max-width: none;
+  white-space: normal;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.owner-admin .oa-service-card .oa-service-desc {
+  max-width: none;
+  margin-top: 6px;
+}
+
+.owner-admin .oa-entity-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.owner-admin .oa-entity-stat-grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.owner-admin .oa-entity-stat {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(228, 184, 74, 0.06);
+  border: 1px solid rgba(228, 184, 74, 0.12);
+  min-width: 0;
+}
+
+.owner-admin .oa-entity-stat-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fef3c7;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.owner-admin .oa-entity-stat-label {
+  margin-top: 3px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(254, 243, 199, 0.45);
+}
+
+.owner-admin .oa-entity-popularity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.owner-admin .oa-entity-popularity .oa-progress {
+  flex: 1;
+}
+
+.owner-admin .oa-entity-popularity span {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(254, 243, 199, 0.55);
+  min-width: 34px;
+  text-align: right;
+}
+
+.owner-admin .oa-entity-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.owner-admin .oa-entity-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.owner-admin .oa-doctor-card .oa-doctor-card-header {
+  align-items: center;
+}
+
+.owner-admin .oa-doctor-card .oa-doctor-card-name {
+  color: #fef3c7;
+  font-size: 14px;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.owner-admin .oa-doctor-card .oa-doctor-card-specialty {
+  color: rgba(254, 243, 199, 0.55);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.owner-admin .oa-doctor-card-rating {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.owner-admin .oa-doctor-card-rating-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fef3c7;
+}
+
+.owner-admin .oa-doctor-card::before {
+  display: none;
+}
+
+.owner-admin .oa-entity-grid > * {
+  display: flex;
+  min-height: 0;
+}
+
+.owner-admin .oa-entity-grid .oa-entity-card {
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .owner-admin .oa-entity-grid {
+    grid-template-columns: 1fr;
+  }
+}

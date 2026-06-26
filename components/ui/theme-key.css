@@ -1,9 +1,10 @@
-/* Premium physical theme key — scoped to .theme-key-root */
+/* Square 3D keyboard keycap — clinic blue/white (light) · blue/black (dark) */
 
 .theme-key-root {
-  --tk-size: 76px;
+  --tk-size: 72px;
   --tk-scale: 1;
   position: relative;
+  z-index: 4;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -13,8 +14,8 @@
 }
 
 .theme-key-root--compact {
-  --tk-size: 76px;
-  --tk-scale: 0.44;
+  --tk-size: 72px;
+  --tk-scale: 0.5;
   width: 36px;
   height: 36px;
 }
@@ -33,13 +34,34 @@
 
 .theme-key-wrap input {
   position: absolute;
+  inset: 0;
+  z-index: 10;
   opacity: 0;
-  width: 0;
-  height: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+
+.theme-key-cap {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: translateY(0);
+  transition: transform 0.1s ease;
   pointer-events: none;
 }
 
-.theme-key-button {
+.theme-key-cap-base {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  transform: translateY(4px);
+  pointer-events: none;
+}
+
+.theme-key-cap-face {
   position: relative;
   z-index: 2;
   display: flex;
@@ -47,365 +69,152 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 32% 22%, rgba(255, 248, 220, 0.14), transparent 42%),
-    radial-gradient(circle at 50% 115%, rgba(0, 0, 0, 0.85), transparent 55%),
-    linear-gradient(165deg, #3a3834 0%, #1c1b19 48%, #0e0e0e 100%);
-  box-shadow:
-    0 10px 22px rgba(0, 0, 0, 0.55),
-    inset 0 2px 3px rgba(255, 248, 220, 0.18),
-    inset 0 -5px 10px rgba(0, 0, 0, 0.65),
-    0 0 0 1px rgba(228, 184, 74, 0.12);
-  cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.2s ease;
-  pointer-events: none;
+  border-radius: 10px;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
-.theme-key-corner {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  pointer-events: none;
-  box-shadow: inset 0 -2px 0 -1px rgba(255, 230, 120, 0.12);
-}
-
-.theme-key-inner {
-  position: relative;
-  z-index: 1;
+.theme-key-cap-face svg {
   width: 52%;
   height: 52%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.theme-key-inner svg {
-  width: 100%;
-  height: 100%;
   overflow: visible;
 }
 
-.theme-key-symbol {
-  fill: rgba(254, 243, 199, 0.88);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
-  transition: opacity 0.35s ease, fill 0.35s ease;
+.theme-key-icon {
+  transition: opacity 0.22s ease, transform 0.22s ease;
 }
 
-.theme-key-symbol--moon {
+.theme-key-icon--moon {
   opacity: 1;
+  transform: scale(1);
 }
 
-.theme-key-symbol--sun {
+.theme-key-icon--sun {
   opacity: 0;
-  fill: #ffdf4e;
+  transform: scale(0.82);
 }
 
-.theme-key-path {
-  fill: none;
-  stroke: #ffdf4e;
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 120;
-  stroke-dashoffset: 120;
-  opacity: 0;
-}
-
-.theme-key-path-glow {
-  fill: none;
-  stroke: #ffc400;
-  stroke-width: 6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 120;
-  stroke-dashoffset: 120;
-  opacity: 0;
-  filter: blur(3px);
-}
-
-.theme-key-led {
+.theme-key-cap-led {
   position: absolute;
-  z-index: 4;
-  top: 7%;
-  left: 50%;
-  width: 14px;
+  z-index: 3;
+  top: 7px;
+  right: 7px;
+  width: 5px;
   height: 5px;
-  transform: translateX(-50%);
-  border-radius: 3px;
-  background: #0a0a0a;
+  border-radius: 2px;
+  pointer-events: none;
+  transition: background 0.22s ease, box-shadow 0.22s ease;
+}
+
+/* ── Dark theme: black key + blue accent ── */
+[data-theme="dark"] .theme-key-cap-base {
+  background: linear-gradient(180deg, #020617 0%, #000000 100%);
+  box-shadow: 0 5px 0 #000000, 0 8px 14px rgba(0, 0, 0, 0.55);
+}
+
+[data-theme="dark"] .theme-key-cap-face {
+  color: #38bdf8;
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.1) 0%, transparent 28%),
+    linear-gradient(180deg, #141820 0%, #080c14 52%, #030508 100%);
+  border: 1px solid rgba(56, 189, 248, 0.32);
   box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.15),
-    inset 0 -4px 1px -3px rgba(255, 255, 255, 0.08),
-    0 0 0 2px rgba(0, 0, 0, 0.55);
-  pointer-events: none;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.55),
+    0 0 12px rgba(14, 165, 233, 0.12);
 }
 
-.theme-key-led::after {
-  content: "";
-  position: absolute;
-  inset: -8px -14px;
-  border-radius: 999px;
-  background: transparent;
-  pointer-events: none;
+[data-theme="dark"] .theme-key-cap-led {
+  background: #0ea5e9;
+  box-shadow: 0 0 6px rgba(14, 165, 233, 0.75);
 }
 
-.theme-key-bg {
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-  border-radius: 50%;
-  overflow: hidden;
-  pointer-events: none;
-  opacity: 0;
-}
-
-.theme-key-bg::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
+[data-theme="dark"] .theme-key-wrap:hover .theme-key-cap-face {
+  border-color: rgba(125, 211, 252, 0.5);
   box-shadow:
-    inset 0 -2px 0 -1px rgba(160, 160, 160, 0.3),
-    inset 0 0 5px 1px black,
-    inset 0 0 0 1px black;
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.5),
+    0 0 16px rgba(14, 165, 233, 0.22);
 }
 
-.theme-key-shine-1,
-.theme-key-shine-2 {
-  position: absolute;
-  left: 50%;
-  bottom: 50%;
-  width: 120%;
-  height: 120%;
-  transform: translate(-50%, 0) scale(0);
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 223, 78, 0.55) 0%, transparent 68%);
-  pointer-events: none;
-}
-
-.theme-key-bg-glow {
-  position: absolute;
-  z-index: 1;
-  inset: -20%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 196, 0, 0.35) 0%, transparent 70%);
-  opacity: 0;
-  pointer-events: none;
-  filter: blur(8px);
-}
-
-/* ── Checked = light theme (LED on, sun visible) ── */
-.theme-key-wrap input:checked ~ .theme-key-button .theme-key-symbol--moon {
-  opacity: 0;
-}
-
-.theme-key-wrap input:checked ~ .theme-key-button .theme-key-symbol--sun {
+[data-theme="dark"] .theme-key-icon--moon {
   opacity: 1;
+  transform: scale(1);
 }
 
-.theme-key-wrap input:checked ~ .theme-key-led {
-  background: #ffdf4e;
+[data-theme="dark"] .theme-key-icon--sun {
+  opacity: 0;
+  transform: scale(0.82);
+}
+
+/* ── Light theme: white key + blue accent ── */
+[data-theme="light"] .theme-key-cap-base {
+  background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+  box-shadow: 0 5px 0 #475569, 0 8px 14px rgba(14, 165, 233, 0.18);
+}
+
+[data-theme="light"] .theme-key-cap-face {
+  color: #0284c7;
+  background:
+    linear-gradient(165deg, #ffffff 0%, #f8fcff 46%, #e0f2fe 100%);
+  border: 1px solid rgba(14, 165, 233, 0.42);
   box-shadow:
-    0 -10px 35px 17px rgba(255, 200, 0, 0.55),
-    inset 0 1px 2px 0 white,
-    0 0 0 3px rgb(0 0 0 / 60%),
-    0 0 2px 4px rgba(152, 119, 0, 0.3);
-  animation: tk-reflexLedTurnOn 0.4s ease forwards;
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -2px 5px rgba(14, 165, 233, 0.1),
+    0 2px 10px rgba(14, 165, 233, 0.12);
 }
 
-.theme-key-wrap input:checked ~ .theme-key-bg {
-  opacity: 1;
+[data-theme="light"] .theme-key-cap-led {
+  background: #0ea5e9;
+  box-shadow: 0 0 6px rgba(14, 165, 233, 0.55);
 }
 
-.theme-key-wrap input:checked ~ .theme-key-bg .theme-key-shine-1 {
-  animation: tk-bg 1.8s ease-out forwards;
-}
-
-.theme-key-wrap input:checked ~ .theme-key-bg .theme-key-shine-2 {
-  animation: tk-bg 1.8s ease-out 0.08s forwards;
-}
-
-.theme-key-wrap input:checked ~ .theme-key-bg-glow {
-  animation: tk-bgGlow 1.6s ease-out forwards;
-}
-
-.theme-key-wrap input:checked ~ .theme-key-button .theme-key-path,
-.theme-key-wrap input:checked ~ .theme-key-button .theme-key-path-glow {
-  opacity: 1;
-  animation: tk-symbolPath 1.4s ease-in-out forwards;
-}
-
-.theme-key-wrap input:checked ~ .theme-key-bg::before {
-  animation: tk-bgBeforeTurnOn 0.5s ease forwards;
-}
-
-/* ── Unchecked = dark theme ── */
-.theme-key-wrap input:not(:checked) ~ .theme-key-led {
-  animation: tk-ledTurnOff 2.4s ease forwards;
-}
-
-.theme-key-wrap input:not(:checked) ~ .theme-key-button .theme-key-corner {
-  animation: tk-reflexLedTurnOff 2.4s ease forwards;
-}
-
-.theme-key-wrap input:not(:checked) ~ .theme-key-led::after {
-  animation: tk-reflexLedBlurTurnOff 2.4s ease forwards;
-}
-
-.theme-key-wrap input:not(:checked) ~ .theme-key-bg::before {
-  animation: tk-bgBeforeTurnOff 2.4s ease forwards;
-}
-
-.theme-key-wrap input:active ~ .theme-key-button {
-  transform: translateY(2px) scale(0.98);
+[data-theme="light"] .theme-key-wrap:hover .theme-key-cap-face {
+  border-color: rgba(14, 165, 233, 0.62);
   box-shadow:
-    0 4px 10px rgba(0, 0, 0, 0.45),
-    inset 0 3px 8px rgba(0, 0, 0, 0.55),
-    inset 0 1px 2px rgba(255, 248, 220, 0.08);
+    inset 0 1px 0 #ffffff,
+    inset 0 -2px 5px rgba(14, 165, 233, 0.12),
+    0 4px 16px rgba(14, 165, 233, 0.2);
+}
+
+[data-theme="light"] .theme-key-icon--moon {
+  opacity: 0;
+  transform: scale(0.82);
+}
+
+[data-theme="light"] .theme-key-icon--sun {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Press — key travels down into the base */
+.theme-key-wrap:active .theme-key-cap {
+  transform: translateY(3px);
+}
+
+.theme-key-wrap:active .theme-key-cap-face {
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="light"] .theme-key-wrap:active .theme-key-cap-face {
+  box-shadow:
+    inset 0 2px 6px rgba(14, 165, 233, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.sidebar-neon-header .theme-key-root {
+  margin-top: 1px;
+}
+
+.mobile-top-bar .theme-key-root {
+  flex-shrink: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .theme-key-wrap input:checked ~ .theme-key-bg,
-  .theme-key-wrap input:checked ~ .theme-key-bg-glow,
-  .theme-key-wrap input:checked ~ .theme-key-button .theme-key-path,
-  .theme-key-wrap input:checked ~ .theme-key-button .theme-key-path-glow,
-  .theme-key-wrap input:not(:checked) ~ .theme-key-led,
-  .theme-key-wrap input:not(:checked) ~ .theme-key-button .theme-key-corner,
-  .theme-key-wrap input:not(:checked) ~ .theme-key-led::after,
-  .theme-key-wrap input:not(:checked) ~ .theme-key-bg::before {
-    animation: none !important;
+  .theme-key-cap,
+  .theme-key-cap-face,
+  .theme-key-icon {
+    transition: none !important;
   }
-}
-
-@keyframes tk-bgGlow {
-  0% { opacity: 0; }
-  40% { opacity: 1; }
-  80%, 100% { opacity: 0; }
-}
-
-@keyframes tk-ledTurnOff {
-  30%, 60% {
-    background-color: #ffdf4e;
-    box-shadow:
-      0 -10px 35px 17px rgba(255, 200, 0, 0.6),
-      inset 0 1px 2px 0 white,
-      0 0 0 3px rgb(0 0 0 / 60%),
-      0 0 2px 4px rgba(152, 119, 0, 0.3);
-  }
-  60.1%, 65% {
-    background-color: #0a0a0a;
-    box-shadow:
-      0 -10px 35px 17px transparent,
-      inset 0 1px 2px 0 transparent,
-      0 0 0 3px rgb(0 0 0 / 10%),
-      0 0 2px 4px transparent;
-  }
-  65.1%, 70% {
-    background-color: #ffdf4e;
-    box-shadow:
-      0 -10px 35px 17px rgba(255, 200, 0, 0.6),
-      inset 0 1px 2px 0 white,
-      0 0 0 3px rgb(0 0 0 / 60%),
-      0 0 2px 4px rgba(152, 119, 0, 0.3);
-  }
-  70.1%, 100% {
-    background-color: #0a0a0a;
-    box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.15),
-      inset 0 -4px 1px -3px rgba(255, 255, 255, 0.08),
-      0 0 0 2px rgba(0, 0, 0, 0.55);
-  }
-}
-
-@keyframes tk-reflexLedTurnOff {
-  30%, 60% {
-    box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.4),
-      inset 0 -6px 1px -4px #9b8100,
-      inset 0 -15px 6px -8px #373326;
-  }
-  60.1%, 65% {
-    box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.4),
-      inset 0 -6px 1px -4px rgba(255, 255, 255, 0.1),
-      inset 0 -15px 6px -8px rgba(255, 255, 255, 0.1);
-  }
-  65.1%, 70% {
-    box-shadow:
-      inset 0 1px 1px rgb(255 255 255 / 40%),
-      inset 0 -6px 1px -4px #9b8100,
-      inset 0 -15px 6px -8px #373326;
-  }
-  70.1%, 100% {
-    box-shadow: inset 0 -2px 0 -1px rgba(255, 230, 120, 0.12);
-  }
-}
-
-@keyframes tk-reflexLedTurnOn {
-  to {
-    box-shadow:
-      0 -10px 35px 17px rgba(255, 200, 0, 0.55),
-      inset 0 1px 2px 0 white,
-      0 0 0 3px rgb(0 0 0 / 60%),
-      0 0 2px 4px rgba(152, 119, 0, 0.3);
-  }
-}
-
-@keyframes tk-reflexLedBlurTurnOff {
-  30%, 60% { background: #ffc400; }
-  60.1%, 65% { background: transparent; }
-  65.1%, 70% { background: #ffc400; }
-  70.1%, 100% { background: transparent; }
-}
-
-@keyframes tk-bgBeforeTurnOff {
-  30%, 60% {
-    box-shadow:
-      inset 0 -2px 0 -1px rgba(255, 230, 120, 0.3),
-      inset 0 0 5px 1px black,
-      inset 0 0 0 1px black;
-  }
-  60.1%, 65% {
-    box-shadow:
-      inset 0 -2px 0 -1px rgba(160, 160, 160, 0.3),
-      inset 0 0 5px 1px black,
-      inset 0 0 0 1px black;
-  }
-  65.1%, 70% {
-    box-shadow:
-      inset 0 -2px 0 -1px rgba(255, 230, 120, 0.3),
-      inset 0 0 5px 1px black,
-      inset 0 0 0 1px black;
-  }
-  70.1%, 100% {
-    box-shadow:
-      inset 0 -2px 0 -1px rgba(160, 160, 160, 0.3),
-      inset 0 0 5px 1px black,
-      inset 0 0 0 1px black;
-  }
-}
-
-@keyframes tk-bgBeforeTurnOn {
-  to {
-    box-shadow:
-      inset 0 -2px 0 -1px rgba(255, 230, 120, 0.35),
-      inset 0 0 5px 1px black,
-      inset 0 0 0 1px black;
-  }
-}
-
-@keyframes tk-bg {
-  0% { transform: translate(-50%, 0) scale(0); opacity: 0.8; }
-  12% { transform: translate(-50%, 0) scale(1.4); opacity: 1; }
-  60%, 100% { transform: translate(-50%, -180%) scale(1.1, 1); opacity: 0; }
-}
-
-@keyframes tk-symbolPath {
-  0% { stroke-dashoffset: 120; opacity: 0.3; }
-  50% { stroke-dashoffset: 0; opacity: 1; }
-  100% { stroke-dashoffset: -120; opacity: 0; }
 }

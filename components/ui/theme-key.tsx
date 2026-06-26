@@ -11,11 +11,12 @@ interface ThemeKeyProps {
   className?: string;
 }
 
-/** Skeuomorphic light/dark theme toggle (clinic site only). */
+/** Square 3D keyboard key — clinic site theme toggle only. */
 export function ThemeKey({ compact = false, className }: ThemeKeyProps) {
   const { theme, setTheme } = useTheme();
   const { t } = useLanguage();
-  const inputId = useId().replace(/:/g, "");
+  const uid = useId().replace(/:/g, "");
+  const inputId = `theme-key-${uid}`;
   const isLight = theme === "light";
 
   return (
@@ -31,32 +32,31 @@ export function ThemeKey({ compact = false, className }: ThemeKeyProps) {
           onChange={(e) => setTheme(e.target.checked ? "light" : "dark")}
           aria-label={t.themeLabel}
         />
-        <button type="button" className="theme-key-button" tabIndex={-1} aria-hidden>
-          <div className="theme-key-corner" />
-          <div className="theme-key-inner">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" aria-hidden>
-              {/* Moon — dark theme */}
+        <span className="theme-key-cap" aria-hidden>
+          <span className="theme-key-cap-base" />
+          <span className="theme-key-cap-face">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" aria-hidden>
               <path
-                className="theme-key-symbol theme-key-symbol--moon"
-                d="M44 38.5a18 18 0 0 1-24.2-24.2A18 18 0 1 0 44 38.5Z"
+                className="theme-key-icon theme-key-icon--moon"
+                d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
-              {/* Sun — light theme */}
-              <circle className="theme-key-symbol theme-key-symbol--sun" cx="32" cy="32" r="11" />
-              <g className="theme-key-path-glow">
-                <path d="M32 8v8M32 48v8M8 32h8M48 32h8M14.6 14.6l5.6 5.6M43.8 43.8l5.6 5.6M14.6 49.4l5.6-5.6M43.8 20.2l5.6-5.6" />
-              </g>
-              <g className="theme-key-path">
-                <path d="M32 8v8M32 48v8M8 32h8M48 32h8M14.6 14.6l5.6 5.6M43.8 43.8l5.6 5.6M14.6 49.4l5.6-5.6M43.8 20.2l5.6-5.6" />
+              <g className="theme-key-icon theme-key-icon--sun">
+                <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.75" />
+                <path
+                  d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+                  stroke="currentColor"
+                  strokeWidth="1.75"
+                  strokeLinecap="round"
+                />
               </g>
             </svg>
-          </div>
-        </button>
-        <div className="theme-key-led" aria-hidden />
-        <div className="theme-key-bg" aria-hidden>
-          <div className="theme-key-shine-1" />
-          <div className="theme-key-shine-2" />
-        </div>
-        <div className="theme-key-bg-glow" aria-hidden />
+          </span>
+          <span className="theme-key-cap-led" aria-hidden />
+        </span>
       </label>
     </div>
   );
