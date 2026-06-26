@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
 import { IClose } from "./icons";
 
@@ -15,6 +16,12 @@ export function Modal({
   footer?: ReactNode;
   maxWidth?: number;
 }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -26,13 +33,21 @@ export function Modal({
     };
   }, [open, onClose]);
 
-  if (!open) return null;
-  return (
+  if (!open || !mounted) return null;
+
+  return createPortal(
     <div className="oa-modal-backdrop" onClick={onClose}>
-      <div className="oa-modal" style={{ maxWidth }} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+      <div
+        className="oa-modal"
+        style={{ maxWidth }}
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="oa-modal-title"
+      >
         <div className="oa-modal-head">
           <div>
-            <div className="oa-modal-title">{title}</div>
+            <div className="oa-modal-title" id="oa-modal-title">{title}</div>
             {sub && <div className="oa-modal-sub">{sub}</div>}
           </div>
           <button className="oa-btn oa-btn-icon oa-btn-ghost" onClick={onClose} aria-label="Закрыть"><IClose /></button>
@@ -40,7 +55,8 @@ export function Modal({
         <div className="oa-modal-body">{children}</div>
         {footer && <div className="oa-modal-foot">{footer}</div>}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -53,15 +69,25 @@ export function Drawer({
   sub?: string;
   children: ReactNode;
 }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
   }, [open, onClose]);
 
-  if (!open) return null;
-  return (
+  if (!open || !mounted) return null;
+  return createPortal(
     <div className="oa-modal-backdrop oa-drawer-backdrop" onClick={onClose}>
       <div className="oa-drawer" onClick={(e) => e.stopPropagation()}>
         <div className="oa-drawer-head">
@@ -73,7 +99,8 @@ export function Drawer({
         </div>
         <div className="oa-drawer-body">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
