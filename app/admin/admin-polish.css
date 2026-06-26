@@ -892,6 +892,98 @@
   white-space: nowrap;
 }
 
+/* ── Appointments page: fit all columns, no horizontal scroll ── */
+.owner-admin .oa-table-bookings {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.owner-admin .oa-table-bookings .oa-col-bk-patient { width: 22%; }
+.owner-admin .oa-table-bookings .oa-col-bk-service { width: 14%; }
+.owner-admin .oa-table-bookings .oa-col-bk-doctor { width: 17%; }
+.owner-admin .oa-table-bookings .oa-col-bk-date { width: 12%; }
+.owner-admin .oa-table-bookings .oa-col-bk-sum { width: 8%; }
+.owner-admin .oa-table-bookings .oa-col-bk-status { width: 13%; }
+.owner-admin .oa-table-bookings .oa-col-bk-actions { width: 14%; }
+
+.owner-admin .oa-table-bookings thead th {
+  font-size: 10px !important;
+  padding: 6px 8px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.owner-admin .oa-table-bookings tbody td {
+  height: 44px !important;
+  min-height: 44px !important;
+  max-height: 44px !important;
+  padding: 0 8px !important;
+  font-size: 12.5px !important;
+  vertical-align: middle !important;
+  overflow: hidden;
+}
+
+.owner-admin .oa-table-bookings tbody td:last-child {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  padding-right: 6px !important;
+}
+
+.owner-admin .oa-table-bookings .oa-booking-service,
+.owner-admin .oa-table-bookings .oa-booking-doctor {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.owner-admin .oa-table-bookings .oa-booking-doctor {
+  color: var(--oa-gold-text-soft, rgba(254, 243, 199, 0.62));
+  font-weight: 500;
+}
+
+.owner-admin .oa-table-bookings .oa-booking-date,
+.owner-admin .oa-table-bookings .oa-booking-sum {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px !important;
+  color: var(--oa-text-soft);
+}
+
+.owner-admin .oa-table-bookings .oa-booking-sum {
+  font-weight: 600;
+  color: var(--oa-gold-text, #fef3c7);
+}
+
+.owner-admin .oa-table-bookings .oa-badge {
+  font-size: 10px;
+  padding: 2px 7px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.owner-admin .oa-table-bookings .oa-booking-actions {
+  min-width: 0 !important;
+  justify-content: flex-end;
+}
+
+.owner-admin .oa-table-bookings .oa-booking-actions .oa-btn-icon {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+}
+
+.owner-admin .oa-table-wrap.oa-table-no-scroll {
+  overflow-x: hidden !important;
+  overflow-y: auto;
+  max-height: calc(100vh - 220px);
+}
+
 /* ── Services table typography ── */
 .owner-admin .oa-service-name {
   font-size: 15px;

@@ -10,6 +10,7 @@ export function DataTableShell({
   loading,
   empty,
   skeletonRows = 8,
+  noHorizontalScroll = false,
 }: {
   toolbar?: ReactNode;
   footer?: ReactNode;
@@ -17,7 +18,13 @@ export function DataTableShell({
   loading?: boolean;
   empty?: { icon?: ReactNode; title: string; sub?: string };
   skeletonRows?: number;
+  /** Fit all columns in viewport — vertical scroll only */
+  noHorizontalScroll?: boolean;
 }) {
+  const wrapClass = noHorizontalScroll
+    ? "oa-table-wrap oa-table-no-scroll"
+    : "oa-table-wrap oa-table-responsive";
+
   return (
     <div className="oa-card oa-table-card">
       {toolbar && <div className="oa-table-toolbar">{toolbar}</div>}
@@ -29,7 +36,7 @@ export function DataTableShell({
       ) : empty ? (
         <EmptyState icon={empty.icon} title={empty.title} sub={empty.sub} />
       ) : (
-        <div className="oa-table-wrap oa-table-responsive">{children}</div>
+        <div className={wrapClass}>{children}</div>
       )}
 
       {footer && !loading && !empty && (
