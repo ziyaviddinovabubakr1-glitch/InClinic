@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 import { IClose } from "./icons";
 
 export function Modal({
-  open, onClose, title, sub, children, footer, maxWidth = 560,
+  open, onClose, title, sub, children, footer, maxWidth = 560, premium = false,
 }: {
   open: boolean;
   onClose: () => void;
@@ -15,6 +15,7 @@ export function Modal({
   children: ReactNode;
   footer?: ReactNode;
   maxWidth?: number;
+  premium?: boolean;
 }) {
   const [mounted, setMounted] = useState(false);
 
@@ -38,7 +39,7 @@ export function Modal({
   return createPortal(
     <div className="oa-modal-backdrop" onClick={onClose}>
       <div
-        className="oa-modal"
+        className={`oa-modal${premium ? " oa-modal-premium" : ""}`}
         style={{ maxWidth }}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
@@ -50,7 +51,7 @@ export function Modal({
             <div className="oa-modal-title" id="oa-modal-title">{title}</div>
             {sub && <div className="oa-modal-sub">{sub}</div>}
           </div>
-          <button className="oa-btn oa-btn-icon oa-btn-ghost" onClick={onClose} aria-label="Закрыть"><IClose /></button>
+          <button className="oa-btn oa-btn-icon oa-btn-icon-round oa-modal-close" onClick={onClose} aria-label="Закрыть"><IClose /></button>
         </div>
         <div className="oa-modal-body">{children}</div>
         {footer && <div className="oa-modal-foot">{footer}</div>}

@@ -108,9 +108,9 @@ export default function AnalyticsPage() {
 
 function Metric({ label, value, tone }: { label: string; value: string; tone?: string }) {
   return (
-    <div className="oa-metric-pill">
+    <div className={`oa-metric-pill${tone ? ` oa-metric-pill--${tone}` : ""}`}>
       <div className="oa-metric-pill-label">{label}</div>
-      <div className={`oa-metric-pill-value${tone ? ` oa-metric-pill-value--${tone}` : ""}`}>{value}</div>
+      <div className="oa-metric-pill-value">{value}</div>
     </div>
   );
 }

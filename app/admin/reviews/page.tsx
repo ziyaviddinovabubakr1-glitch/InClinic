@@ -15,6 +15,7 @@ import type { Review, ReviewStatus } from "@/lib/admin/types";
 import { ConfirmDialog } from "@/components/admin/Modal";
 import {
   Avatar, Stars, ReviewStatusBadge, StatTile, SkeletonCard, EmptyState, Pagination,
+  formatShortName,
 } from "@/components/admin/ui";
 import { DataTableShell } from "@/components/admin/DataTable";
 import { MotionPage } from "@/components/admin/motion";
@@ -30,6 +31,10 @@ const STATUS_LABEL: Record<string, string> = {
   REJECTED: "Отклонённые",
 };
 const RATINGS: (number | "ALL")[] = ["ALL", 5, 4, 3, 2, 1];
+const RATING_OPTIONS = RATINGS.map((r) => ({
+  id: r === "ALL" ? "ALL" : String(r),
+  label: r === "ALL" ? "Все ★" : `${r}★`,
+}));
 
 function formatReviewDate(iso: string): string {
   return new Date(iso).toLocaleDateString("ru-RU", {
@@ -54,6 +59,10 @@ export default function ReviewsPage() {
   }, [search]);
 
   useEffect(() => { setPage(1); }, [debounced, status, rating, doctorId]);
+
+  function runSearch(next?: string) {
+    setDebounced((next ?? search).trim());
+  }
 
   const { data: doctors = [] } = useDoctorsList();
   const { data: analytics } = useReviewAnalytics();
@@ -110,43 +119,47 @@ export default function ReviewsPage() {
             : undefined
         }
         toolbar={
-          <div className="oa-table-toolbar-inner">
-            <div className="oa-search" style={{ flex: 1, minWidth: 200 }}>
+          <div className="oa-reviews-toolbar">
+            <form
+              className="oa-search oa-search-gold oa-reviews-search"
+              onSubmit={(e) => { e.preventDefault(); runSearch(); }}
+            >
               <ISearch />
               <input
                 className="oa-input"
+                type="search"
                 placeholder="Поиск по пациенту, врачу или тексту"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                aria-label="Поиск отзывов"
               />
-            </div>
+              <button type="submit" className="oa-search-submit" aria-label="Найти">
+                <ISearch style={{ width: 16, height: 16 }} />
+              </button>
+            </form>
             <SegmentedControl
               options={STATUSES.map((s) => ({ id: s, label: STATUS_LABEL[s] }))}
               value={status}
               onChange={setStatus}
+              className="oa-reviews-status-tabs"
             />
             <select
-              className="oa-select oa-select-compact"
+              className="oa-select oa-select-compact oa-reviews-doctor-select"
               value={doctorId}
               onChange={(e) => setDoctorId(e.target.value)}
+              aria-label="Фильтр по врачу"
             >
               <option value="">Все врачи</option>
               {doctors.map((d) => (
-                <option key={d.id} value={d.id}>{d.fullName}</option>
+                <option key={d.id} value={d.id}>{formatShortName(d.fullName)}</option>
               ))}
             </select>
-            <div className="oa-chips">
-              {RATINGS.map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  className={`oa-chip ${rating === r ? "oa-chip-active" : ""}`}
-                  onClick={() => setRating(r)}
-                >
-                  {r === "ALL" ? "Все ★" : `${r}★`}
-                </button>
-              ))}
-            </div>
+            <SegmentedControl
+              options={RATING_OPTIONS}
+              value={rating === "ALL" ? "ALL" : String(rating)}
+              onChange={(id) => setRating(id === "ALL" ? "ALL" : Number(id))}
+              className="oa-reviews-rating-tabs"
+            />
           </div>
         }
         footer={
@@ -156,7 +169,7 @@ export default function ReviewsPage() {
           </>
         }
       >
-        <table className="oa-table">
+        <table className="oa-table oa-table-reviews">
           <thead>
             <tr>
               <th>Пациент</th>
@@ -172,56 +185,59 @@ export default function ReviewsPage() {
             {rows?.map((r) => (
               <tr key={r.id}>
                 <td data-label="Пациент">
-                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <Avatar name={r.patientName} size={28} tone="violet" />
-                    <Link href={`/admin/patients/${r.patientId}`} className="oa-cell-link oa-cell-strong">
-                      {r.patientName}
+                  <div className="oa-review-patient">
+                    <Avatar name={r.patientName} size={26} tone="violet" />
+                    <Link href={`/admin/patients/${r.patientId}`} className="oa-cell-link oa-review-patient-name" title={r.patientName}>
+                      {formatShortName(r.patientName)}
                     </Link>
                   </div>
                 </td>
-                <td className="oa-cell-soft" data-label="Врач">{r.doctorName}</td>
+                <td className="oa-review-doctor" data-label="Врач" title={r.doctorName}>
+                  {formatShortName(r.doctorName)}
+                </td>
                 <td data-label="Рейтинг">
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <Stars rating={r.rating} size={12} />
-                    <span className="oa-cell-strong">{r.rating}</span>
+                  <div className="oa-review-rating">
+                    <Stars rating={r.rating} size={11} />
+                    <span>{r.rating}</span>
                   </div>
                 </td>
-                <td className="oa-cell-soft" data-label="Комментарий" style={{ maxWidth: 280 }}>
-                  <span style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                    {r.comment || "—"}
-                  </span>
+                <td className="oa-review-comment" data-label="Комментарий" title={r.comment || undefined}>
+                  {r.comment || "—"}
                 </td>
                 <td data-label="Статус"><ReviewStatusBadge status={r.status} /></td>
-                <td className="oa-cell-soft" data-label="Дата">{formatReviewDate(r.date)}</td>
+                <td className="oa-review-date" data-label="Дата">{formatReviewDate(r.date)}</td>
                 <td data-label="Действия">
-                  <div className="oa-table-actions">
+                  <div className="oa-review-actions">
                     {canModerate && r.status !== "APPROVED" && (
                       <button
                         type="button"
-                        className="oa-btn oa-btn-success oa-btn-sm"
+                        className="oa-review-btn oa-review-btn--approve"
                         disabled={approve.isPending}
                         onClick={() => moderate(r, "APPROVED")}
                       >
-                        <ICheck style={{ width: 13, height: 13 }} /> Одобрить
+                        <ICheck style={{ width: 12, height: 12 }} />
+                        <span>Одобрить</span>
                       </button>
                     )}
                     {canModerate && r.status !== "REJECTED" && (
                       <button
                         type="button"
-                        className="oa-btn oa-btn-ghost oa-btn-sm"
+                        className="oa-review-btn oa-review-btn--reject"
                         disabled={reject.isPending}
                         onClick={() => moderate(r, "REJECTED")}
                       >
-                        <IClose style={{ width: 13, height: 13 }} /> Отклонить
+                        <IClose style={{ width: 12, height: 12 }} />
+                        <span>Отклонить</span>
                       </button>
                     )}
                     {can("review:delete") && (
                       <button
                         type="button"
-                        className="oa-btn oa-btn-danger oa-btn-sm"
+                        className="oa-review-btn oa-review-btn--delete"
                         onClick={() => setToDelete(r)}
+                        aria-label="Удалить"
                       >
-                        <ITrash style={{ width: 13, height: 13 }} />
+                        <ITrash style={{ width: 12, height: 12 }} />
                       </button>
                     )}
                   </div>

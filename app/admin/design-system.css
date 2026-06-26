@@ -314,8 +314,8 @@
 /* ═══ KPI STRIP (Stripe) ═══ */
 .owner-admin .oa-kpi-strip {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
   width: 100%;
 }
 
@@ -443,7 +443,7 @@
 
 .owner-admin .oa-dash-v3-body {
   display: grid;
-  grid-template-columns: 1fr 240px;
+  grid-template-columns: 1fr minmax(168px, 188px);
   gap: 12px;
   align-items: start;
 }

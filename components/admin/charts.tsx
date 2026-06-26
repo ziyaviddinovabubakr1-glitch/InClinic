@@ -289,22 +289,59 @@ export function Sparkline({ data, color = ACCENT, width = 110, height = 36 }: {
 
 /* ───────────────────────────  Gauge (radial)  ──────────────────────────── */
 export function Gauge({ value, size = 150, label }: { value: number; size?: number; label?: string }) {
-  const r = (size - 18) / 2;
+  const gid = useId().replace(/:/g, "");
+  const r = (size - 14) / 2;
   const c = 2 * Math.PI * r;
   const pct = Math.max(0, Math.min(100, value));
   const dash = (pct / 100) * c;
-  const color = pct >= 75 ? "#22c55e" : pct >= 50 ? "#3b82f6" : pct >= 30 ? "#f59e0b" : "#ef4444";
-  const glow = pct >= 75 ? "rgba(34,197,94,0.35)" : pct >= 50 ? "rgba(59,130,246,0.35)" : "rgba(245,158,11,0.3)";
+  const track = "rgba(255, 255, 255, 0.08)";
+  const gold = "#e4b84a";
+  const goldHi = "#fce588";
+  const thickness = Math.max(7, size * 0.11);
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="oa-gauge">
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="oa-gauge" aria-hidden="true">
+      <defs>
+        <linearGradient id={`oa-gauge-gold-${gid}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={goldHi} />
+          <stop offset="55%" stopColor={gold} />
+          <stop offset="100%" stopColor="#9a6b14" />
+        </linearGradient>
+      </defs>
       <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={GRID} strokeWidth="11" />
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth="11"
-          strokeDasharray={`${dash} ${c - dash}`} strokeLinecap="round"
-          style={{ filter: `drop-shadow(0 0 10px ${glow})` }} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={track} strokeWidth={thickness} />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke={`url(#oa-gauge-gold-${gid})`}
+          strokeWidth={thickness}
+          strokeDasharray={`${dash} ${c - dash}`}
+          strokeLinecap="round"
+        />
       </g>
-      <text x="50%" y="46%" textAnchor="middle" fontSize={size * 0.2} fontWeight="800" fill="var(--oa-text)" style={{ fontFamily: "var(--font-display), var(--font-inter), sans-serif" }}>{pct}</text>
-      <text x="50%" y="62%" textAnchor="middle" fontSize="11" fill="var(--oa-text-faint)">{label ?? "из 100"}</text>
+      <text
+        x="50%"
+        y="44%"
+        textAnchor="middle"
+        fontSize={size * 0.22}
+        fontWeight="800"
+        fill="#fafafa"
+      >
+        {pct}
+      </text>
+      {label && (
+        <text
+          x="50%"
+          y="58%"
+          textAnchor="middle"
+          fontSize={Math.max(10, size * 0.14)}
+          fontWeight="600"
+          fill="#e4b84a"
+        >
+          {label}
+        </text>
+      )}
     </svg>
   );
 }

@@ -133,6 +133,14 @@ export function ReviewStatusBadge({ status }: { status: ReviewStatus }) {
   );
 }
 
+export function formatShortName(fullName: string): string {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean);
+  if (parts.length <= 1) return fullName.trim() || "—";
+  const [last, ...rest] = parts;
+  const initials = rest.map((p) => `${p.charAt(0).toUpperCase()}.`).join(" ");
+  return `${last} ${initials}`;
+}
+
 /* ───────────────────────────  Avatar  ──────────────────────────────────── */
 export function Avatar({ name, size = 38, tone = "blue" }: { name: string; size?: number; tone?: string }) {
   const initials = name.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase();

@@ -104,13 +104,34 @@ export default function DoctorsPage() {
 
   const saving = createDoctorMut.isPending || updateDoctorMut.isPending;
 
+  function runSearch(next?: string) {
+    setDebounced((next ?? search).trim());
+  }
+
   return (
     <MotionPage style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       <div className="oa-toolbar">
-        <div className="oa-search" style={{ flex: 1, minWidth: 220 }}>
+        <form
+          className="oa-search oa-search-gold"
+          style={{ flex: 1, minWidth: 220 }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            runSearch();
+          }}
+        >
           <ISearch />
-          <input className="oa-input" placeholder="Поиск по имени, специализации или телефону" value={search} onChange={(e) => setSearch(e.target.value)} />
-        </div>
+          <input
+            className="oa-input"
+            type="search"
+            placeholder="Поиск по имени, специализации или телефону"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            aria-label="Поиск врачей"
+          />
+          <button type="submit" className="oa-search-submit" aria-label="Найти">
+            <ISearch style={{ width: 16, height: 16 }} />
+          </button>
+        </form>
         <div className="oa-chips">
           {(["ALL", "ACTIVE", "HIDDEN"] as const).map((s) => (
             <button key={s} className={`oa-chip ${statusFilter === s ? "oa-chip-active" : ""}`} onClick={() => setStatusFilter(s)}>
@@ -130,7 +151,7 @@ export default function DoctorsPage() {
           <EmptyState icon={<IDoctors />} title="Врачи не найдены" sub="Измените фильтры или добавьте нового врача." />
         ) : (
           <div className="oa-table-wrap oa-table-responsive">
-            <table className="oa-table">
+            <table className="oa-table oa-table-compact oa-table-doctors">
               <thead>
                 <tr>
                   <th>Врач</th>
@@ -150,20 +171,20 @@ export default function DoctorsPage() {
                   return (
                     <tr key={d.id}>
                       <td className="oa-table-col-patient-first" data-label="Врач">
-                        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                          <Avatar name={d.fullName} size={36} tone={d.status === "ACTIVE" ? "blue" : "amber"} />
-                          <div style={{ minWidth: 0 }}>
-                            <div className="oa-cell-strong">{d.fullName}</div>
-                            <div style={{ fontSize: 12, color: "var(--oa-text-faint)" }}>{d.specialty} · {d.experienceYears} лет</div>
+                        <div className="oa-doctor-cell">
+                          <Avatar name={d.fullName} size={28} tone={d.status === "ACTIVE" ? "blue" : "amber"} />
+                          <div className="oa-doctor-cell-text">
+                            <div className="oa-doctor-cell-name" title={d.fullName}>{d.fullName}</div>
+                            <div className="oa-doctor-cell-meta">{d.specialty} · {d.experienceYears} лет</div>
                           </div>
                         </div>
                       </td>
                       <td className="oa-cell-soft" data-label="Телефон" style={{ fontSize: 12.5 }}>{d.phone}</td>
                       <td data-label="Рейтинг">
-                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                          <Stars rating={d.rating} size={12} />
+                        <div className="oa-doctor-rating">
+                          <Stars rating={d.rating} size={10} />
                           <span className="oa-cell-strong">{d.rating.toFixed(1)}</span>
-                          <span className="oa-cell-soft" style={{ fontSize: 11 }}>({d.reviewCount})</span>
+                          <span className="oa-cell-soft">({d.reviewCount})</span>
                         </div>
                       </td>
                       <td className="oa-cell-strong" data-label="Пациенты">{d.patientsCount}</td>
@@ -208,6 +229,7 @@ export default function DoctorsPage() {
         title={editing ? "Редактировать врача" : "Новый врач"}
         sub={editing ? "Изменение данных врача" : "Врач входит через сайт inclinic — не через админку"}
         maxWidth={520}
+        premium
         footer={
           <>
             <button className="oa-btn oa-btn-ghost" onClick={() => setFormOpen(false)}>Отмена</button>

@@ -18,11 +18,11 @@ export default function ArchivePage() {
       <PageHeader title="Архив" sub="Завершённые данные клиники · постоянное хранение" />
 
       {isLoading || !summary ? (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 14 }}>
-          {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} height={110} />)}
+        <div className="oa-archive-grid">
+          {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} height={150} />)}
         </div>
       ) : (
-        <MotionGrid style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 14 }}>
+        <MotionGrid className="oa-archive-grid">
           <MotionItem><ArchiveCard icon={IAppointments} label="Завершённые приёмы" value={String(summary.completedAppointments)} /></MotionItem>
           <MotionItem><ArchiveCard icon={IPatients} label="Историч. пациенты" value={String(summary.historicalPatients)} /></MotionItem>
           <MotionItem><ArchiveCard icon={IMoney} label="Архив дохода" value={money(summary.totalArchivedRevenue)} /></MotionItem>
@@ -39,8 +39,8 @@ function ArchiveCard({ icon: Icon, label, value }: {
   icon: (p: React.SVGProps<SVGSVGElement>) => JSX.Element; label: string; value: string;
 }) {
   return (
-    <div className="oa-stat-card">
-      <AdminIcon3d icon={Icon} size={28} iconSize={14} />
+    <div className="oa-stat-card oa-archive-card">
+      <AdminIcon3d icon={Icon} size={32} iconSize={15} />
       <div className="oa-kpi-label">{label}</div>
       <div className="oa-kpi-value">{value}</div>
     </div>

@@ -76,7 +76,7 @@ export default function ServicesPage() {
           <EmptyState icon={<IServices />} title="Услуги не найдены" sub="Добавьте первую услугу." />
         ) : (
           <div className="oa-table-wrap oa-table-responsive">
-            <table className="oa-table">
+            <table className="oa-table oa-table-services">
               <thead>
                 <tr>
                   <th>Услуга</th>
@@ -92,9 +92,9 @@ export default function ServicesPage() {
               <tbody>
                 {services.map((s) => (
                   <tr key={s.id}>
-                    <td className="oa-table-col-patient-first" data-label="Услуга">
-                      <div className="oa-cell-strong">{s.name}</div>
-                      <div style={{ fontSize: 12, color: "var(--oa-text-faint)", marginTop: 2, maxWidth: 280, lineHeight: 1.4 }}>{s.description}</div>
+                    <td className="oa-table-col-patient-first oa-service-cell" data-label="Услуга">
+                      <div className="oa-service-name">{s.name}</div>
+                      {s.description && <div className="oa-service-desc">{s.description}</div>}
                     </td>
                     <td className="oa-cell-strong" data-label="Цена">{money(s.price)}</td>
                     <td className="oa-cell-soft" data-label="Длительность">{s.durationMin} мин</td>

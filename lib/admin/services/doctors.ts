@@ -30,12 +30,15 @@ export function listDoctors(query: DoctorQuery = {}): Promise<Doctor[]> {
       rows = rows.filter((d) => d.status === query.status);
     }
     if (query.search) {
-      const q = query.search.toLowerCase();
+      const q = query.search.toLowerCase().trim();
+      const qDigits = q.replace(/\D/g, "");
       rows = rows.filter(
         (d) =>
           d.fullName.toLowerCase().includes(q) ||
           d.specialty.toLowerCase().includes(q) ||
-          d.phone.replace(/\D/g, "").includes(q.replace(/\D/g, "")),
+          d.education.toLowerCase().includes(q) ||
+          d.languages.some((l) => l.toLowerCase().includes(q)) ||
+          (qDigits.length > 0 && d.phone.replace(/\D/g, "").includes(qDigits)),
       );
     }
     rows.sort((a, b) => b.appointmentsCount - a.appointmentsCount);

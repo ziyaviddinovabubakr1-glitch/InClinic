@@ -72,21 +72,21 @@ export default function DashboardPage() {
       />
 
       <section className="oa-dash-v3-kpi">
-        <StaggerGrid className="oa-kpi-strip">
+        <StaggerGrid className="oa-kpi-strip oa-kpi-strip--hero">
           {PRIMARY_KPIS(data, revenueSpark, apptSpark).map((k) => (
             <StaggerItem key={k.label}>
               <KpiCard label={k.label} value={k.value} tone={k.tone} delta={k.delta} deltaDir={k.deltaDir} sparkData={k.spark} />
             </StaggerItem>
           ))}
         </StaggerGrid>
-        <StaggerGrid className="oa-kpi-strip oa-kpi-strip--muted oa-kpi-strip--3">
+        <StaggerGrid className="oa-kpi-strip oa-kpi-strip--muted oa-kpi-strip--3 oa-kpi-strip--mid">
           {REVIEW_KPIS(data, revenueSpark).map((k) => (
             <StaggerItem key={k.label}>
               <KpiCard label={k.label} value={k.value} tone={k.tone} delta={k.delta} deltaDir={k.deltaDir} sparkData={k.spark} />
             </StaggerItem>
           ))}
         </StaggerGrid>
-        <StaggerGrid className="oa-kpi-strip oa-kpi-strip--muted oa-kpi-strip--6">
+        <StaggerGrid className="oa-kpi-strip oa-kpi-strip--muted oa-kpi-strip--3">
           {SECONDARY_KPIS(data, revenueSpark, apptSpark).map((k) => (
             <StaggerItem key={k.label}>
               <KpiCard label={k.label} value={k.value} tone={k.tone} delta={k.delta} deltaDir={k.deltaDir} sparkData={k.spark} />
@@ -136,7 +136,7 @@ export default function DashboardPage() {
               <span className="oa-panel-title">Показатели</span>
             </div>
             <div className="oa-rail-gauge">
-              <Gauge value={executive.clinicHealthScore} size={64} label="Здоровье" />
+              <Gauge value={executive.clinicHealthScore} size={52} label="Здоровье" />
             </div>
             <div className="oa-rail-stats">
               <RailStat label="Общий доход" value={money(executive.totalLifetimeRevenue)} tone="green" />
@@ -157,7 +157,7 @@ export default function DashboardPage() {
             </Link>
           </div>
           <div className="oa-table-wrap">
-            <table className="oa-table oa-table-dense">
+            <table className="oa-table oa-table-dense oa-table-appointments">
               <thead>
                 <tr>
                   <th>Пациент</th>
@@ -169,17 +169,18 @@ export default function DashboardPage() {
                 {recentAppointments.map((a) => (
                   <tr key={a.id}>
                     <td>
-                      <div className="oa-cell-user">
-                        <Avatar name={a.patientName} size={24} />
-                        <div>
+                      <div className="oa-cell-user oa-appointment-user" title={`${a.patientName} · ${a.patientPhone} · ${a.serviceName}`}>
+                        <Avatar name={a.patientName} size={22} />
+                        <div className="oa-appointment-line">
                           {a.patientId ? (
-                            <Link href={`/admin/patients/${a.patientId}`} className="oa-cell-link oa-cell-strong">
+                            <Link href={`/admin/patients/${a.patientId}`} className="oa-cell-link oa-appointment-name">
                               {a.patientName}
                             </Link>
                           ) : (
-                            <div className="oa-cell-strong">{a.patientName}</div>
+                            <span className="oa-appointment-name">{a.patientName}</span>
                           )}
-                          <div className="oa-cell-soft">{a.patientPhone} · {a.serviceName}</div>
+                          <span className="oa-appointment-sep">·</span>
+                          <span className="oa-appointment-meta">{a.serviceName}</span>
                         </div>
                       </div>
                     </td>
