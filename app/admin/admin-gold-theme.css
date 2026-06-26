@@ -1,0 +1,372 @@
+/* ═══════════════════════════════════════════════════════════════
+   InClinic Admin — Premium Black / Gold Theme (global surfaces)
+═══════════════════════════════════════════════════════════════ */
+
+.owner-admin {
+  --oa-premium-surface: linear-gradient(165deg, rgba(16, 14, 11, 0.98) 0%, rgba(6, 6, 6, 0.98) 100%);
+  --oa-premium-shine: linear-gradient(90deg, transparent, rgba(228, 184, 74, 0.45), transparent);
+  --oa-premium-inset: inset 0 1px 0 rgba(255, 248, 220, 0.07);
+  --oa-premium-shadow: 0 2px 14px rgba(0, 0, 0, 0.24);
+}
+
+/* ── Shared premium card shell ── */
+.owner-admin .oa-card,
+.owner-admin .oa-panel,
+.owner-admin .oa-stat-tile,
+.owner-admin .oa-stat-card,
+.owner-admin .oa-insight-tile,
+.owner-admin .oa-metric-pill,
+.owner-admin .oa-segment-stat,
+.owner-admin .oa-report-card,
+.owner-admin .oa-backup-action,
+.owner-admin .oa-archive-vault-card,
+.owner-admin .oa-archive-vault-settings,
+.owner-admin .oa-doctor-card,
+.owner-admin .oa-chart-block {
+  position: relative;
+  background: var(--oa-premium-surface) !important;
+  border: 1px solid var(--oa-gold-border) !important;
+  border-radius: var(--oa-card-radius) !important;
+  box-shadow: var(--oa-premium-inset), var(--oa-premium-shadow) !important;
+  overflow: hidden;
+}
+
+.owner-admin .oa-card::after,
+.owner-admin .oa-panel::after,
+.owner-admin .oa-stat-tile::after,
+.owner-admin .oa-stat-card::after,
+.owner-admin .oa-insight-tile::after,
+.owner-admin .oa-metric-pill::after,
+.owner-admin .oa-segment-stat::after,
+.owner-admin .oa-report-card::after,
+.owner-admin .oa-backup-action::after,
+.owner-admin .oa-kpi-v3::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: var(--oa-premium-shine);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.owner-admin .oa-card-hover:hover,
+.owner-admin .oa-stat-card:hover,
+.owner-admin .oa-insight-tile:hover,
+.owner-admin .oa-segment-stat:hover,
+.owner-admin .oa-report-card:hover,
+.owner-admin .oa-backup-action:hover:not(:disabled),
+.owner-admin .oa-stat-tile:hover {
+  border-color: var(--oa-gold-border-strong) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 220, 0.1),
+    0 6px 22px rgba(0, 0, 0, 0.32) !important;
+}
+
+/* ── KPI cards (all pages) ── */
+.owner-admin .oa-kpi-v3 {
+  background: var(--oa-premium-surface) !important;
+  border: 1px solid var(--oa-gold-border) !important;
+  border-radius: var(--oa-card-radius) !important;
+  box-shadow: var(--oa-premium-inset), var(--oa-premium-shadow) !important;
+}
+
+.owner-admin .oa-kpi-v3--hero {
+  border-color: var(--oa-gold-border-strong) !important;
+  background: linear-gradient(135deg, rgba(228, 184, 74, 0.16) 0%, rgba(10, 9, 8, 0.98) 52%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 220, 0.12),
+    0 8px 28px rgba(0, 0, 0, 0.3) !important;
+}
+
+.owner-admin .oa-kpi-label,
+.owner-admin .oa-stat-tile-label,
+.owner-admin .oa-metric-pill-label,
+.owner-admin .oa-insight-label,
+.owner-admin .oa-panel-meta,
+.owner-admin .oa-stat-card .oa-kpi-label {
+  color: var(--oa-gold-text-soft) !important;
+}
+
+.owner-admin .oa-kpi-value,
+.owner-admin .oa-stat-tile-value,
+.owner-admin .oa-stat-card .oa-kpi-value,
+.owner-admin .oa-metric-pill-value,
+.owner-admin .oa-segment-stat-value {
+  color: var(--oa-gold-text) !important;
+}
+
+.owner-admin .oa-kpi-v3:hover {
+  border-color: var(--oa-gold-border-strong) !important;
+}
+
+.owner-admin .oa-kpi-delta.oa-delta-up {
+  color: #86efac !important;
+}
+
+.owner-admin .oa-kpi-delta.oa-delta-down {
+  color: #fca5a5 !important;
+}
+
+.owner-admin .oa-kpi-delta.oa-delta-flat {
+  color: var(--oa-gold-text-soft) !important;
+}
+
+/* ── Panels & tables ── */
+.owner-admin .oa-panel-title,
+.owner-admin .oa-section-title,
+.owner-admin .oa-page-title,
+.owner-admin .oa-topbar-page-title {
+  color: var(--oa-gold-text) !important;
+}
+
+.owner-admin .oa-panel-head--row,
+.owner-admin .oa-table thead th {
+  border-color: rgba(228, 184, 74, 0.12) !important;
+}
+
+.owner-admin .oa-table-card {
+  background: var(--oa-premium-surface) !important;
+  border: 1px solid var(--oa-gold-border) !important;
+  border-radius: var(--oa-card-radius) !important;
+  box-shadow: var(--oa-premium-inset), var(--oa-premium-shadow) !important;
+}
+
+.owner-admin .oa-table tbody tr {
+  border-color: rgba(228, 184, 74, 0.08) !important;
+}
+
+.owner-admin .oa-table tbody tr:hover {
+  background: rgba(228, 184, 74, 0.04) !important;
+}
+
+/* ── Insights & profile stats ── */
+.owner-admin .oa-insight-name {
+  color: var(--oa-gold-text) !important;
+}
+
+.owner-admin .oa-insight-metric {
+  color: var(--oa-gold-mid) !important;
+}
+
+.owner-admin .oa-profile-stats .oa-stat-tile {
+  padding: 14px 12px !important;
+}
+
+.owner-admin .oa-stat-tile-value--lg {
+  font-size: 20px !important;
+  color: var(--oa-gold-text) !important;
+}
+
+/* ── Archive & reports ── */
+.owner-admin .oa-archive-card .oa-kpi-value,
+.owner-admin .oa-report-card-title {
+  color: var(--oa-gold-text) !important;
+}
+
+.owner-admin .oa-report-card--hero {
+  border-color: var(--oa-gold-border-strong) !important;
+  background: linear-gradient(135deg, rgba(228, 184, 74, 0.14) 0%, rgba(10, 9, 8, 0.98) 55%) !important;
+}
+
+.owner-admin .oa-report-card-sub {
+  color: var(--oa-gold-text-soft) !important;
+}
+
+/* ── Segment filter cards (patients) ── */
+.owner-admin .oa-segment-stat-active {
+  border-color: var(--oa-gold-border-strong) !important;
+  background: rgba(228, 184, 74, 0.14) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 220, 0.1),
+    0 0 0 1px rgba(228, 184, 74, 0.2) !important;
+}
+
+.owner-admin .oa-segment-stat-active .oa-segment-stat-value {
+  color: var(--oa-gold-text) !important;
+}
+
+/* ── Buttons (gold primary) ── */
+.owner-admin .oa-btn-primary,
+.owner-admin .oa-btn-gold {
+  background: linear-gradient(165deg, var(--oa-gold-hi) 0%, var(--oa-gold-mid) 48%, var(--oa-gold-lo) 100%) !important;
+  color: #3d2a0a !important;
+  border: 1px solid rgba(255, 220, 140, 0.45) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.35) inset,
+    0 2px 10px rgba(0, 0, 0, 0.28) !important;
+}
+
+.owner-admin .oa-btn-primary:hover:not(:disabled),
+.owner-admin .oa-btn-gold:hover:not(:disabled) {
+  filter: brightness(1.06);
+  border-color: rgba(255, 220, 140, 0.6) !important;
+}
+
+.owner-admin .oa-btn-ghost {
+  border-color: rgba(228, 184, 74, 0.28) !important;
+  color: var(--oa-gold-text-soft) !important;
+}
+
+.owner-admin .oa-btn-ghost:hover:not(:disabled) {
+  border-color: rgba(228, 184, 74, 0.45) !important;
+  color: var(--oa-gold-text) !important;
+  background: rgba(228, 184, 74, 0.06) !important;
+}
+
+/* ── Badges ── */
+.owner-admin .oa-badge-confirmed,
+.owner-admin .oa-badge-completed {
+  background: rgba(228, 184, 74, 0.14) !important;
+  color: var(--oa-gold-text) !important;
+  border: 1px solid rgba(228, 184, 74, 0.35) !important;
+}
+
+.owner-admin .oa-badge-pending {
+  background: rgba(228, 184, 74, 0.08) !important;
+  color: #fcd34d !important;
+  border: 1px solid rgba(228, 184, 74, 0.28) !important;
+}
+
+/* ── Links & accents ── */
+.owner-admin .oa-link-sm,
+.owner-admin .oa-cell-link {
+  color: var(--oa-gold-mid) !important;
+}
+
+.owner-admin .oa-link-sm:hover,
+.owner-admin .oa-cell-link:hover {
+  color: var(--oa-gold-hi) !important;
+}
+
+.owner-admin .oa-review-doctor {
+  color: var(--oa-gold-mid) !important;
+}
+
+/* ── Inputs (subtle gold frame) ── */
+.owner-admin .oa-input,
+.owner-admin .oa-select,
+.owner-admin .oa-textarea {
+  background: rgba(0, 0, 0, 0.35) !important;
+  border-color: rgba(228, 184, 74, 0.2) !important;
+  border-radius: 10px !important;
+  color: var(--oa-text) !important;
+}
+
+.owner-admin .oa-input:focus,
+.owner-admin .oa-select:focus,
+.owner-admin .oa-textarea:focus {
+  border-color: rgba(228, 184, 74, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(228, 184, 74, 0.12) !important;
+}
+
+.owner-admin .oa-label,
+.owner-admin .oa-field-label {
+  color: var(--oa-gold-text-soft) !important;
+}
+
+/* ── Topbar / content chrome ── */
+.owner-admin .oa-topbar-linear {
+  border-bottom-color: rgba(228, 184, 74, 0.12) !important;
+}
+
+.owner-admin .oa-content-linear {
+  background: var(--oa-bg) !important;
+}
+
+/* ── Empty & skeleton areas inside cards ── */
+.owner-admin .oa-empty-state {
+  color: var(--oa-gold-text-soft);
+}
+
+.owner-admin .oa-page-sub,
+.owner-admin .oa-section-sub {
+  color: var(--oa-gold-text-faint) !important;
+}
+
+/* KPI top shine (design-system hides pseudo-elements) */
+.owner-admin .oa-kpi-v3::after {
+  display: block !important;
+}
+
+/* Login screen */
+.oa-login-shell {
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 0%, rgba(228, 184, 74, 0.14), transparent),
+    linear-gradient(180deg, #0a0908, var(--oa-bg)) !important;
+}
+
+.oa-login-card {
+  background: linear-gradient(165deg, rgba(16, 14, 11, 0.98), rgba(6, 6, 6, 0.98)) !important;
+  border: 1px solid var(--oa-gold-border) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 220, 0.08),
+    0 12px 40px rgba(0, 0, 0, 0.45) !important;
+}
+
+.oa-login-card::before {
+  height: 3px !important;
+  background: linear-gradient(90deg, transparent, var(--oa-gold-mid), transparent) !important;
+}
+
+.oa-login-subtitle {
+  color: var(--oa-gold-text-soft) !important;
+}
+
+/* Toasts */
+.oa-toast {
+  background: linear-gradient(165deg, rgba(16, 14, 11, 0.98), rgba(8, 8, 8, 0.98)) !important;
+  border: 1px solid var(--oa-gold-border) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 220, 0.06),
+    0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+.oa-toast--info { border-left-color: var(--oa-gold-mid) !important; }
+.oa-toast-title { color: var(--oa-gold-text) !important; }
+.oa-toast-msg { color: var(--oa-gold-text-soft) !important; }
+
+/* Standard modal (non-premium) */
+.oa-modal:not(.oa-modal-premium) {
+  background: linear-gradient(165deg, rgba(16, 14, 11, 0.98), rgba(8, 8, 8, 0.98)) !important;
+  border: 1px solid var(--oa-gold-border) !important;
+}
+
+.oa-modal:not(.oa-modal-premium) .oa-modal-title {
+  color: var(--oa-gold-text) !important;
+}
+
+/* Tone pills — unified gold family */
+.owner-admin .oa-tone-blue,
+.owner-admin .oa-tone-green,
+.owner-admin .oa-tone-amber,
+.owner-admin .oa-tone-violet,
+.owner-admin .oa-tone-sky {
+  background: rgba(228, 184, 74, 0.12) !important;
+  color: var(--oa-gold-text) !important;
+  border: 1px solid rgba(228, 184, 74, 0.28) !important;
+}
+
+.owner-admin .oa-tone-red {
+  background: rgba(229, 72, 77, 0.12) !important;
+  color: #fca5a5 !important;
+  border: 1px solid rgba(229, 72, 77, 0.28) !important;
+}
+
+/* Dashboard rail panel */
+.owner-admin .oa-dash-v3-rail .oa-panel {
+  background: var(--oa-premium-surface) !important;
+  border-color: var(--oa-gold-border) !important;
+}
+
+.owner-admin .oa-rail-stat-label {
+  color: var(--oa-gold-text-soft) !important;
+}
+
+/* Sparklines stay gold */
+.owner-admin .oa-kpi-v3-spark polyline,
+.owner-admin .oa-kpi-v3-spark path {
+  stroke: var(--oa-gold-mid) !important;
+}

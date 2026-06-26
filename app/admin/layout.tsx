@@ -5,6 +5,7 @@ import "./admin.css";
 import "./tokens.css";
 import "./design-system.css";
 import "./admin-polish.css";
+import "./admin-gold-theme.css";
 import AdminShell from "@/components/admin/AdminShell";
 import AdminBootLoader from "@/components/admin/AdminBootLoader";
 import AdminScrollRoot from "@/components/admin/AdminScrollRoot";
