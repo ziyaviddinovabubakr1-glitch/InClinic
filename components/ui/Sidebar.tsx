@@ -35,7 +35,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
               <span className="brand-in font-extrabold">In</span>
               <span className="brand-clinic font-extrabold">Clinic</span>
             </div>
-            <p className="text-[9px] leading-snug text-theme-muted mt-1 whitespace-normal line-clamp-2">
+            <p className="sidebar-tagline text-[9px] leading-snug text-theme-muted mt-1 whitespace-normal line-clamp-2">
               {t.tagline}
             </p>
           </div>
@@ -59,11 +59,11 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden px-2 py-2">
-        <div className="text-[8px] font-semibold uppercase tracking-widest text-theme-muted px-1.5 mb-1.5">
+      <div className="flex-1 overflow-hidden px-3 py-3 md:px-2 md:py-2">
+        <div className="text-[10px] md:text-[8px] font-semibold uppercase tracking-widest text-theme-muted px-2 md:px-1.5 mb-2.5 md:mb-1.5">
           {t.nav}
         </div>
-        <nav className="space-y-0.5">
+        <nav className="space-y-1 md:space-y-0.5">
           {NAV_MAIN.map((item) => {
             const active = isActive(item.href, item.exact);
             const { Icon, badge } = item;
@@ -73,19 +73,19 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
                 href={item.href}
                 onClick={onClose}
                 className={`
-                  sidebar-nav-item flex items-center gap-2 px-2 py-2 rounded-lg text-xs
-                  transition-colors duration-200
+                  sidebar-nav-item flex items-center gap-3 md:gap-2 px-3 py-3 md:px-2 md:py-2 rounded-xl md:rounded-lg text-base md:text-xs
+                  transition-colors duration-200 min-h-[48px] md:min-h-0
                   ${active ? "sidebar-nav-active font-semibold" : "theme-nav-link"}
                 `}
               >
-                <Icon size={16} />
-                <span className="flex-1 truncate">{item.label}</span>
+                <Icon size={22} className="sidebar-nav-icon md:!w-4 md:!h-4 flex-shrink-0" />
+                <span className="flex-1 truncate leading-snug">{item.label}</span>
                 {badge != null && badge > 0 && (
-                  <span className="min-w-[1.1rem] h-4 px-1 rounded-full text-[9px] font-bold flex items-center justify-center theme-pill text-theme-accent">
+                  <span className="sidebar-nav-badge min-w-[1.35rem] h-5 md:min-w-[1.1rem] md:h-4 px-1.5 md:px-1 rounded-full text-[11px] md:text-[9px] font-bold flex items-center justify-center theme-pill text-theme-accent">
                     {badge}
                   </span>
                 )}
-                {active && <span className="sidebar-nav-dot w-1 h-1 rounded-full flex-shrink-0" />}
+                {active && <span className="sidebar-nav-dot w-1.5 h-1.5 md:w-1 md:h-1 rounded-full flex-shrink-0" />}
               </Link>
             );
           })}

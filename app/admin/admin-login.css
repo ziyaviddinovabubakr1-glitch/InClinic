@@ -1,4 +1,4 @@
-/* Admin login — orbiting neon arc on card border + floating logo + runaway button */
+/* Admin login — subtle single neon beam + floating logo + runaway button */
 
 .oa-login-motion {
   display: flex;
@@ -9,72 +9,111 @@
 .oa-login-card-wrap {
   position: relative;
   width: 100%;
-  padding-top: 44px;
+  padding-top: 58px;
   overflow: visible;
 }
 
-/* Logo half outside — center on top edge of card, no square frame */
+/* Logo half outside — opaque disc hides neon/border lines behind it */
 .oa-login-logo-float {
   position: absolute;
-  top: 44px;
+  top: 58px;
   left: 50%;
-  z-index: 6;
+  z-index: 12;
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  background: none;
-  border: none;
-  box-shadow: none;
   pointer-events: none;
 }
 
-.oa-login-logo-float .oa-brand-logo {
-  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.55));
+.oa-login-logo-mask {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 118px;
+  height: 118px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, #121110 0%, #0a0908 72%, #080807 100%);
+  box-shadow:
+    0 0 0 7px #0a0908,
+    0 10px 32px rgba(0, 0, 0, 0.65);
+}
+
+.oa-login-logo-img.oa-brand-logo {
+  width: 96px !important;
+  height: 96px !important;
+  filter:
+    brightness(1.55)
+    saturate(1.35)
+    contrast(1.1)
+    drop-shadow(0 0 10px rgba(120, 230, 255, 0.45))
+    drop-shadow(0 0 22px rgba(80, 200, 240, 0.22));
 }
 
 .oa-login-card-frame {
   position: relative;
-  width: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* One soft gold beam orbiting the card edge — not dominant */
+.oa-login-neon-beam {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.oa-login-neon-beam::before {
+  content: "";
+  position: absolute;
+  width: 220%;
+  height: 220%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    transparent 268deg,
+    rgba(252, 229, 136, 0.08) 282deg,
+    rgba(252, 229, 136, 0.42) 296deg,
+    rgba(228, 184, 74, 0.72) 308deg,
+    rgba(255, 248, 220, 0.55) 318deg,
+    rgba(252, 229, 136, 0.28) 328deg,
+    transparent 342deg,
+    transparent 360deg
+  );
+  animation: oaLoginNeonOrbit 3.6s linear infinite;
+  opacity: 0.85;
+}
+
+@keyframes oaLoginNeonOrbit {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 .oa-login-card {
   position: relative;
   z-index: 1;
-  background: linear-gradient(165deg, rgba(16, 14, 11, 0.98), rgba(6, 6, 6, 0.98));
-  border: 1px solid rgba(228, 184, 74, 0.22);
+  margin: 2px;
+  background: linear-gradient(165deg, rgba(16, 14, 11, 0.99), rgba(6, 6, 6, 0.99));
+  border: 1px solid rgba(228, 184, 74, 0.16);
   border-radius: 22px;
   box-shadow:
-    inset 0 1px 0 rgba(255, 248, 220, 0.07),
+    inset 0 1px 0 rgba(255, 248, 220, 0.06),
     0 14px 44px rgba(0, 0, 0, 0.5);
-  padding: 52px 26px 22px;
+  padding: 56px 26px 22px;
   overflow: visible;
 }
 
 .oa-login-card::before {
   content: none !important;
-}
-
-/* Neon arc travels along the card border (dash offset, not spinning the SVG) */
-.oa-login-neon-svg {
-  position: absolute;
-  inset: -1px;
-  width: calc(100% + 2px);
-  height: calc(100% + 2px);
-  pointer-events: none;
-  overflow: visible;
-  z-index: 3;
-}
-
-.oa-login-neon-stroke {
-  stroke-dasharray: 16 84;
-  stroke-dashoffset: 0;
-  animation: oaLoginNeonDash 2.6s linear infinite;
-  filter:
-    drop-shadow(0 0 3px rgba(252, 229, 136, 0.95))
-    drop-shadow(0 0 8px rgba(228, 184, 74, 0.75))
-    drop-shadow(0 0 14px rgba(201, 146, 26, 0.4));
 }
 
 .oa-login-form {
@@ -222,12 +261,6 @@
   font-size: 11px;
 }
 
-@keyframes oaLoginNeonDash {
-  to {
-    stroke-dashoffset: -100;
-  }
-}
-
 @keyframes oaLoginErrorIn {
   from {
     opacity: 0;
@@ -261,8 +294,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .oa-login-neon-stroke {
+  .oa-login-neon-beam::before {
     animation: none;
+    opacity: 0.35;
   }
 
   .oa-login-btn--ready {
@@ -276,7 +310,17 @@
 
 @media (max-width: 420px) {
   .oa-login-card {
-    padding: 48px 18px 18px;
+    padding: 52px 18px 18px;
+  }
+
+  .oa-login-logo-mask {
+    width: 104px;
+    height: 104px;
+  }
+
+  .oa-login-logo-img.oa-brand-logo {
+    width: 84px !important;
+    height: 84px !important;
   }
 
   .oa-login-btn-zone {

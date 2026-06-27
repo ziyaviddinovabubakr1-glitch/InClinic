@@ -34,7 +34,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <div
         className={`
           fixed md:static inset-y-0 left-0 z-50 md:z-auto
-          w-[min(13.25rem,82vw)] flex-shrink-0 app-shell-sidebar
+          w-[min(17.5rem,88vw)] md:w-[min(13.25rem,82vw)] flex-shrink-0 app-shell-sidebar
           transition-transform duration-300 ease-out md:transition-none
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
         `}
