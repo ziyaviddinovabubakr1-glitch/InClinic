@@ -94,13 +94,14 @@ export default function RunawayLoginButton({
     setTease(true);
   }
 
-  function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
-    if (!blocked || loading) return;
-    e.preventDefault();
+  function handleClick() {
+    if (loading) return;
+    if (!blocked) return;
     setShake(true);
     onBlockedAttempt?.();
     jumpAway();
     window.setTimeout(() => setShake(false), 480);
+    // Never preventDefault — form submit must reach handleLogin.
   }
 
   return (
