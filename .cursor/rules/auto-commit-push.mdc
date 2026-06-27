@@ -1,0 +1,20 @@
+---
+description: After every completed task, auto-commit and push to main when there are file changes
+alwaysApply: true
+---
+
+# Auto commit and push after completed tasks
+
+When a task is fully completed (implementation done, build verified if applicable):
+
+1. Run `git status` — if there are no changes, skip the rest.
+2. Run `git add .`
+3. Draft a concise, meaningful commit message focused on **why** (1–2 sentences).
+4. Run `git commit` with that message.
+5. Run `git push origin main`
+
+Do not skip commit/push when there are file changes unless the user explicitly says not to in that message.
+
+Use PowerShell-safe commit syntax on Windows (e.g. `git commit -m "title" -m "body"`), not bash heredocs.
+
+Never use destructive git commands (force push, hard reset) unless explicitly requested.
