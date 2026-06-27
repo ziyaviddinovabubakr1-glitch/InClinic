@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { IShield } from "@/components/admin/icons";
 import { MotionPage } from "@/components/admin/motion";
@@ -66,25 +66,9 @@ export default function OwnerLoginPage() {
         <div className="oa-login-card-wrap">
           <div className="oa-login-logo-float">
             <div className="oa-login-logo-neon-wrap">
-              <svg className="oa-login-logo-neon-svg" viewBox="0 0 100 100" aria-hidden>
-                <defs>
-                  <linearGradient id="oa-login-logo-neon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#fffef5" />
-                    <stop offset="40%" stopColor="#fce588" />
-                    <stop offset="100%" stopColor="#c9921a" />
-                  </linearGradient>
-                </defs>
-                <circle
-                  className="oa-login-logo-neon-stroke"
-                  cx="50"
-                  cy="50"
-                  r="46"
-                  fill="none"
-                  stroke="url(#oa-login-logo-neon-grad)"
-                  strokeWidth="2.8"
-                  strokeLinecap="round"
-                />
-              </svg>
+              <div className="oa-login-logo-glow-top" aria-hidden>
+                <div className="oa-login-logo-glow-spin" />
+              </div>
               <div className="oa-login-logo-mask">
                 <AdminBrandLogo
                   variant="icon"
@@ -97,61 +81,63 @@ export default function OwnerLoginPage() {
           </div>
 
           <div className="oa-login-card-frame">
-            <div className="oa-login-card-aura" aria-hidden />
-            <div className="oa-login-card-border">
-              <div className="oa-login-card-border-beam" aria-hidden />
-              <div className="oa-login-card">
-                <form onSubmit={handleLogin} className="oa-login-form">
-                  <div>
-                    <label className="oa-label" htmlFor="oa-login-user">
-                      Имя пользователя
-                    </label>
+            <div className="oa-login-card-backglow" aria-hidden>
+              <div className="oa-login-card-backglow-spin" />
+            </div>
+            <div className="oa-login-card-halo" aria-hidden />
+            <div className="oa-login-card">
+              <form onSubmit={handleLogin} className="oa-login-form">
+                <div className="oa-login-field">
+                  <label className="oa-login-label" htmlFor="oa-login-user">
+                    Имя пользователя
+                  </label>
+                  <div className="oa-login-input-wrap">
                     <input
                       id="oa-login-user"
-                      className="oa-input"
+                      className="oa-login-input"
                       value={username}
                       onChange={(e) => onCredentialsChange(setUsername, e.target.value)}
-                      placeholder="Abubakr"
                       autoComplete="username"
                       autoFocus
                     />
                   </div>
-                  <div>
-                    <label className="oa-label" htmlFor="oa-login-pass">
-                      Пароль
-                    </label>
+                </div>
+                <div className="oa-login-field">
+                  <label className="oa-login-label" htmlFor="oa-login-pass">
+                    Пароль
+                  </label>
+                  <div className="oa-login-input-wrap">
                     <input
                       id="oa-login-pass"
-                      className="oa-input"
+                      className="oa-login-input"
                       type="password"
                       value={password}
                       onChange={(e) => onCredentialsChange(setPassword, e.target.value)}
-                      placeholder="••••••••"
                       autoComplete="current-password"
                     />
                   </div>
-
-                  {error && (
-                    <div className="oa-login-error" role="alert">
-                      {error}
-                    </div>
-                  )}
-
-                  <RunawayLoginButton
-                    blocked={buttonBlocked}
-                    loading={loading}
-                    onBlockedAttempt={() => {
-                      if (!username.trim() || !password.trim()) {
-                        setError("Заполните имя пользователя и пароль");
-                      }
-                    }}
-                  />
-                </form>
-
-                <div className="oa-login-footer">
-                  <IShield style={{ width: 14, height: 14 }} aria-hidden />
-                  <span>Защищённый доступ · только роль OWNER</span>
                 </div>
+
+                {error && (
+                  <div className="oa-login-error" role="alert">
+                    {error}
+                  </div>
+                )}
+
+                <RunawayLoginButton
+                  blocked={buttonBlocked}
+                  loading={loading}
+                  onBlockedAttempt={() => {
+                    if (!username.trim() || !password.trim()) {
+                      setError("Заполните имя пользователя и пароль");
+                    }
+                  }}
+                />
+              </form>
+
+              <div className="oa-login-footer">
+                <IShield style={{ width: 14, height: 14 }} aria-hidden />
+                <span>Защищённый доступ · только роль OWNER</span>
               </div>
             </div>
           </div>
