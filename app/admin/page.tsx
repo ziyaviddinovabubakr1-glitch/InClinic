@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { IShield } from "@/components/admin/icons";
+import { UserCircle, Lock, Shield } from "lucide-react";
 import { MotionPage } from "@/components/admin/motion";
 import AdminBrandLogo from "@/components/admin/AdminBrandLogo";
 import RunawayLoginButton from "@/components/admin/RunawayLoginButton";
@@ -63,9 +63,14 @@ export default function OwnerLoginPage() {
   return (
     <main className="oa-login-shell">
       <MotionPage className="oa-login-motion" style={{ width: "100%", maxWidth: 390 }}>
-        <div className="oa-login-card-wrap">
-          <div className="oa-login-logo-float">
-            <div className="oa-login-logo-neon-wrap">
+        <div className="oa-login-glass-wrap">
+          <div className="oa-login-glass-aura" aria-hidden />
+          <div className="oa-login-glass-neon" aria-hidden>
+            <div className="oa-login-glass-neon-beam" />
+          </div>
+
+          <div className="oa-login-glass-panel">
+            <div className="oa-login-logo-crest">
               <div className="oa-login-logo-glow-top" aria-hidden>
                 <div className="oa-login-logo-glow-spin" />
               </div>
@@ -78,67 +83,54 @@ export default function OwnerLoginPage() {
                 />
               </div>
             </div>
-          </div>
 
-          <div className="oa-login-card-frame">
-            <div className="oa-login-card-backglow" aria-hidden>
-              <div className="oa-login-card-backglow-spin" />
-            </div>
-            <div className="oa-login-card-halo" aria-hidden />
-            <div className="oa-login-card">
-              <form onSubmit={handleLogin} className="oa-login-form">
-                <div className="oa-login-field">
-                  <label className="oa-login-label" htmlFor="oa-login-user">
-                    Имя пользователя
-                  </label>
-                  <div className="oa-login-input-wrap">
-                    <input
-                      id="oa-login-user"
-                      className="oa-login-input"
-                      value={username}
-                      onChange={(e) => onCredentialsChange(setUsername, e.target.value)}
-                      autoComplete="username"
-                      autoFocus
-                    />
-                  </div>
-                </div>
-                <div className="oa-login-field">
-                  <label className="oa-login-label" htmlFor="oa-login-pass">
-                    Пароль
-                  </label>
-                  <div className="oa-login-input-wrap">
-                    <input
-                      id="oa-login-pass"
-                      className="oa-login-input"
-                      type="password"
-                      value={password}
-                      onChange={(e) => onCredentialsChange(setPassword, e.target.value)}
-                      autoComplete="current-password"
-                    />
-                  </div>
-                </div>
-
-                {error && (
-                  <div className="oa-login-error" role="alert">
-                    {error}
-                  </div>
-                )}
-
-                <RunawayLoginButton
-                  blocked={buttonBlocked}
-                  loading={loading}
-                  onBlockedAttempt={() => {
-                    if (!username.trim() || !password.trim()) {
-                      setError("Заполните имя пользователя и пароль");
-                    }
-                  }}
+            <form onSubmit={handleLogin} className="oa-login-form">
+              <div className="oa-login-input-wrap">
+                <input
+                  id="oa-login-user"
+                  className="oa-login-input"
+                  value={username}
+                  onChange={(e) => onCredentialsChange(setUsername, e.target.value)}
+                  autoComplete="username"
+                  aria-label="Имя пользователя"
+                  autoFocus
                 />
-              </form>
-
-              <div className="oa-login-footer">
-                <IShield style={{ width: 14, height: 14 }} aria-hidden />
-                <span>Защищённый доступ · только роль OWNER</span>
+                <UserCircle className="oa-login-input-icon" size={20} aria-hidden />
               </div>
+
+              <div className="oa-login-input-wrap">
+                <input
+                  id="oa-login-pass"
+                  className="oa-login-input"
+                  type="password"
+                  value={password}
+                  onChange={(e) => onCredentialsChange(setPassword, e.target.value)}
+                  autoComplete="current-password"
+                  aria-label="Пароль"
+                />
+                <Lock className="oa-login-input-icon" size={20} aria-hidden />
+              </div>
+
+              {error && (
+                <div className="oa-login-error" role="alert">
+                  {error}
+                </div>
+              )}
+
+              <RunawayLoginButton
+                blocked={buttonBlocked}
+                loading={loading}
+                onBlockedAttempt={() => {
+                  if (!username.trim() || !password.trim()) {
+                    setError("Заполните имя пользователя и пароль");
+                  }
+                }}
+              />
+            </form>
+
+            <div className="oa-login-footer">
+              <Shield size={14} aria-hidden />
+              <span>Защищённый доступ · только роль OWNER</span>
             </div>
           </div>
         </div>
