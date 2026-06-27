@@ -87,29 +87,40 @@ export async function authenticateOwner(username: string, password: string) {
   const plain = password.trim();
   if (!plain) return null;
 
-  const matched = await findOwnerByUsername(username);
-  if (matched?.passwordHash && (await verifyPassword(plain, matched.passwordHash))) {
-    return activateOwnerIfNeeded(matched);
-  }
-
-  const owners = await prisma.user.findMany({
-    where: { role: "OWNER" },
-    include: { clinic: true },
-  });
-
-  for (const owner of owners) {
-    if (!owner.passwordHash) continue;
-    if (!(await verifyPassword(plain, owner.passwordHash))) continue;
-    return activateOwnerIfNeeded(owner);
-  }
-
   const configured = getConfiguredOwnerCredentials();
+
+  async function tryOwners(): Promise<OwnerWithClinic | null> {
+    const matched = await findOwnerByUsername(username);
+    if (matched?.passwordHash && (await verifyPassword(plain, matched.passwordHash))) {
+      return activateOwnerIfNeeded(matched);
+    }
+
+    const owners = await prisma.user.findMany({
+      where: { role: "OWNER" },
+      include: { clinic: true },
+    });
+
+    for (const owner of owners) {
+      if (!owner.passwordHash) continue;
+      if (!(await verifyPassword(plain, owner.passwordHash))) continue;
+      return activateOwnerIfNeeded(owner);
+    }
+
+    return null;
+  }
+
+  let user = await tryOwners();
+  if (user) return user;
+
   if (configured && plain === configured.password) {
     return syncOwnerFromCredentials(configured.username, plain);
   }
 
-  if (allowDevCredentials() && configured && owners.length === 0) {
-    return syncOwnerFromCredentials(configured.username, configured.password);
+  if (allowDevCredentials() && configured) {
+    const ownerCount = await prisma.user.count({ where: { role: "OWNER" } });
+    if (ownerCount === 0) {
+      return syncOwnerFromCredentials(configured.username, configured.password);
+    }
   }
 
   return null;

@@ -4,6 +4,7 @@ import { pathToFileURL } from "url";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { startEmbeddedPostgres, syncEnvFiles, DATABASE_URL } from "./embedded-db.mjs";
+import { syncAdminFromEnv } from "./sync-admin-from-env.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
@@ -31,6 +32,8 @@ export async function setupDatabase() {
     console.log("→ База уже настроена, синхронизация схемы...");
     execSync("npx prisma generate", { stdio: "inherit", env: process.env });
     execSync("npx prisma db push", { stdio: "inherit", env: process.env });
+    console.log("→ Sync owner login from env/defaults...");
+    await syncAdminFromEnv();
     console.log("→ Backfill patients from bookings...");
     execSync("node scripts/backfill-patients.mjs", { stdio: "inherit", env: process.env });
     return;

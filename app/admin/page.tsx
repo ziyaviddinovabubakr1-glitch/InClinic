@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IShield } from "@/components/admin/icons";
 import { MotionPage } from "@/components/admin/motion";
 import AdminBrandLogo from "@/components/admin/AdminBrandLogo";
 import RunawayLoginButton from "@/components/admin/RunawayLoginButton";
+import LoginNeonOutline from "@/components/admin/LoginNeonOutline";
 import "./admin-login.css";
 
 export default function OwnerLoginPage() {
   const router = useRouter();
+  const wrapRef = useRef<HTMLDivElement>(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -64,28 +66,11 @@ export default function OwnerLoginPage() {
   return (
     <main className="oa-login-shell">
       <MotionPage className="oa-login-motion" style={{ width: "100%", maxWidth: 390 }}>
-        <div className="oa-login-card-wrap">
+        <div ref={wrapRef} className="oa-login-card-wrap">
+          <LoginNeonOutline wrapRef={wrapRef} />
+
           <div className="oa-login-logo-float">
             <div className="oa-login-logo-neon-wrap">
-              <svg className="oa-login-logo-neon-svg" viewBox="0 0 100 100" aria-hidden>
-                <defs>
-                  <linearGradient id="oa-login-logo-neon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#fff8dc" />
-                    <stop offset="45%" stopColor="#fce588" />
-                    <stop offset="100%" stopColor="#c9921a" />
-                  </linearGradient>
-                </defs>
-                <circle
-                  className="oa-login-logo-neon-stroke"
-                  cx="50"
-                  cy="50"
-                  r="46"
-                  fill="none"
-                  stroke="url(#oa-login-logo-neon-grad)"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-              </svg>
               <div className="oa-login-logo-mask">
                 <AdminBrandLogo
                   variant="icon"
@@ -98,7 +83,6 @@ export default function OwnerLoginPage() {
           </div>
 
           <div className="oa-login-card-frame">
-            <div className="oa-login-neon-beam" aria-hidden />
             <div className="oa-login-card">
               <form onSubmit={handleLogin} className="oa-login-form">
                 <div>

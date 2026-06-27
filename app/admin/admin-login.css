@@ -1,4 +1,4 @@
-/* Admin login — subtle single neon beam + floating logo + runaway button */
+/* Admin login — unified neon outline (logo + card) + runaway button */
 
 .oa-login-motion {
   display: flex;
@@ -13,12 +13,46 @@
   overflow: visible;
 }
 
-/* Logo half outside — neon ring like owner avatar */
+/* Unified premium neon — one arc travels logo + card outline */
+.oa-login-unified-neon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
+  overflow: visible;
+}
+
+.oa-login-unified-neon-glow {
+  stroke-dasharray: 24 76;
+  stroke-dashoffset: 0;
+  opacity: 0.55;
+  animation: oaLoginUnifiedNeonDash 3.8s linear infinite;
+}
+
+.oa-login-unified-neon-stroke {
+  stroke-dasharray: 24 76;
+  stroke-dashoffset: 0;
+  animation: oaLoginUnifiedNeonDash 3.8s linear infinite;
+  filter:
+    drop-shadow(0 0 4px rgba(252, 229, 136, 0.95))
+    drop-shadow(0 0 10px rgba(228, 184, 74, 0.7))
+    drop-shadow(0 0 18px rgba(201, 146, 26, 0.35));
+}
+
+@keyframes oaLoginUnifiedNeonDash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+/* Logo half outside */
 .oa-login-logo-float {
   position: absolute;
   top: 64px;
   left: 50%;
-  z-index: 12;
+  z-index: 6;
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
@@ -35,26 +69,6 @@
   justify-content: center;
 }
 
-.oa-login-logo-neon-svg {
-  position: absolute;
-  inset: -4px;
-  width: calc(100% + 8px);
-  height: calc(100% + 8px);
-  overflow: visible;
-  pointer-events: none;
-  transform-origin: center center;
-  animation: oaLoginLogoNeonSpin 2.6s linear infinite;
-}
-
-.oa-login-logo-neon-stroke {
-  stroke-dasharray: 48 242;
-  stroke-dashoffset: 0;
-  filter:
-    drop-shadow(0 0 3px rgba(252, 229, 136, 0.9))
-    drop-shadow(0 0 8px rgba(228, 184, 74, 0.65))
-    drop-shadow(0 0 14px rgba(201, 146, 26, 0.35));
-}
-
 .oa-login-logo-mask {
   position: relative;
   z-index: 1;
@@ -66,7 +80,7 @@
   border-radius: 50%;
   background: radial-gradient(circle at 50% 42%, #161412 0%, #0a0908 68%, #080807 100%);
   box-shadow:
-    0 0 0 5px #0a0908,
+    0 0 0 6px #0a0908,
     0 10px 36px rgba(0, 0, 0, 0.62);
   overflow: hidden;
 }
@@ -85,56 +99,14 @@
 .oa-login-card-frame {
   position: relative;
   border-radius: 24px;
-  overflow: hidden;
   isolation: isolate;
-}
-
-/* One soft gold beam orbiting the card edge — not dominant */
-.oa-login-neon-beam {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-}
-
-.oa-login-neon-beam::before {
-  content: "";
-  position: absolute;
-  width: 220%;
-  height: 220%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: conic-gradient(
-    from 0deg at 50% 50%,
-    transparent 0deg,
-    transparent 268deg,
-    rgba(252, 229, 136, 0.08) 282deg,
-    rgba(252, 229, 136, 0.42) 296deg,
-    rgba(228, 184, 74, 0.72) 308deg,
-    rgba(255, 248, 220, 0.55) 318deg,
-    rgba(252, 229, 136, 0.28) 328deg,
-    transparent 342deg,
-    transparent 360deg
-  );
-  animation: oaLoginNeonOrbit 3.6s linear infinite;
-  opacity: 0.85;
-}
-
-@keyframes oaLoginNeonOrbit {
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
 }
 
 .oa-login-card {
   position: relative;
   z-index: 1;
-  margin: 2px;
   background: linear-gradient(165deg, rgba(16, 14, 11, 0.99), rgba(6, 6, 6, 0.99));
-  border: 1px solid rgba(228, 184, 74, 0.16);
+  border: 1px solid rgba(228, 184, 74, 0.14);
   border-radius: 22px;
   box-shadow:
     inset 0 1px 0 rgba(255, 248, 220, 0.06),
@@ -295,12 +267,6 @@
   font-size: 11px;
 }
 
-@keyframes oaLoginLogoNeonSpin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @keyframes oaLoginErrorIn {
   from {
     opacity: 0;
@@ -334,13 +300,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .oa-login-neon-beam::before {
+  .oa-login-unified-neon-glow,
+  .oa-login-unified-neon-stroke {
     animation: none;
-    opacity: 0.35;
-  }
-
-  .oa-login-logo-neon-svg {
-    animation: none;
+    opacity: 0.45;
   }
 
   .oa-login-btn--ready {
