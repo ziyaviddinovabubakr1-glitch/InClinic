@@ -1,5 +1,9 @@
 /* Admin login — 3D glass card, static gold halo, crest arch */
 
+.oa-login-shell {
+  padding-bottom: 64px;
+}
+
 .oa-login-motion {
   display: flex;
   justify-content: center;
@@ -9,7 +13,7 @@
 /* ── 3D tilt stage ── */
 .oa-login-tilt-root {
   width: 100%;
-  margin-top: 56px;
+  margin-top: 28px;
   perspective: 1100px;
   perspective-origin: 50% 42%;
 }
@@ -17,7 +21,7 @@
 .oa-login-glass-wrap {
   position: relative;
   width: 100%;
-  padding: 36px 10px 10px;
+  padding: 24px 10px 10px;
   overflow: visible;
   transform-style: preserve-3d;
   transition: transform 0.14s ease-out;
@@ -47,7 +51,7 @@
 
   position: relative;
   z-index: 2;
-  margin-top: 52px;
+  margin-top: 28px;
   transform: translateZ(18px);
   padding: 58px 24px 22px;
 }
@@ -108,32 +112,30 @@
   opacity: 1;
 }
 
-/* Logo clipped inside crest semicircle */
+/* Logo — half in crest, half on card */
 .oa-login-logo-crest {
   position: absolute;
-  top: calc(var(--oa-crest-h) * -1);
+  top: 0;
   left: 50%;
   z-index: 3;
-  width: var(--oa-crest-w);
-  height: var(--oa-crest-h);
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  border-radius: var(--oa-crest-h) var(--oa-crest-h) 0 0;
+  overflow: visible;
   pointer-events: none;
 }
 
 .oa-login-logo-img.oa-brand-logo {
-  width: 72px !important;
-  height: 72px !important;
-  transform: translateY(14px);
+  width: 102px !important;
+  height: 102px !important;
+  transform: none;
   filter:
     brightness(1.75)
     saturate(1.45)
-    drop-shadow(0 0 14px rgba(130, 235, 255, 0.58))
-    drop-shadow(0 0 26px rgba(90, 210, 245, 0.26));
+    drop-shadow(0 0 16px rgba(130, 235, 255, 0.6))
+    drop-shadow(0 0 30px rgba(90, 210, 245, 0.28))
+    drop-shadow(0 8px 18px rgba(0, 0, 0, 0.45));
 }
 
 .oa-login-form {
@@ -366,9 +368,8 @@
   }
 
   .oa-login-logo-img.oa-brand-logo {
-    width: 64px !important;
-    height: 64px !important;
-    transform: translateY(12px);
+    width: 88px !important;
+    height: 88px !important;
   }
 
   .oa-login-btn-zone {
