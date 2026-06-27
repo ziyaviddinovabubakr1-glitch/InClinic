@@ -44,6 +44,46 @@ function clearAuthCookies(response: NextResponse) {
   response.cookies.delete("admin_refresh");
 }
 
+function getConfiguredOwnerCredentials(): { username: string; password: string } | null {
+  const envUser = process.env.ADMIN_USERNAME?.trim();
+  const envPass = process.env.ADMIN_PASSWORD?.trim();
+  if (envUser && envPass) {
+    return { username: envUser, password: envPass };
+  }
+  if (allowDevCredentials()) {
+    return getDevAdminCredentials();
+  }
+  return null;
+}
+
+async function syncOwnerFromCredentials(username: string, plainPassword: string) {
+  const slug = process.env.DEFAULT_CLINIC_SLUG ?? "default";
+  const clinic =
+    (await prisma.clinic.findUnique({ where: { slug } })) ??
+    (await prisma.clinic.create({
+      data: { slug, name: process.env.NEXT_PUBLIC_CLINIC_NAME ?? "InClinic" },
+    }));
+
+  await prisma.user.updateMany({
+    where: { role: "OWNER", username: { not: username } },
+    data: { active: false },
+  });
+
+  const passwordHash = await hashPassword(plainPassword);
+  return prisma.user.upsert({
+    where: { username },
+    update: { passwordHash, role: "OWNER", clinicId: clinic.id, active: true },
+    create: {
+      username,
+      passwordHash,
+      role: "OWNER",
+      clinicId: clinic.id,
+      active: true,
+    },
+    include: { clinic: true },
+  });
+}
+
 async function authenticateUser(username: string, password: string) {
   const normalized = username.trim();
   const plain = password.trim();
@@ -58,61 +98,29 @@ async function authenticateUser(username: string, password: string) {
       where: {
         username: { equals: normalized, mode: "insensitive" },
         role: "OWNER",
-        active: true,
       },
       include: { clinic: true },
     });
   }
 
-  if (user?.active && (await verifyPassword(plain, user.passwordHash))) {
+  if (user && (await verifyPassword(plain, user.passwordHash))) {
+    if (!user.active) {
+      return prisma.user.update({
+        where: { id: user.id },
+        data: { active: true },
+        include: { clinic: true },
+      });
+    }
     return user;
   }
 
-  /* Render: если логин/пароль совпали с env, но БД ещё не обновилась — синхронизируем на лету */
-  const envUser = process.env.ADMIN_USERNAME?.trim();
-  const envPass = process.env.ADMIN_PASSWORD?.trim();
+  const configured = getConfiguredOwnerCredentials();
   if (
-    envUser &&
-    envPass &&
-    normalized.toLowerCase() === envUser.toLowerCase() &&
-    plain === envPass
+    configured &&
+    normalized.toLowerCase() === configured.username.toLowerCase() &&
+    plain === configured.password
   ) {
-    const slug = process.env.DEFAULT_CLINIC_SLUG ?? "default";
-    const clinic =
-      (await prisma.clinic.findUnique({ where: { slug } })) ??
-      (await prisma.clinic.create({
-        data: { slug, name: process.env.NEXT_PUBLIC_CLINIC_NAME ?? "InClinic" },
-      }));
-
-    await prisma.user.updateMany({
-      where: { role: "OWNER", username: { not: envUser } },
-      data: { active: false },
-    });
-
-    const passwordHash = await hashPassword(envPass);
-    return prisma.user.upsert({
-      where: { username: envUser },
-      update: { passwordHash, role: "OWNER", clinicId: clinic.id, active: true },
-      create: {
-        username: envUser,
-        passwordHash,
-        role: "OWNER",
-        clinicId: clinic.id,
-        active: true,
-      },
-      include: { clinic: true },
-    });
-  }
-
-  if (allowDevCredentials()) {
-    const dev = getDevAdminCredentials();
-    if (normalized === dev.username && plain === dev.password) {
-      const fallback = await prisma.user.findFirst({
-        where: { role: "OWNER", active: true },
-        include: { clinic: true },
-      });
-      if (fallback) return fallback;
-    }
+    return syncOwnerFromCredentials(configured.username, plain);
   }
 
   return null;

@@ -63,35 +63,40 @@ export default function OwnerLoginPage() {
       <MotionPage className="oa-login-motion" style={{ width: "100%", maxWidth: 390 }}>
         <div className="oa-login-card-wrap">
           <div className="oa-login-logo-float">
-            <AdminBrandLogo variant="icon" size="md" animate />
+            <AdminBrandLogo variant="icon" size="lg" animate />
           </div>
 
           <div className="oa-login-card-frame">
-            <svg className="oa-login-neon-svg" viewBox="0 0 100 100" aria-hidden>
-              <defs>
-                <linearGradient id="oa-login-neon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#fff8dc" />
-                  <stop offset="45%" stopColor="#fce588" />
-                  <stop offset="100%" stopColor="#c9921a" />
-                </linearGradient>
-              </defs>
-              <rect
-                className="oa-login-neon-stroke"
-                x="1.8"
-                y="1.8"
-                width="96.4"
-                height="96.4"
-                rx="11"
-                ry="11"
-                fill="none"
-                stroke="url(#oa-login-neon-grad)"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-                vectorEffect="non-scaling-stroke"
-              />
-            </svg>
-
             <div className="oa-login-card">
+              <svg
+                className="oa-login-neon-svg"
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                aria-hidden
+              >
+                <defs>
+                  <linearGradient id="oa-login-neon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#fff8dc" />
+                    <stop offset="45%" stopColor="#fce588" />
+                    <stop offset="100%" stopColor="#c9921a" />
+                  </linearGradient>
+                </defs>
+                <rect
+                  className="oa-login-neon-stroke"
+                  x="1.2"
+                  y="1.2"
+                  width="97.6"
+                  height="97.6"
+                  rx="5.5"
+                  ry="5.5"
+                  pathLength="100"
+                  fill="none"
+                  stroke="url(#oa-login-neon-grad)"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>
               <form onSubmit={handleLogin} className="oa-login-form">
                 <div>
                   <label className="oa-label" htmlFor="oa-login-user">
@@ -102,7 +107,7 @@ export default function OwnerLoginPage() {
                     className="oa-input"
                     value={username}
                     onChange={(e) => onCredentialsChange(setUsername, e.target.value)}
-                    placeholder="Abubakr"
+                    placeholder="Логин владельца"
                     autoComplete="username"
                     autoFocus
                   />
