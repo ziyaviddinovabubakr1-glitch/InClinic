@@ -10,41 +10,47 @@ import {
 } from "@/components/admin/ui";
 import { MotionPage, StaggerGrid, StaggerItem } from "@/components/admin/motion";
 import PageHeader from "@/components/admin/PageHeader";
-import {
-  IDoctors, IAppointments, IMoney, IServices, ICalendar, IChevronRight, IReviews,
-} from "@/components/admin/icons";
+import { IChevronRight } from "@/components/admin/icons";
 
-function toSpark(series: { value: number }[]) {
-  return series.map((p) => p.value);
-}
-
-const PRIMARY_KPIS = (data: DashboardData, revenueSpark: number[], apptSpark: number[]) => [
-  { label: "Доход за месяц", value: money(data.kpis.revenueMonth), tone: "green" as const, delta: "+12%", deltaDir: "up" as const, spark: revenueSpark },
-  { label: "Новых сегодня", value: String(data.kpis.newPatientsToday), tone: "blue" as const, delta: "регистрации", deltaDir: "up" as const, spark: apptSpark },
-  { label: "Записей сегодня", value: String(data.kpis.appointmentsToday), tone: "violet" as const, delta: `${data.kpis.cancelledAppointments} отм.`, deltaDir: (data.kpis.cancelledAppointments ? "down" : "flat") as "down" | "flat", spark: apptSpark },
-  { label: "Всего пациентов", value: String(data.kpis.totalPatients), tone: "sky" as const, delta: `${data.kpis.returningPatients} повтор.`, deltaDir: "flat" as const, spark: revenueSpark },
-];
-
-const REVIEW_KPIS = (data: DashboardData, revenueSpark: number[]) => [
-  { label: "Рейтинг клиники", value: data.kpis.averageClinicRating.toFixed(1), tone: "amber" as const, delta: "из 5", deltaDir: "up" as const, spark: revenueSpark },
-  { label: "Отзывов за месяц", value: String(data.kpis.reviewsThisMonth), tone: "violet" as const, delta: `${data.kpis.pendingReviews} ожид.`, deltaDir: "flat" as const, spark: revenueSpark },
-  { label: "Лучший врач", value: data.overview.topRatedDoctor.name.split(" ")[0] ?? "—", tone: "blue" as const, delta: `${data.overview.topRatedDoctor.rating.toFixed(1)} ★`, deltaDir: "up" as const, spark: revenueSpark },
-];
-
-const SECONDARY_KPIS = (data: DashboardData, revenueSpark: number[], apptSpark: number[]) => [
-  { label: "Доход сегодня", value: money(data.kpis.revenueToday), tone: "green" as const, spark: revenueSpark },
-  { label: "Доход за неделю", value: money(data.kpis.revenueWeek), tone: "blue" as const, spark: revenueSpark },
-  { label: "Новых за неделю", value: String(data.kpis.newPatients), tone: "violet" as const, delta: "регистрации", deltaDir: "up" as const, spark: revenueSpark },
-  { label: "С визитами сегодня", value: String(data.kpis.patientsToday), tone: "amber" as const, spark: apptSpark },
-  { label: "Средний чек", value: money(data.kpis.avgCheck), tone: "sky" as const, spark: revenueSpark },
-  { label: "Загрузка", value: `${data.kpis.clinicLoad}%`, tone: "red" as const, spark: apptSpark },
-];
-
-function DASHBOARD_KPIS(data: DashboardData, revenueSpark: number[], apptSpark: number[]) {
+function DASHBOARD_KPIS(data: DashboardData) {
+  const { kpis, overview } = data;
   return [
-    ...PRIMARY_KPIS(data, revenueSpark, apptSpark),
-    ...REVIEW_KPIS(data, revenueSpark),
-    ...SECONDARY_KPIS(data, revenueSpark, apptSpark),
+    {
+      label: "Доход за месяц",
+      value: money(kpis.revenueMonth),
+      tone: "green" as const,
+      delta: "+12%",
+      deltaDir: "up" as const,
+      hero: true,
+    },
+    {
+      label: "Записей сегодня",
+      value: String(kpis.appointmentsToday),
+      tone: "violet" as const,
+      delta: kpis.cancelledAppointments ? `${kpis.cancelledAppointments} отм.` : "активные",
+      deltaDir: (kpis.cancelledAppointments ? "down" : "flat") as "down" | "flat",
+    },
+    {
+      label: "Пациентов",
+      value: String(kpis.totalPatients),
+      tone: "sky" as const,
+      delta: `${kpis.newPatientsToday} новых`,
+      deltaDir: "up" as const,
+    },
+    {
+      label: "Рейтинг",
+      value: overview.clinicRating.toFixed(1),
+      tone: "amber" as const,
+      delta: `${kpis.reviewsThisMonth} отз.`,
+      deltaDir: "flat" as const,
+    },
+    {
+      label: "Загрузка",
+      value: `${kpis.clinicLoad}%`,
+      tone: "red" as const,
+      delta: `ср. чек ${money(kpis.avgCheck)}`,
+      deltaDir: "flat" as const,
+    },
   ];
 }
 
@@ -53,18 +59,9 @@ export default function DashboardPage() {
 
   if (isLoading || !data) return <DashboardSkeleton />;
 
-  const { kpis, executive, overview, revenueSeries, appointmentsSeries, recentAppointments, latestReviews } = data;
-  const revenueSpark = toSpark(revenueSeries);
-  const apptSpark = toSpark(appointmentsSeries);
-
-  const insights = [
-    { icon: IDoctors, tone: "blue", title: "Лучший врач", name: overview.bestDoctor.name, metric: overview.bestDoctor.metric },
-    { icon: IServices, tone: "green", title: "Топ услуга", name: overview.topService.name, metric: overview.topService.metric },
-    { icon: IAppointments, tone: "violet", title: "Загрузка", name: overview.busiestDoctor.name, metric: overview.busiestDoctor.metric },
-    { icon: ICalendar, tone: "amber", title: "Пиковый день", name: overview.busiestDay.label, metric: overview.busiestDay.metric },
-    { icon: IMoney, tone: "sky", title: "Лучший месяц", name: overview.mostProfitableMonth.label, metric: overview.mostProfitableMonth.metric },
-    { icon: IReviews, tone: "amber", title: "Топ врач", name: overview.topRatedDoctor.name, metric: `${overview.topRatedDoctor.rating.toFixed(1)} ★ · ${overview.topRatedDoctor.reviews} отз.` },
-  ];
+  const { kpis, executive, revenueSeries, appointmentsSeries, recentAppointments, latestReviews } = data;
+  const kpisList = DASHBOARD_KPIS(data);
+  const [hero, ...rest] = kpisList;
 
   return (
     <MotionPage className="oa-dash-v3">
@@ -79,23 +76,28 @@ export default function DashboardPage() {
       />
 
       <section className="oa-dash-v3-kpi">
-        <StaggerGrid className="oa-kpi-grid oa-kpi-grid--dashboard">
-          {(() => {
-            const kpis = DASHBOARD_KPIS(data, revenueSpark, apptSpark);
-            const [hero, ...rest] = kpis;
-            return (
-              <>
-                <StaggerItem key={hero.label} className="oa-kpi-hero-slot">
-                  <KpiCard label={hero.label} value={hero.value} tone={hero.tone} delta={hero.delta} deltaDir={hero.deltaDir} sparkData={hero.spark} hero />
-                </StaggerItem>
-                {rest.map((k) => (
-                  <StaggerItem key={k.label}>
-                    <KpiCard label={k.label} value={k.value} tone={k.tone} delta={k.delta} deltaDir={k.deltaDir} sparkData={k.spark} />
-                  </StaggerItem>
-                ))}
-              </>
-            );
-          })()}
+        <StaggerGrid className="oa-kpi-grid oa-kpi-grid--compact">
+          <StaggerItem key={hero.label} className="oa-kpi-hero-slot">
+            <KpiCard
+              label={hero.label}
+              value={hero.value}
+              tone={hero.tone}
+              delta={hero.delta}
+              deltaDir={hero.deltaDir}
+              hero
+            />
+          </StaggerItem>
+          {rest.map((k) => (
+            <StaggerItem key={k.label}>
+              <KpiCard
+                label={k.label}
+                value={k.value}
+                tone={k.tone}
+                delta={k.delta}
+                deltaDir={k.deltaDir}
+              />
+            </StaggerItem>
+          ))}
         </StaggerGrid>
       </section>
 
@@ -117,36 +119,19 @@ export default function DashboardPage() {
               <BarChart data={appointmentsSeries} height={72} />
             </div>
           </div>
-
-          <div className="oa-dash-v3-insights">
-            {insights.map(({ icon: Icon, tone, title, name, metric }) => (
-              <div key={title} className="oa-insight-tile">
-                <div className={`oa-insight-icon oa-tone-${tone}`}>
-                  <Icon style={{ width: 12, height: 12 }} />
-                </div>
-                <div className="oa-insight-body">
-                  <div className="oa-insight-label">{title}</div>
-                  <div className="oa-insight-name">{name}</div>
-                  <div className="oa-insight-metric">{metric}</div>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
 
         <aside className="oa-dash-v3-rail">
           <div className="oa-panel oa-panel-rail">
             <div className="oa-panel-head">
-              <span className="oa-panel-title">Показатели</span>
+              <span className="oa-panel-title">Здоровье</span>
             </div>
             <div className="oa-rail-gauge">
-              <Gauge value={executive.clinicHealthScore} size={58} label="Здоровье" captionBelow />
+              <Gauge value={executive.clinicHealthScore} size={58} label="Клиника" captionBelow />
             </div>
             <div className="oa-rail-stats">
-              <RailStat label="Общий доход" value={money(executive.totalLifetimeRevenue)} tone="green" />
-              <RailStat label="Всего пациентов" value={String(kpis.totalPatients)} tone="blue" />
-              <RailStat label="Приёмов" value={String(executive.totalCompletedAppointments)} tone="violet" />
-              <RailStat label="Рейтинг врачей" value={executive.averageDoctorRating.toFixed(1)} tone="amber" />
+              <RailStat label="Доход сегодня" value={money(kpis.revenueToday)} tone="green" />
+              <RailStat label="Приёмов всего" value={String(executive.totalCompletedAppointments)} tone="violet" />
             </div>
           </div>
         </aside>
@@ -241,8 +226,8 @@ function DashboardSkeleton() {
     <div className="oa-dash-v3">
       <SkeletonCard height={36} />
       <div className="oa-dash-v3-kpi">
-        <div className="oa-kpi-grid">
-          {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} height={76} />)}
+        <div className="oa-kpi-grid oa-kpi-grid--compact">
+          {Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} height={76} />)}
         </div>
       </div>
       <div className="oa-dash-v3-body">

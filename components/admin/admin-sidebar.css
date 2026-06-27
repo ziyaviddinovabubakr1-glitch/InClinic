@@ -33,8 +33,8 @@
   height: auto !important;
   display: grid !important;
   grid-template-rows: repeat(var(--oa-nav-rows, 14), minmax(0, 1fr)) !important;
-  gap: 4px;
-  padding: 8px 10px;
+  gap: 0;
+  padding: 0 4px;
   overflow: hidden !important;
   justify-content: stretch !important;
 }
@@ -46,8 +46,8 @@
   min-height: 0 !important;
   height: 100% !important;
   flex: unset !important;
-  padding: 0 12px 0 14px !important;
-  border-radius: 10px;
+  padding: 0 10px 0 12px !important;
+  border-radius: 0;
   font-size: 14px !important;
   font-weight: 500;
   color: var(--oa-text-soft, #a1a1aa);
@@ -56,70 +56,32 @@
   border: none !important;
 }
 
+/* Plain gold icons — no frames */
+.owner-admin .oa-sidebar-fill .oa-nav-icon-plain {
+  width: 16px !important;
+  height: 16px !important;
+  flex-shrink: 0;
+  color: rgba(228, 184, 74, 0.72) !important;
+  opacity: 1 !important;
+  filter: none;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+.owner-admin .oa-sidebar-fill .oa-nav-fill .oa-nav-item:hover .oa-nav-icon-plain {
+  color: rgba(252, 229, 136, 0.95) !important;
+}
+
+.owner-admin .oa-sidebar-fill .oa-nav-item-active .oa-nav-icon-plain {
+  color: #fce588 !important;
+}
+
 .owner-admin .oa-sidebar-fill .oa-nav-fill .oa-nav-item svg {
-  width: 13px !important;
-  height: 13px !important;
+  width: 16px !important;
+  height: 16px !important;
   flex-shrink: 0;
   opacity: 1 !important;
-  color: #3d2a0a !important;
-  filter: drop-shadow(0 1px 0 rgba(255, 248, 220, 0.65));
-}
-
-/* Compact gold 3D nav tiles — CSS only */
-.owner-admin .oa-sidebar-fill .oa-nav-icon-3d {
-  --oa-gold-hi: #fff8dc;
-  --oa-gold-mid: #e4b84a;
-  --oa-gold-lo: #9a6b14;
-  width: 26px !important;
-  height: 26px !important;
-  min-width: 26px;
-  border-radius: 7px !important;
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  background:
-    linear-gradient(
-      165deg,
-      var(--oa-gold-hi) 0%,
-      var(--oa-gold-mid) 42%,
-      var(--oa-gold-lo) 100%
-    ) !important;
-  border: 1px solid rgba(255, 220, 140, 0.42) !important;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.62) inset,
-    0 -1px 3px rgba(60, 38, 8, 0.38) inset,
-    0 2px 7px rgba(0, 0, 0, 0.28),
-    0 0 0 1px rgba(0, 0, 0, 0.18) !important;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
-}
-
-.owner-admin .oa-sidebar-fill .oa-nav-item:hover .oa-nav-icon-3d {
-  transform: translateY(-1px);
-  filter: brightness(1.06);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.72) inset,
-    0 -1px 3px rgba(60, 38, 8, 0.32) inset,
-    0 4px 10px rgba(0, 0, 0, 0.32),
-    0 0 12px rgba(228, 184, 74, 0.22) !important;
-}
-
-.owner-admin .oa-sidebar-fill .oa-nav-item-active .oa-nav-icon-3d {
-  --oa-gold-hi: #fffbeb;
-  --oa-gold-mid: #f0c84a;
-  --oa-gold-lo: #b8860b;
-  transform: translateY(-1px) scale(1.05);
-  filter: brightness(1.08);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.78) inset,
-    0 -1px 4px rgba(60, 38, 8, 0.28) inset,
-    0 0 0 1px rgba(255, 228, 160, 0.35),
-    0 4px 12px rgba(0, 0, 0, 0.34),
-    0 0 16px rgba(240, 200, 74, 0.28) !important;
-}
-
-.owner-admin .oa-sidebar-fill .oa-nav-fill .oa-nav-item:hover svg {
-  opacity: 1 !important;
+  color: inherit !important;
+  filter: none;
 }
 
 .oa-sidebar-fill .oa-nav-fill .oa-nav-item:hover {
@@ -128,13 +90,13 @@
 }
 
 .oa-sidebar-fill .oa-nav-fill .oa-nav-item-active {
-  background: rgba(228, 184, 74, 0.12) !important;
+  background: rgba(228, 184, 74, 0.1) !important;
   color: #fef3c7 !important;
   font-weight: 600;
 }
 
 .owner-admin .oa-sidebar-fill .oa-nav-item-active svg {
-  color: #3d2a0a !important;
+  color: inherit !important;
   opacity: 1 !important;
 }
 
@@ -206,18 +168,13 @@
 @media (max-height: 700px) {
   .oa-sidebar-fill .oa-nav-fill .oa-nav-item {
     font-size: 13px;
-    gap: 10px;
-    padding: 0 10px 0 12px;
+    gap: 8px;
+    padding: 0 8px 0 10px !important;
   }
-  .owner-admin .oa-sidebar-fill .oa-nav-icon-3d {
-    width: 24px !important;
-    height: 24px !important;
-    min-width: 24px;
-    border-radius: 6px !important;
-  }
+  .owner-admin .oa-sidebar-fill .oa-nav-icon-plain,
   .owner-admin .oa-sidebar-fill .oa-nav-fill .oa-nav-item svg {
-    width: 12px !important;
-    height: 12px !important;
+    width: 14px !important;
+    height: 14px !important;
   }
   .oa-sidebar-fill .oa-sidebar-footer {
     padding: 4px 5px 5px;
