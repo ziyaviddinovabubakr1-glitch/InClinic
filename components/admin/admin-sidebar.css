@@ -56,18 +56,32 @@
 
 .owner-admin .oa-sidebar-fill .oa-nav-group-label {
   display: block !important;
-  padding: 2px 8px 1px !important;
-  font-size: 8px !important;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(228, 184, 74, 0.4);
-  line-height: 1.1;
+  padding: 8px 10px 3px !important;
+  margin: 0 !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  color: rgba(228, 184, 74, 0.52) !important;
+  line-height: 1 !important;
   user-select: none;
+  pointer-events: none;
+  cursor: default;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
 .owner-admin .oa-sidebar-fill .oa-nav-group:first-child .oa-nav-group-label {
-  padding-top: 0 !important;
+  padding-top: 12px !important;
+  margin-top: 2px !important;
+}
+
+.owner-admin .oa-sidebar-fill .oa-nav-group + .oa-nav-group .oa-nav-group-label {
+  padding-top: 7px !important;
+  margin-top: 3px !important;
+  border-top: 1px solid rgba(228, 184, 74, 0.1);
 }
 
 .oa-sidebar-fill .oa-nav-fill .oa-nav-item {
@@ -229,8 +243,15 @@
     height: 13px !important;
   }
   .owner-admin .oa-sidebar-fill .oa-nav-group-label {
-    padding: 2px 6px 0 !important;
-    font-size: 7px !important;
+    padding: 6px 8px 2px !important;
+    font-size: 8px !important;
+  }
+  .owner-admin .oa-sidebar-fill .oa-nav-group:first-child .oa-nav-group-label {
+    padding-top: 9px !important;
+  }
+  .owner-admin .oa-sidebar-fill .oa-nav-group + .oa-nav-group .oa-nav-group-label {
+    padding-top: 5px !important;
+    margin-top: 2px !important;
   }
   .owner-admin .oa-sidebar-fill .oa-sidebar-footer {
     padding: 2px 4px 3px !important;
@@ -317,18 +338,7 @@
 }
 
 .owner-admin .oa-sidebar-fill .oa-nav-group + .oa-nav-group {
-  margin-top: 1px !important;
-}
-
-.owner-admin .oa-sidebar-fill .oa-nav-group-label {
-  display: block !important;
-  padding: 3px 8px 0 !important;
-  font-size: 8px !important;
-  line-height: 1 !important;
-}
-
-.owner-admin .oa-sidebar-fill .oa-nav-group:first-child .oa-nav-group-label {
-  padding-top: 0 !important;
+  margin-top: 0 !important;
 }
 
 .owner-admin .oa-sidebar-fill .oa-nav-item {
