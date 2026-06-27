@@ -164,7 +164,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     className={`oa-nav-item ${active ? "oa-nav-item-active" : ""}`}
                   >
                     {active && <NavIndicator />}
-                    <Icon className="oa-nav-icon-plain" style={{ width: 16, height: 16 }} />
+                    <Icon className="oa-nav-icon-plain" style={{ width: 14, height: 14 }} />
                     <span className="oa-nav-label">{label}</span>
                   </Link>
                 );

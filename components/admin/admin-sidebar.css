@@ -16,14 +16,16 @@
 
 .oa-sidebar-fill .oa-sidebar-brand {
   flex-shrink: 0;
+  padding: 8px 10px 6px !important;
+  min-height: auto !important;
 }
 
 .oa-sidebar-fill .oa-sidebar-footer {
   flex-shrink: 0;
   display: flex !important;
   flex-direction: column !important;
-  gap: 5px;
-  padding: 5px 6px 6px;
+  gap: 3px;
+  padding: 3px 5px 4px;
   border-top: 1px solid var(--oa-border, rgba(255, 255, 255, 0.08));
 }
 
@@ -34,43 +36,53 @@
   display: flex !important;
   flex-direction: column !important;
   gap: 0;
-  padding: 0 4px;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
+  padding: 0 2px !important;
+  overflow: hidden !important;
   justify-content: flex-start !important;
 }
 
+.oa-sidebar-fill .oa-nav-grouped {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
 .oa-sidebar-fill .oa-nav-grouped .oa-nav-group {
-  flex-shrink: 0;
+  flex-shrink: 1;
+  min-height: 0;
 }
 
 .owner-admin .oa-sidebar-fill .oa-nav-group-label {
   display: block !important;
-  padding: 10px 12px 4px;
-  font-size: 9px;
+  padding: 2px 8px 1px !important;
+  font-size: 8px !important;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(228, 184, 74, 0.42);
-  line-height: 1;
+  color: rgba(228, 184, 74, 0.4);
+  line-height: 1.1;
   user-select: none;
 }
 
 .owner-admin .oa-sidebar-fill .oa-nav-group:first-child .oa-nav-group-label {
-  padding-top: 6px;
+  padding-top: 0 !important;
 }
 
 .oa-sidebar-fill .oa-nav-fill .oa-nav-item {
   display: flex !important;
   align-items: center !important;
-  gap: 10px;
-  min-height: 34px !important;
+  gap: 8px;
+  min-height: 26px !important;
   height: auto !important;
   flex: unset !important;
-  padding: 0 10px 0 12px !important;
-  border-radius: 0;
-  font-size: 14px !important;
+  padding: 0 8px 0 10px !important;
+  margin: 0 !important;
+  border-radius: 6px !important;
+  font-size: 12.5px !important;
   font-weight: 500;
+  line-height: 1.15 !important;
   color: var(--oa-text-soft, #a1a1aa);
   text-decoration: none;
   position: relative;
@@ -79,8 +91,8 @@
 
 /* Plain gold icons — no frames */
 .owner-admin .oa-sidebar-fill .oa-nav-icon-plain {
-  width: 16px !important;
-  height: 16px !important;
+  width: 14px !important;
+  height: 14px !important;
   flex-shrink: 0;
   color: rgba(228, 184, 74, 0.72) !important;
   opacity: 1 !important;
@@ -97,8 +109,8 @@
 }
 
 .owner-admin .oa-sidebar-fill .oa-nav-fill .oa-nav-item svg {
-  width: 16px !important;
-  height: 16px !important;
+  width: 14px !important;
+  height: 14px !important;
   flex-shrink: 0;
   opacity: 1 !important;
   color: inherit !important;
@@ -129,9 +141,9 @@
 .oa-sidebar-fill .oa-sidebar-owner-card {
   display: flex !important;
   align-items: center;
-  gap: 6px;
-  padding: 5px 7px;
-  border-radius: 7px;
+  gap: 5px;
+  padding: 3px 5px;
+  border-radius: 6px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   min-width: 0;
@@ -169,8 +181,8 @@
   justify-content: center;
   gap: 4px;
   width: 100% !important;
-  min-height: 24px;
-  padding: 4px 8px;
+  min-height: 22px;
+  padding: 3px 6px;
   border: 1px solid rgba(229, 72, 77, 0.35);
   border-radius: 7px;
   background: rgba(229, 72, 77, 0.12);
@@ -186,7 +198,30 @@
   color: #fecaca;
 }
 
-@media (max-height: 700px) {
+/* Override design-system nav density for fill sidebar */
+.owner-admin .oa-sidebar-fill .oa-nav,
+.owner-admin .oa-sidebar-fill .oa-nav-flat {
+  padding: 0 2px !important;
+  gap: 0 !important;
+}
+
+.owner-admin .oa-sidebar-fill .oa-nav-item {
+  min-height: 26px !important;
+  height: auto !important;
+  padding: 0 8px 0 10px !important;
+  font-size: 12.5px !important;
+  border-radius: 6px !important;
+}
+
+.owner-admin .oa-reviews-page .oa-profile-stats {
+  gap: 8px !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.owner-admin .oa-reviews-page .oa-profile-stats .oa-stat-tile {
+  min-height: 56px !important;
+  padding: 10px 12px !important;
+}
   .oa-sidebar-fill .oa-nav-fill .oa-nav-item {
     font-size: 13px;
     gap: 8px;

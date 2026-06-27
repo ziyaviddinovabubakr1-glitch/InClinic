@@ -118,6 +118,7 @@ export default function ReviewsPage() {
 
       <DataTableShell
         loading={isLoading && !rows}
+        noHorizontalScroll
         empty={
           rows?.length === 0
             ? { icon: <IReviews />, title: "Отзывы не найдены", sub: "Измените фильтры поиска." }
@@ -211,23 +212,25 @@ export default function ReviewsPage() {
                     {canModerate && r.status !== "APPROVED" && (
                       <button
                         type="button"
-                        className="oa-review-btn oa-review-btn--approve"
+                        className="oa-review-btn oa-review-btn--approve oa-review-btn--icon"
                         disabled={approve.isPending}
                         onClick={() => moderate(r, "APPROVED")}
+                        aria-label="Одобрить"
+                        title="Одобрить"
                       >
-                        <ICheck style={{ width: 12, height: 12 }} />
-                        <span>Одобрить</span>
+                        <ICheck style={{ width: 13, height: 13 }} />
                       </button>
                     )}
                     {canModerate && r.status !== "REJECTED" && (
                       <button
                         type="button"
-                        className="oa-review-btn oa-review-btn--reject"
+                        className="oa-review-btn oa-review-btn--reject oa-review-btn--icon"
                         disabled={reject.isPending}
                         onClick={() => moderate(r, "REJECTED")}
+                        aria-label="Отклонить"
+                        title="Отклонить"
                       >
-                        <IClose style={{ width: 12, height: 12 }} />
-                        <span>Отклонить</span>
+                        <IClose style={{ width: 13, height: 13 }} />
                       </button>
                     )}
                     {can("review:delete") && (

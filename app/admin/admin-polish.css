@@ -1083,74 +1083,98 @@
   flex-shrink: 0;
 }
 
+.owner-admin .oa-table-reviews {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.owner-admin .oa-table-reviews thead th:nth-child(1) { width: 15%; }
+.owner-admin .oa-table-reviews thead th:nth-child(2) { width: 13%; }
+.owner-admin .oa-table-reviews thead th:nth-child(3) { width: 12%; }
+.owner-admin .oa-table-reviews thead th:nth-child(4) { width: 28%; }
+.owner-admin .oa-table-reviews thead th:nth-child(5) { width: 12%; }
+.owner-admin .oa-table-reviews thead th:nth-child(6) { width: 10%; }
+.owner-admin .oa-table-reviews thead th:nth-child(7) { width: 10%; }
+
+.owner-admin .oa-reviews-page .oa-table-wrap.oa-table-no-scroll {
+  overflow-x: hidden !important;
+}
+
 .owner-admin .oa-table-reviews tbody td {
-  height: 40px !important;
-  min-height: 40px !important;
-  max-height: 40px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
   vertical-align: middle !important;
-  padding: 0 8px !important;
-  font-size: 12.5px !important;
+  padding: 0 6px !important;
+  font-size: 12px !important;
+  overflow: hidden;
 }
 
 .owner-admin .oa-table-reviews thead th {
-  font-size: 10px !important;
-  padding: 6px 8px !important;
+  font-size: 9px !important;
+  padding: 5px 6px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .owner-admin .oa-table-reviews tbody td:last-child {
   width: auto !important;
-  min-width: 0;
-  max-width: 168px;
+  min-width: 0 !important;
+  max-width: none !important;
+  padding-right: 4px !important;
 }
 
 .owner-admin .oa-review-patient {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   min-width: 0;
-  max-width: 130px;
+  max-width: 100%;
 }
 
 .owner-admin .oa-review-patient-name {
-  font-size: 13px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .owner-admin .oa-review-doctor {
-  font-size: 12px !important;
+  font-size: 11px !important;
   font-weight: 500 !important;
   color: #e4b84a !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 120px;
+  max-width: 100%;
 }
 
 .owner-admin .oa-review-rating {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
   white-space: nowrap;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
 }
 
 .owner-admin .oa-review-comment {
-  font-size: 12px !important;
+  font-size: 11px !important;
   color: var(--oa-text-soft) !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 220px;
+  max-width: 100%;
 }
 
 .owner-admin .oa-review-date {
   white-space: nowrap;
-  font-size: 12px !important;
-  width: 88px;
+  font-size: 11px !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .owner-admin .oa-review-actions {
@@ -1158,19 +1182,19 @@
   flex-wrap: nowrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 6px;
+  gap: 4px;
 }
 
 .owner-admin .oa-review-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  height: 30px !important;
-  min-height: 30px !important;
+  gap: 0;
+  height: 28px !important;
+  min-height: 28px !important;
   width: auto !important;
   min-width: unset !important;
-  padding: 0 11px !important;
+  padding: 0 10px !important;
   border-radius: 999px !important;
   font-size: 11px !important;
   font-weight: 600 !important;
@@ -1178,6 +1202,13 @@
   border: 1px solid transparent;
   cursor: pointer;
   transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.owner-admin .oa-review-btn.oa-review-btn--icon {
+  width: 28px !important;
+  min-width: 28px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
 }
 
 .owner-admin .oa-review-btn:hover:not(:disabled) {
