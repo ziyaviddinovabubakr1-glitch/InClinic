@@ -1,4 +1,4 @@
-/* Admin login — 3D glass card, rear lamp glow, icon inputs */
+/* Admin login — 3D glass card, static gold halo, crest arch */
 
 .oa-login-motion {
   display: flex;
@@ -9,7 +9,7 @@
 /* ── 3D tilt stage ── */
 .oa-login-tilt-root {
   width: 100%;
-  margin-top: 52px;
+  margin-top: 56px;
   perspective: 1100px;
   perspective-origin: 50% 42%;
 }
@@ -17,77 +17,141 @@
 .oa-login-glass-wrap {
   position: relative;
   width: 100%;
-  padding: 28px 18px 18px;
+  padding: 36px 14px 14px;
   overflow: visible;
   transform-style: preserve-3d;
   transition: transform 0.14s ease-out;
   will-change: transform;
 }
 
-/* Rear lamp — independent light behind the card, not on its border */
-.oa-login-back-lamp {
+/* Static gold halo — full perimeter, no rotation */
+.oa-login-back-halo {
   position: absolute;
-  inset: -20px -8px -28px;
+  inset: -8px -4px -12px;
   z-index: 0;
   pointer-events: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
 }
 
-.oa-login-lamp-spin {
+.oa-login-halo-outer,
+.oa-login-halo-mid,
+.oa-login-halo-inner {
   position: absolute;
-  width: 340px;
-  height: 340px;
-  animation: oaLoginLampSpin 7s linear infinite;
-}
-
-.oa-login-lamp-core {
-  position: absolute;
-  inset: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: conic-gradient(
-    from 0deg at 50% 50%,
-    transparent 0deg,
-    transparent 250deg,
-    rgba(252, 229, 136, 0.08) 268deg,
-    rgba(255, 248, 220, 0.55) 284deg,
-    rgba(252, 229, 136, 0.95) 296deg,
-    rgba(255, 254, 245, 0.75) 306deg,
-    rgba(228, 184, 74, 0.35) 320deg,
-    rgba(252, 229, 136, 0.1) 336deg,
-    transparent 352deg,
-    transparent 360deg
-  );
-  filter: blur(44px);
-  opacity: 0.92;
+  pointer-events: none;
 }
 
-/* Glass panel — blocks lamp center; edges catch spill light */
-.oa-login-glass-panel {
+.oa-login-halo-outer {
+  width: 118%;
+  height: 108%;
+  background: radial-gradient(
+    ellipse 100% 100% at 50% 50%,
+    rgba(255, 248, 220, 0.42) 0%,
+    rgba(252, 229, 136, 0.28) 28%,
+    rgba(228, 184, 74, 0.14) 48%,
+    rgba(252, 229, 136, 0.06) 62%,
+    transparent 74%
+  );
+  filter: blur(28px);
+  opacity: 0.95;
+}
+
+.oa-login-halo-mid {
+  width: 108%;
+  height: 102%;
+  background: radial-gradient(
+    ellipse 100% 100% at 50% 50%,
+    rgba(255, 254, 245, 0.55) 0%,
+    rgba(252, 229, 136, 0.38) 22%,
+    rgba(228, 184, 74, 0.18) 42%,
+    transparent 58%
+  );
+  filter: blur(16px);
+  opacity: 0.88;
+}
+
+.oa-login-halo-inner {
+  width: 102%;
+  height: 98%;
+  background: radial-gradient(
+    ellipse 100% 100% at 50% 50%,
+    rgba(252, 229, 136, 0.35) 0%,
+    rgba(255, 248, 220, 0.22) 35%,
+    transparent 52%
+  );
+  filter: blur(8px);
+  opacity: 0.9;
+}
+
+/* Unified card + crest semicircle */
+.oa-login-card-shell {
+  --oa-card-fill: linear-gradient(
+    168deg,
+    rgba(34, 30, 26, 0.97) 0%,
+    rgba(22, 20, 17, 0.98) 42%,
+    rgba(14, 13, 11, 0.99) 100%
+  );
+  --oa-card-edge: rgba(252, 229, 136, 0.34);
+  --oa-card-edge-soft: rgba(228, 184, 74, 0.16);
+
+  position: relative;
+  z-index: 2;
+  transform: translateZ(18px);
+  filter: drop-shadow(0 28px 56px rgba(0, 0, 0, 0.72));
+}
+
+.oa-login-crest-arch {
+  position: absolute;
+  top: -52px;
+  left: 50%;
+  z-index: 1;
+  width: 136px;
+  height: 68px;
+  transform: translateX(-50%);
+  border-radius: 136px 136px 0 0;
+  background: var(--oa-card-fill);
+  border: 1px solid var(--oa-card-edge);
+  border-bottom: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 220, 0.14),
+    0 -8px 28px rgba(252, 229, 136, 0.12);
+}
+
+.oa-login-crest-arch::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: -1px;
+  height: 2px;
+  background: rgba(22, 20, 17, 0.99);
+}
+
+.oa-login-card-body {
   position: relative;
   z-index: 2;
   border-radius: 24px;
   overflow: visible;
-  background: linear-gradient(
-    165deg,
-    rgba(18, 16, 14, 0.92) 0%,
-    rgba(8, 8, 8, 0.96) 55%,
-    rgba(4, 4, 4, 0.98) 100%
-  );
-  backdrop-filter: blur(32px) saturate(1.12);
-  -webkit-backdrop-filter: blur(32px) saturate(1.12);
-  border: 1px solid rgba(228, 184, 74, 0.08);
+  background: var(--oa-card-fill);
+  backdrop-filter: blur(34px) saturate(1.18);
+  -webkit-backdrop-filter: blur(34px) saturate(1.18);
+  border: 1px solid var(--oa-card-edge);
   box-shadow:
-    inset 0 1px 0 rgba(255, 248, 220, 0.07),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.4),
-    0 24px 64px rgba(0, 0, 0, 0.65);
-  padding: 72px 24px 22px;
-  transform: translateZ(18px);
+    inset 0 1px 0 rgba(255, 248, 220, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+    0 0 0 1px var(--oa-card-edge-soft),
+    0 0 36px rgba(252, 229, 136, 0.18),
+    0 0 72px rgba(228, 184, 74, 0.12),
+    0 0 110px rgba(252, 229, 136, 0.08);
+  padding: 58px 24px 22px;
 }
 
-.oa-login-glass-panel::before {
+.oa-login-card-body::before {
   content: none !important;
 }
 
@@ -99,35 +163,39 @@
   z-index: 0;
   background: radial-gradient(
     circle at var(--oa-glare-x, 50%) var(--oa-glare-y, 30%),
-    rgba(255, 248, 220, 0.11) 0%,
-    transparent 52%
+    rgba(255, 248, 220, 0.14) 0%,
+    transparent 54%
   );
-  opacity: 0.85;
+  opacity: 0.9;
   transition: opacity 0.2s ease;
 }
 
-/* Logo — no black circle, floats above card */
+/* Logo inside crest arch */
 .oa-login-logo-crest {
   position: absolute;
-  top: 0;
+  top: -52px;
   left: 50%;
-  z-index: 4;
-  transform: translate(-50%, -54%);
+  z-index: 5;
+  width: 136px;
+  height: 68px;
+  transform: translateX(-50%);
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
+  padding-bottom: 2px;
   pointer-events: none;
 }
 
 .oa-login-logo-img.oa-brand-logo {
-  width: 96px !important;
-  height: 96px !important;
+  width: 88px !important;
+  height: 88px !important;
+  transform: translateY(-18px);
   filter:
-    brightness(1.7)
+    brightness(1.75)
     saturate(1.45)
-    drop-shadow(0 0 18px rgba(130, 235, 255, 0.6))
-    drop-shadow(0 0 36px rgba(90, 210, 245, 0.28))
-    drop-shadow(0 8px 20px rgba(0, 0, 0, 0.55));
+    drop-shadow(0 0 16px rgba(130, 235, 255, 0.62))
+    drop-shadow(0 0 32px rgba(90, 210, 245, 0.3))
+    drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5));
 }
 
 .oa-login-form {
@@ -312,10 +380,6 @@
   color: rgba(228, 184, 74, 0.45);
 }
 
-@keyframes oaLoginLampSpin {
-  to { transform: rotate(360deg); }
-}
-
 @keyframes oaLoginErrorIn {
   from { opacity: 0; transform: translateY(-6px); }
   to { opacity: 1; transform: translateY(0); }
@@ -343,10 +407,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .oa-login-lamp-spin {
-    animation: none;
-  }
-
   .oa-login-glass-wrap {
     transition: none;
   }
@@ -361,18 +421,29 @@
 }
 
 @media (max-width: 420px) {
-  .oa-login-glass-panel {
-    padding: 64px 18px 18px;
+  .oa-login-card-body {
+    padding: 52px 18px 18px;
+  }
+
+  .oa-login-crest-arch,
+  .oa-login-logo-crest {
+    width: 118px;
+    height: 59px;
+  }
+
+  .oa-login-crest-arch {
+    top: -46px;
+    border-radius: 118px 118px 0 0;
+  }
+
+  .oa-login-logo-crest {
+    top: -46px;
   }
 
   .oa-login-logo-img.oa-brand-logo {
-    width: 84px !important;
-    height: 84px !important;
-  }
-
-  .oa-login-lamp-spin {
-    width: 300px;
-    height: 300px;
+    width: 76px !important;
+    height: 76px !important;
+    transform: translateY(-14px);
   }
 
   .oa-login-btn-zone {

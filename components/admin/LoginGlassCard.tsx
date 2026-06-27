@@ -45,17 +45,21 @@ export default function LoginGlassCard({ logo, children, footer }: Props) {
           ["--oa-glare-y" as string]: `${glare.y}%`,
         }}
       >
-        <div className="oa-login-back-lamp" aria-hidden>
-          <div className="oa-login-lamp-spin">
-            <div className="oa-login-lamp-core" />
-          </div>
+        <div className="oa-login-back-halo" aria-hidden>
+          <div className="oa-login-halo-outer" />
+          <div className="oa-login-halo-mid" />
+          <div className="oa-login-halo-inner" />
         </div>
 
-        <div className="oa-login-glass-panel">
-          <div className="oa-login-panel-glare" aria-hidden />
+        <div className="oa-login-card-shell">
+          <div className="oa-login-crest-arch" aria-hidden />
           <div className="oa-login-logo-crest">{logo}</div>
-          {children}
-          {footer}
+
+          <div className="oa-login-card-body">
+            <div className="oa-login-panel-glare" aria-hidden />
+            {children}
+            {footer}
+          </div>
         </div>
       </div>
     </div>
