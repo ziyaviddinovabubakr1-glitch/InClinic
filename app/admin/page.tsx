@@ -29,11 +29,14 @@ export default function OwnerLoginPage() {
     setError("");
     setAuthOk(false);
     setLoading(true);
+    const user = username.trim();
+    const pass = password.trim();
     try {
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        credentials: "include",
+        body: JSON.stringify({ username: user, password: pass }),
       });
       const data = (await res.json()) as { success?: boolean; error?: string };
       if (!res.ok || !data.success) {
@@ -63,13 +66,34 @@ export default function OwnerLoginPage() {
       <MotionPage className="oa-login-motion" style={{ width: "100%", maxWidth: 390 }}>
         <div className="oa-login-card-wrap">
           <div className="oa-login-logo-float">
-            <div className="oa-login-logo-mask">
-              <AdminBrandLogo
-                variant="icon"
-                size="hero"
-                animate
-                className="oa-login-logo-img"
-              />
+            <div className="oa-login-logo-neon-wrap">
+              <svg className="oa-login-logo-neon-svg" viewBox="0 0 100 100" aria-hidden>
+                <defs>
+                  <linearGradient id="oa-login-logo-neon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#fff8dc" />
+                    <stop offset="45%" stopColor="#fce588" />
+                    <stop offset="100%" stopColor="#c9921a" />
+                  </linearGradient>
+                </defs>
+                <circle
+                  className="oa-login-logo-neon-stroke"
+                  cx="50"
+                  cy="50"
+                  r="46"
+                  fill="none"
+                  stroke="url(#oa-login-logo-neon-grad)"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              </svg>
+              <div className="oa-login-logo-mask">
+                <AdminBrandLogo
+                  variant="icon"
+                  size="hero"
+                  animate
+                  className="oa-login-logo-img"
+                />
+              </div>
             </div>
           </div>
 
