@@ -213,31 +213,23 @@
   border-radius: 6px !important;
 }
 
-.owner-admin .oa-reviews-page .oa-profile-stats {
-  gap: 8px !important;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.owner-admin .oa-reviews-page .oa-profile-stats .oa-stat-tile {
-  min-height: 56px !important;
-  padding: 10px 12px !important;
-}
+@media (max-height: 700px) {
   .oa-sidebar-fill .oa-nav-fill .oa-nav-item {
-    font-size: 13px;
-    gap: 8px;
-    padding: 0 8px 0 10px !important;
+    font-size: 12px;
+    gap: 6px;
+    padding: 0 6px 0 8px !important;
   }
   .owner-admin .oa-sidebar-fill .oa-nav-icon-plain,
   .owner-admin .oa-sidebar-fill .oa-nav-fill .oa-nav-item svg {
-    width: 14px !important;
-    height: 14px !important;
+    width: 13px !important;
+    height: 13px !important;
   }
   .oa-sidebar-fill .oa-sidebar-footer {
-    padding: 4px 5px 5px;
-    gap: 4px;
+    padding: 2px 4px 3px;
+    gap: 2px;
   }
   .oa-sidebar-logout-btn {
-    min-height: 22px;
+    min-height: 20px;
     font-size: 10px;
   }
 }
