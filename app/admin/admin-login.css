@@ -17,78 +17,14 @@
 .oa-login-glass-wrap {
   position: relative;
   width: 100%;
-  padding: 36px 14px 14px;
+  padding: 36px 10px 10px;
   overflow: visible;
   transform-style: preserve-3d;
   transition: transform 0.14s ease-out;
   will-change: transform;
 }
 
-/* Static gold halo — full perimeter, no rotation */
-.oa-login-back-halo {
-  position: absolute;
-  inset: -8px -4px -12px;
-  z-index: 0;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.oa-login-halo-outer,
-.oa-login-halo-mid,
-.oa-login-halo-inner {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.oa-login-halo-outer {
-  width: 118%;
-  height: 108%;
-  background: radial-gradient(
-    ellipse 100% 100% at 50% 50%,
-    rgba(255, 248, 220, 0.42) 0%,
-    rgba(252, 229, 136, 0.28) 28%,
-    rgba(228, 184, 74, 0.14) 48%,
-    rgba(252, 229, 136, 0.06) 62%,
-    transparent 74%
-  );
-  filter: blur(28px);
-  opacity: 0.95;
-}
-
-.oa-login-halo-mid {
-  width: 108%;
-  height: 102%;
-  background: radial-gradient(
-    ellipse 100% 100% at 50% 50%,
-    rgba(255, 254, 245, 0.55) 0%,
-    rgba(252, 229, 136, 0.38) 22%,
-    rgba(228, 184, 74, 0.18) 42%,
-    transparent 58%
-  );
-  filter: blur(16px);
-  opacity: 0.88;
-}
-
-.oa-login-halo-inner {
-  width: 102%;
-  height: 98%;
-  background: radial-gradient(
-    ellipse 100% 100% at 50% 50%,
-    rgba(252, 229, 136, 0.35) 0%,
-    rgba(255, 248, 220, 0.22) 35%,
-    transparent 52%
-  );
-  filter: blur(8px);
-  opacity: 0.9;
-}
-
-/* Unified card + crest semicircle */
+/* Single unified card + crest — one surface, one border trace */
 .oa-login-card-shell {
   --oa-card-fill: linear-gradient(
     168deg,
@@ -97,58 +33,72 @@
     rgba(14, 13, 11, 0.99) 100%
   );
   --oa-card-edge: rgba(252, 229, 136, 0.34);
-  --oa-card-edge-soft: rgba(228, 184, 74, 0.16);
+  --oa-crest-w: 136px;
+  --oa-crest-h: 68px;
 
   position: relative;
   z-index: 2;
+  margin-top: 52px;
   transform: translateZ(18px);
-  filter: drop-shadow(0 28px 56px rgba(0, 0, 0, 0.72));
-}
-
-.oa-login-crest-arch {
-  position: absolute;
-  top: -52px;
-  left: 50%;
-  z-index: 1;
-  width: 136px;
-  height: 68px;
-  transform: translateX(-50%);
-  border-radius: 136px 136px 0 0;
-  background: var(--oa-card-fill);
-  border: 1px solid var(--oa-card-edge);
-  border-bottom: none;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 248, 220, 0.14),
-    0 -8px 28px rgba(252, 229, 136, 0.12);
-}
-
-.oa-login-crest-arch::after {
-  content: "";
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: -1px;
-  height: 2px;
-  background: rgba(22, 20, 17, 0.99);
-}
-
-.oa-login-card-body {
-  position: relative;
-  z-index: 2;
+  padding: 58px 24px 22px;
   border-radius: 24px;
-  overflow: visible;
   background: var(--oa-card-fill);
   backdrop-filter: blur(34px) saturate(1.18);
   -webkit-backdrop-filter: blur(34px) saturate(1.18);
   border: 1px solid var(--oa-card-edge);
   box-shadow:
-    inset 0 1px 0 rgba(255, 248, 220, 0.12),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
-    0 0 0 1px var(--oa-card-edge-soft),
-    0 0 36px rgba(252, 229, 136, 0.18),
-    0 0 72px rgba(228, 184, 74, 0.12),
-    0 0 110px rgba(252, 229, 136, 0.08);
-  padding: 58px 24px 22px;
+    inset 0 1px 0 rgba(255, 248, 220, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+  /* Uniform gold neon ~8px (≈0.5cm) on full silhouette incl. crest */
+  filter:
+    drop-shadow(0 0 4px rgba(252, 229, 136, 0.72))
+    drop-shadow(0 0 8px rgba(252, 229, 136, 0.52))
+    drop-shadow(0 0 14px rgba(228, 184, 74, 0.38))
+    drop-shadow(0 24px 48px rgba(0, 0, 0, 0.62));
+}
+
+/* Crest arch — same fill as shell, overlaps top edge to hide seam */
+.oa-login-card-shell::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--oa-crest-h) * -1 + 2px);
+  left: 50%;
+  z-index: 0;
+  width: var(--oa-crest-w);
+  height: var(--oa-crest-h);
+  transform: translateX(-50%);
+  border-radius: var(--oa-crest-h) var(--oa-crest-h) 0 0;
+  background: var(--oa-card-fill);
+  backdrop-filter: blur(34px) saturate(1.18);
+  -webkit-backdrop-filter: blur(34px) saturate(1.18);
+  border: 1px solid var(--oa-card-edge);
+  border-bottom: none;
+  box-shadow: inset 0 1px 0 rgba(255, 248, 220, 0.1);
+}
+
+/* Bridge strip — merges crest base into card body */
+.oa-login-card-shell::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  z-index: 1;
+  width: calc(var(--oa-crest-w) - 6px);
+  height: 8px;
+  transform: translateX(-50%);
+  background: var(--oa-card-fill);
+  backdrop-filter: blur(34px) saturate(1.18);
+  -webkit-backdrop-filter: blur(34px) saturate(1.18);
+  pointer-events: none;
+}
+
+.oa-login-card-body {
+  position: relative;
+  z-index: 2;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
 }
 
 .oa-login-card-body::before {
@@ -157,27 +107,32 @@
 
 .oa-login-panel-glare {
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
+  top: calc(var(--oa-crest-h) * -1);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 24px;
   pointer-events: none;
-  z-index: 0;
+  z-index: 3;
   background: radial-gradient(
     circle at var(--oa-glare-x, 50%) var(--oa-glare-y, 30%),
-    rgba(255, 248, 220, 0.14) 0%,
-    transparent 54%
+    rgba(252, 229, 136, 0.26) 0%,
+    rgba(228, 184, 74, 0.14) 24%,
+    rgba(252, 229, 136, 0.05) 40%,
+    transparent 56%
   );
-  opacity: 0.9;
-  transition: opacity 0.2s ease;
+  opacity: 0.95;
+  transition: opacity 0.18s ease;
 }
 
 /* Logo inside crest arch */
 .oa-login-logo-crest {
   position: absolute;
-  top: -52px;
+  top: calc(var(--oa-crest-h) * -1);
   left: 50%;
-  z-index: 5;
-  width: 136px;
-  height: 68px;
+  z-index: 4;
+  width: var(--oa-crest-w);
+  height: var(--oa-crest-h);
   transform: translateX(-50%);
   display: flex;
   align-items: flex-end;
@@ -421,23 +376,10 @@
 }
 
 @media (max-width: 420px) {
-  .oa-login-card-body {
+  .oa-login-card-shell {
+    --oa-crest-w: 118px;
+    --oa-crest-h: 59px;
     padding: 52px 18px 18px;
-  }
-
-  .oa-login-crest-arch,
-  .oa-login-logo-crest {
-    width: 118px;
-    height: 59px;
-  }
-
-  .oa-login-crest-arch {
-    top: -46px;
-    border-radius: 118px 118px 0 0;
-  }
-
-  .oa-login-logo-crest {
-    top: -46px;
   }
 
   .oa-login-logo-img.oa-brand-logo {
