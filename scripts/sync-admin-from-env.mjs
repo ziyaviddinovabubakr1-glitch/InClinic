@@ -5,8 +5,8 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-const DEFAULT_USER = "Abubakr";
-const DEFAULT_PASS = "InClinic2026!";
+const DEFAULT_USER = "InClinic";
+const DEFAULT_PASS = "OwnerSecure2026!";
 
 export function getAdminCredentialsFromEnv() {
   const username = (process.env.ADMIN_USERNAME ?? DEFAULT_USER).trim();

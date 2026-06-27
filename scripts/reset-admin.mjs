@@ -4,7 +4,7 @@
  */
 import { loadEnvFiles } from "./load-env.mjs";
 import { startEmbeddedPostgres, DATABASE_URL } from "./embedded-db.mjs";
-import { syncAdminFromEnv } from "./sync-admin-from-env.mjs";
+import { syncAdminFromEnv, getAdminCredentialsFromEnv } from "./sync-admin-from-env.mjs";
 
 async function main() {
   loadEnvFiles();
@@ -13,9 +13,10 @@ async function main() {
 
   await startEmbeddedPostgres();
   const { username } = await syncAdminFromEnv();
+  const creds = getAdminCredentialsFromEnv();
   console.log(`✓ Владелец синхронизирован: "${username}"`);
-  console.log("  Логин: Abubakr (или ADMIN_USERNAME из .env)");
-  console.log("  Пароль: InClinic2026! (или ADMIN_PASSWORD из .env)");
+  console.log(`  Логин: ${creds.username}`);
+  console.log(`  Пароль: ${creds.password}`);
 }
 
 main().catch((e) => {

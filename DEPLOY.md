@@ -61,8 +61,8 @@ git push -u origin main
 
 | Переменная | Что вписать |
 |------------|-------------|
-| `ADMIN_USERNAME` | Логин для `/admin` (по умолчанию: `Abubakr`) |
-| `ADMIN_PASSWORD` | Пароль админки (по умолчанию: `InClinic2026!`) |
+| `ADMIN_USERNAME` | Логин для `/admin` (по умолчанию: `InClinic`) |
+| `ADMIN_PASSWORD` | Пароль админки (по умолчанию: `OwnerSecure2026!`) |
 | `TELEGRAM_BOT_TOKEN` | Токен от @BotFather |
 | `TELEGRAM_CHAT_ID` | Твой chat id (число) |
 | `TELEGRAM_WEBHOOK_SECRET` | Любая строка 8+ символов (латиница/цифры) |
@@ -117,7 +117,7 @@ npm run telegram:webhook
 
 **Билд упал** → Render → Logs → ищи красные строки.
 
-**Админка не пускает** → на Render в **Environment** задай `ADMIN_USERNAME=Abubakr` и `ADMIN_PASSWORD=InClinic2026!` (или свои), затем **Manual Deploy**. Либо в Shell: `npm run admin:reset`. Пароль синхронизируется при каждом деплое (`build:deploy` → seed).
+**Админка не пускает** → на Render в **Environment** задай `ADMIN_USERNAME=InClinic` и `ADMIN_PASSWORD=OwnerSecure2026!` (или свои), затем **Manual Deploy**. Либо в Shell: `npm run admin:reset`. Пароль синхронизируется при каждом деплое (`build:deploy` → seed).
 
 **Telegram кнопки не работают** → проверь `npm run telegram:status` (URL должен быть `https://inclinic.onrender.com`). Webhook регистрируется при каждом старте сервера. **Не запускай `npm run dev` с `TELEGRAM_FORCE_DEV_POLLING=true`** — это сбрасывает webhook. Локально кнопки работают только на деплое или через ngrok.
 

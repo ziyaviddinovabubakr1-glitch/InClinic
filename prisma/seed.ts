@@ -97,8 +97,8 @@ async function main() {
     create: { slug, name: clinicName },
   });
 
-  const username = (process.env.ADMIN_USERNAME ?? "Abubakr").trim();
-  const password = (process.env.ADMIN_PASSWORD ?? "InClinic2026!").trim();
+  const username = (process.env.ADMIN_USERNAME ?? "InClinic").trim();
+  const password = (process.env.ADMIN_PASSWORD ?? "OwnerSecure2026!").trim();
   const passwordHash = await hashPassword(password);
 
   await prisma.user.updateMany({

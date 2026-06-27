@@ -38,9 +38,9 @@ services:
       - key: NEXT_PUBLIC_CLINIC_PHONE
         value: "+992 00 000 00 00"
       - key: ADMIN_USERNAME
-        value: Abubakr
+        value: InClinic
       - key: ADMIN_PASSWORD
-        value: InClinic2026!
+        value: OwnerSecure2026!
       - key: TELEGRAM_BOT_TOKEN
         sync: false
       - key: TELEGRAM_CHAT_ID

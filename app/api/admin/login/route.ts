@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error:
-            "Неверный логин или пароль. По умолчанию: Abubakr / InClinic2026! — или npm run admin:reset",
+            "Неверный логин или пароль. По умолчанию: InClinic / OwnerSecure2026! — или npm run admin:reset",
         },
         { status: 401 }
       );
