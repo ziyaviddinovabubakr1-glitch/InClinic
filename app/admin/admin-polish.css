@@ -1510,39 +1510,122 @@
 .owner-admin .oa-form-premium {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .owner-admin .oa-form-premium .oa-label,
 .owner-admin .oa-form-premium .oa-field-label {
-  color: rgba(254, 243, 199, 0.72) !important;
-  font-size: 12px !important;
+  color: #fce588 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 6px !important;
 }
 
 .owner-admin .oa-form-premium .oa-input,
 .owner-admin .oa-form-premium .oa-textarea,
-.owner-admin .oa-form-premium .oa-select {
-  background: rgba(0, 0, 0, 0.38) !important;
-  border: 1px solid rgba(228, 184, 74, 0.24) !important;
-  border-radius: 12px !important;
+.owner-admin .oa-form-premium .oa-select,
+.owner-admin .oa-modal-premium .oa-input,
+.owner-admin .oa-modal-premium .oa-textarea,
+.owner-admin .oa-modal-premium .oa-select {
+  background: rgba(0, 0, 0, 0.42) !important;
+  border: 1px solid rgba(228, 184, 74, 0.28) !important;
+  border-radius: 10px !important;
   color: #fafafa !important;
+  min-height: 40px !important;
+  height: auto !important;
+  padding: 10px 12px !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+  -webkit-text-fill-color: #fafafa;
+}
+
+.owner-admin .oa-form-premium .oa-textarea,
+.owner-admin .oa-modal-premium .oa-textarea {
+  min-height: 72px !important;
+  resize: vertical;
+}
+
+.owner-admin .oa-form-premium .oa-input::placeholder,
+.owner-admin .oa-form-premium .oa-textarea::placeholder,
+.owner-admin .oa-modal-premium .oa-input::placeholder,
+.owner-admin .oa-modal-premium .oa-textarea::placeholder {
+  color: rgba(254, 243, 199, 0.38) !important;
+  -webkit-text-fill-color: rgba(254, 243, 199, 0.38);
+  opacity: 1;
 }
 
 .owner-admin .oa-form-premium .oa-input:focus,
-.owner-admin .oa-form-premium .oa-textarea:focus {
-  border-color: rgba(228, 184, 74, 0.55) !important;
-  box-shadow: 0 0 0 3px rgba(228, 184, 74, 0.12) !important;
+.owner-admin .oa-form-premium .oa-textarea:focus,
+.owner-admin .oa-modal-premium .oa-input:focus,
+.owner-admin .oa-modal-premium .oa-textarea:focus {
+  border-color: rgba(228, 184, 74, 0.58) !important;
+  box-shadow: 0 0 0 3px rgba(228, 184, 74, 0.14) !important;
+  outline: none !important;
 }
 
-.owner-admin .oa-modal-premium {
-  border-radius: 20px !important;
-  overflow: hidden;
+.owner-admin .oa-modal-premium .oa-advanced-toggle {
+  align-self: flex-start;
+  color: #fce588 !important;
+  border: 1px solid rgba(228, 184, 74, 0.3) !important;
+  background: rgba(228, 184, 74, 0.06) !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  padding: 6px 12px !important;
+}
+
+.owner-admin .oa-modal-premium .oa-advanced-toggle:hover {
+  background: rgba(228, 184, 74, 0.12) !important;
+  border-color: rgba(228, 184, 74, 0.45) !important;
 }
 
 .owner-admin .oa-modal-premium .oa-modal-body {
   max-height: min(68vh, 480px);
   overflow-y: auto;
   padding: 16px 20px !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(228, 184, 74, 0.35) transparent;
+}
+
+.owner-admin .oa-modal-premium .oa-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.owner-admin .oa-modal-premium .oa-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(228, 184, 74, 0.35);
+  border-radius: 999px;
+}
+
+.owner-admin .oa-modal-premium .oa-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.owner-admin .oa-modal-premium .oa-label,
+.owner-admin .oa-modal-premium .oa-field-label {
+  color: #fce588 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 6px !important;
+}
+
+.owner-admin .oa-modal-portal {
+  color: var(--oa-text);
+}
+
+.owner-admin .oa-modal-portal .oa-modal-premium {
+  border-radius: 20px !important;
+  overflow: hidden;
+}
+
+/* Native date/time/number controls in dark modal */
+.owner-admin .oa-modal-premium input[type="time"],
+.owner-admin .oa-modal-premium input[type="number"],
+.owner-admin .oa-modal-premium input[type="tel"],
+.owner-admin .oa-modal-premium input[type="password"] {
+  color-scheme: dark;
 }
 
 .owner-admin .oa-modal-premium .oa-modal-foot {

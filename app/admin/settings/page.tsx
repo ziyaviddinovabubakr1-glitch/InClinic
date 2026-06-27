@@ -8,7 +8,7 @@ import SegmentedControl from "@/components/admin/SegmentedControl";
 import AdminBrandLogo from "@/components/admin/AdminBrandLogo";
 import OwnerAvatar from "@/components/admin/OwnerAvatar";
 import AdminIcon3d from "@/components/admin/AdminIcon3d";
-import { IShield, IArchive, IDownload } from "@/components/admin/icons";
+import { IShield, IArchive, IDownload, IActivity } from "@/components/admin/icons";
 import { getOwnerAvatarUrl, setOwnerAvatarUrl, clearOwnerAvatarUrl } from "@/lib/owner-avatar";
 import {
   getBrandAsset, setBrandAsset, clearBrandAsset, type BrandAsset,
@@ -187,6 +187,8 @@ export default function SettingsPage() {
       {/* Backup Center */}
       <BackupCenterCard />
 
+      <ActivityLogCard />
+
       <ArchiveVaultCard />
 
       <PasswordChangeCard />
@@ -336,6 +338,30 @@ function BackupCenterCard() {
         confirmLabel="Восстановить"
         danger
       />
+    </div>
+  );
+}
+
+function ActivityLogCard() {
+  return (
+    <div className="oa-card oa-card-pad oa-archive-vault-settings">
+      <div className="oa-archive-vault-settings-head">
+        <AdminIcon3d icon={IActivity} size={36} iconSize={16} />
+        <div>
+          <SectionHeader
+            title="Журнал активности"
+            sub="Аудит входов, изменений записей и действий администраторов"
+          />
+        </div>
+      </div>
+      <p className="oa-archive-vault-settings-note">
+        Раздел не отображается в боковом меню. Откройте журнал, когда нужно проверить
+        историю действий в системе.
+      </p>
+      <Link href="/admin/activity" className="oa-btn oa-btn-primary" style={{ textDecoration: "none", alignSelf: "flex-start" }}>
+        <IActivity style={{ width: 16, height: 16 }} />
+        Открыть журнал
+      </Link>
     </div>
   );
 }

@@ -262,61 +262,38 @@
     line-height: 1;
   }
 
-  /* Floating close — on the seam between drawer and overlay (mobile) */
-  .sidebar-drawer-close {
-    position: fixed;
-    z-index: 55;
-    top: max(0.65rem, env(safe-area-inset-top, 0px));
-    left: min(calc(13.25rem + 0.5rem), calc(82vw + 0.5rem));
+  /* Back — closes mobile drawer in sidebar header */
+  .sidebar-mobile-back {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 2.25rem;
     height: 2.25rem;
     padding: 0;
-    border-radius: 999px;
+    border-radius: 0.65rem;
+    flex-shrink: 0;
     color: #e0f2fe;
-    background: rgba(8, 22, 44, 0.94);
-    border: 1px solid rgba(125, 211, 252, 0.42);
-    box-shadow:
-      0 4px 18px rgba(0, 0, 0, 0.45),
-      0 0 14px rgba(14, 165, 233, 0.18);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(8, 22, 44, 0.88);
+    border: 1px solid rgba(125, 211, 252, 0.38);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
     cursor: pointer;
-    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.25s ease;
-    animation: sidebarCloseIn 0.28s ease-out;
+    transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
   }
-  .sidebar-drawer-close:active {
-    transform: scale(0.92);
+  .sidebar-mobile-back:active {
+    transform: scale(0.94);
   }
-  .sidebar-drawer-close:hover {
-    box-shadow:
-      0 6px 22px rgba(0, 0, 0, 0.5),
-      0 0 20px rgba(14, 165, 233, 0.28);
+  .sidebar-mobile-back:hover {
+    background: rgba(14, 165, 233, 0.18);
+    box-shadow: 0 2px 14px rgba(14, 165, 233, 0.22);
   }
-  @keyframes sidebarCloseIn {
-    from {
-      opacity: 0;
-      transform: scale(0.85) translateX(-6px);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1) translateX(0);
-    }
-  }
-  [data-theme="light"] .sidebar-drawer-close {
+  [data-theme="light"] .sidebar-mobile-back {
     color: #0369a1;
     background: rgba(255, 255, 255, 0.96);
-    border-color: rgba(14, 165, 233, 0.4);
-    box-shadow:
-      0 4px 16px rgba(14, 165, 233, 0.2),
-      0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+    border-color: rgba(14, 165, 233, 0.38);
+    box-shadow: 0 2px 10px rgba(14, 165, 233, 0.14);
   }
-  [data-theme="light"] .sidebar-drawer-close:hover {
-    box-shadow:
-      0 6px 20px rgba(14, 165, 233, 0.28),
-      0 0 0 1px rgba(255, 255, 255, 1) inset;
+  [data-theme="light"] .sidebar-mobile-back:hover {
+    background: rgba(224, 242, 254, 0.95);
   }
 
   [data-theme="light"] .mobile-menu-btn {

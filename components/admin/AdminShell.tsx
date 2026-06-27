@@ -10,7 +10,7 @@ import AdminBrandLogo from "./AdminBrandLogo";
 import {
   IDashboard, IAnalytics, IDoctors, IPatients, IAppointments, IServices,
   IReviews, IReports, IExports, IContent, INotifications, ISettings,
-  ILogout, IMenu, IClose, IPlus, IActivity,
+  ILogout, IMenu, IClose, IPlus,
 } from "./icons";
 import { OWNER_NAME, OWNER_TITLE } from "@/lib/admin/owner";
 import AdminNotifyDropdown from "./AdminNotifyDropdown";
@@ -34,7 +34,6 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/admin/appointments", label: "Записи", Icon: IAppointments },
   { href: "/admin/services", label: "Услуги", Icon: IServices },
   { href: "/admin/reviews", label: "Отзывы", Icon: IReviews },
-  { href: "/admin/activity", label: "Активность", Icon: IActivity },
   { href: "/admin/reports", label: "Отчёты", Icon: IReports },
   { href: "/admin/exports", label: "Экспорт", Icon: IExports },
   { href: "/admin/content", label: "Контент", Icon: IContent },

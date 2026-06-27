@@ -40,7 +40,21 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
             </p>
           </div>
           <div className="flex items-center flex-shrink-0 pt-0.5">
-            <ThemeSwitcher compact />
+            {onClose && (
+              <button
+                type="button"
+                className="sidebar-mobile-back md:hidden"
+                onClick={onClose}
+                aria-label={t.closeMenu}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+            )}
+            <div className="hidden md:block">
+              <ThemeSwitcher compact />
+            </div>
           </div>
         </div>
       </div>

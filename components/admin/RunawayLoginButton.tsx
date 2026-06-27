@@ -8,8 +8,8 @@ interface RunawayLoginButtonProps {
   onBlockedAttempt?: () => void;
 }
 
-const FLEE_RADIUS = 95;
-const FLEE_STRENGTH = 88;
+const FLEE_RADIUS = 130;
+const FLEE_STRENGTH = 105;
 
 export default function RunawayLoginButton({
   blocked,
@@ -33,45 +33,49 @@ export default function RunawayLoginButton({
     }
   }, [blocked]);
 
-  const fleeFrom = useCallback(
-    (clientX: number, clientY: number) => {
-      if (!blocked || !zoneRef.current) return;
+  const fleeFrom = useCallback((clientX: number, clientY: number) => {
+    if (!zoneRef.current) return;
 
-      const zone = zoneRef.current.getBoundingClientRect();
-      const cur = posRef.current;
-      const centerX = zone.left + zone.width / 2 + cur.x;
-      const centerY = zone.top + zone.height / 2 + cur.y;
-      const dx = centerX - clientX;
-      const dy = centerY - clientY;
-      const dist = Math.hypot(dx, dy) || 1;
+    const zone = zoneRef.current.getBoundingClientRect();
+    const cur = posRef.current;
+    const centerX = zone.left + zone.width / 2 + cur.x;
+    const centerY = zone.top + zone.height / 2 + cur.y;
+    const dx = centerX - clientX;
+    const dy = centerY - clientY;
+    const dist = Math.hypot(dx, dy) || 1;
 
-      if (dist >= FLEE_RADIUS) return;
+    if (dist >= FLEE_RADIUS) return;
 
-      const push = ((FLEE_RADIUS - dist) / FLEE_RADIUS) * FLEE_STRENGTH;
-      let nx = cur.x + (dx / dist) * push;
-      let ny = cur.y + (dy / dist) * push;
+    const push = ((FLEE_RADIUS - dist) / FLEE_RADIUS) * FLEE_STRENGTH;
+    let nx = cur.x + (dx / dist) * push;
+    let ny = cur.y + (dy / dist) * push;
 
-      const maxX = Math.max(24, zone.width / 2 - 72);
-      const maxY = Math.max(16, zone.height / 2 - 22);
-      nx = Math.max(-maxX, Math.min(maxX, nx));
-      ny = Math.max(-maxY, Math.min(maxY, ny));
+    const maxX = Math.max(28, zone.width / 2 - 64);
+    const maxY = Math.max(20, zone.height / 2 - 20);
+    nx = Math.max(-maxX, Math.min(maxX, nx));
+    ny = Math.max(-maxY, Math.min(maxY, ny));
 
-      const next = { x: nx, y: ny };
-      posRef.current = next;
-      setPos(next);
-      setTease(true);
-    },
-    [blocked],
-  );
+    const next = { x: nx, y: ny };
+    posRef.current = next;
+    setPos(next);
+    setTease(true);
+  }, []);
 
-  function handlePointerMove(e: React.PointerEvent) {
-    fleeFrom(e.clientX, e.clientY);
-  }
+  useEffect(() => {
+    if (!blocked) return;
+
+    function onDocPointerMove(e: PointerEvent) {
+      fleeFrom(e.clientX, e.clientY);
+    }
+
+    document.addEventListener("pointermove", onDocPointerMove, { passive: true });
+    return () => document.removeEventListener("pointermove", onDocPointerMove);
+  }, [blocked, fleeFrom]);
 
   function handlePointerLeave() {
     if (!blocked) return;
     setTease(false);
-    const drift = { x: posRef.current.x * 0.35, y: posRef.current.y * 0.35 };
+    const drift = { x: posRef.current.x * 0.4, y: posRef.current.y * 0.4 };
     posRef.current = drift;
     setPos(drift);
   }
@@ -79,11 +83,11 @@ export default function RunawayLoginButton({
   function jumpAway() {
     const zone = zoneRef.current;
     if (!zone) return;
-    const maxX = Math.max(24, zone.clientWidth / 2 - 72);
-    const maxY = Math.max(16, zone.clientHeight / 2 - 22);
+    const maxX = Math.max(28, zone.clientWidth / 2 - 64);
+    const maxY = Math.max(20, zone.clientHeight / 2 - 20);
     const next = {
-      x: (Math.random() > 0.5 ? 1 : -1) * (maxX * (0.55 + Math.random() * 0.45)),
-      y: (Math.random() > 0.5 ? 1 : -1) * (maxY * (0.45 + Math.random() * 0.45)),
+      x: (Math.random() > 0.5 ? 1 : -1) * (maxX * (0.6 + Math.random() * 0.4)),
+      y: (Math.random() > 0.5 ? 1 : -1) * (maxY * (0.5 + Math.random() * 0.45)),
     };
     posRef.current = next;
     setPos(next);
@@ -103,7 +107,6 @@ export default function RunawayLoginButton({
     <div
       ref={zoneRef}
       className={`oa-login-btn-zone${blocked ? " oa-login-btn-zone--blocked" : ""}`}
-      onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
     >
       <button

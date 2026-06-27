@@ -37,24 +37,26 @@ export function Modal({
   if (!open || !mounted) return null;
 
   return createPortal(
-    <div className="oa-modal-backdrop" onClick={onClose}>
-      <div
-        className={`oa-modal${premium ? " oa-modal-premium" : ""}`}
-        style={{ maxWidth }}
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="oa-modal-title"
-      >
-        <div className="oa-modal-head">
-          <div>
-            <div className="oa-modal-title" id="oa-modal-title">{title}</div>
-            {sub && <div className="oa-modal-sub">{sub}</div>}
+    <div className="owner-admin oa-modal-portal">
+      <div className="oa-modal-backdrop" onClick={onClose}>
+        <div
+          className={`oa-modal${premium ? " oa-modal-premium" : ""}`}
+          style={{ maxWidth }}
+          onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="oa-modal-title"
+        >
+          <div className="oa-modal-head">
+            <div>
+              <div className="oa-modal-title" id="oa-modal-title">{title}</div>
+              {sub && <div className="oa-modal-sub">{sub}</div>}
+            </div>
+            <button className="oa-btn oa-btn-icon oa-btn-icon-round oa-modal-close" onClick={onClose} aria-label="Закрыть"><IClose /></button>
           </div>
-          <button className="oa-btn oa-btn-icon oa-btn-icon-round oa-modal-close" onClick={onClose} aria-label="Закрыть"><IClose /></button>
+          <div className="oa-modal-body">{children}</div>
+          {footer && <div className="oa-modal-foot">{footer}</div>}
         </div>
-        <div className="oa-modal-body">{children}</div>
-        {footer && <div className="oa-modal-foot">{footer}</div>}
       </div>
     </div>,
     document.body,
@@ -89,16 +91,18 @@ export function Drawer({
 
   if (!open || !mounted) return null;
   return createPortal(
-    <div className="oa-modal-backdrop oa-drawer-backdrop" onClick={onClose}>
-      <div className="oa-drawer" onClick={(e) => e.stopPropagation()}>
-        <div className="oa-drawer-head">
-          <div>
-            <div className="oa-modal-title">{title}</div>
-            {sub && <div className="oa-modal-sub">{sub}</div>}
+    <div className="owner-admin oa-modal-portal">
+      <div className="oa-modal-backdrop oa-drawer-backdrop" onClick={onClose}>
+        <div className="oa-drawer" onClick={(e) => e.stopPropagation()}>
+          <div className="oa-drawer-head">
+            <div>
+              <div className="oa-modal-title">{title}</div>
+              {sub && <div className="oa-modal-sub">{sub}</div>}
+            </div>
+            <button className="oa-btn oa-btn-icon oa-btn-ghost" onClick={onClose} aria-label="Закрыть"><IClose /></button>
           </div>
-          <button className="oa-btn oa-btn-icon oa-btn-ghost" onClick={onClose} aria-label="Закрыть"><IClose /></button>
+          <div className="oa-drawer-body">{children}</div>
         </div>
-        <div className="oa-drawer-body">{children}</div>
       </div>
     </div>,
     document.body,
