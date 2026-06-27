@@ -3,105 +3,61 @@
 import Link from "next/link";
 import { useDashboard } from "@/lib/admin/query/hooks";
 import { money } from "@/lib/admin/services";
-import type { DashboardData } from "@/lib/admin/types";
 import { AreaChart, BarChart, Gauge } from "@/components/admin/charts";
 import {
   KpiCard, Stars, StatusBadge, Avatar, SkeletonCard, ReviewStatusBadge,
 } from "@/components/admin/ui";
-import { MotionPage, StaggerGrid, StaggerItem } from "@/components/admin/motion";
+import { MotionPage, StaggerItem } from "@/components/admin/motion";
 import PageHeader from "@/components/admin/PageHeader";
 import { IChevronRight } from "@/components/admin/icons";
-
-function DASHBOARD_KPIS(data: DashboardData) {
-  const { kpis, overview } = data;
-  return [
-    {
-      label: "Доход за месяц",
-      value: money(kpis.revenueMonth),
-      tone: "green" as const,
-      delta: "+12%",
-      deltaDir: "up" as const,
-      hero: true,
-    },
-    {
-      label: "Записей сегодня",
-      value: String(kpis.appointmentsToday),
-      tone: "violet" as const,
-      delta: kpis.cancelledAppointments ? `${kpis.cancelledAppointments} отм.` : "активные",
-      deltaDir: (kpis.cancelledAppointments ? "down" : "flat") as "down" | "flat",
-    },
-    {
-      label: "Пациентов",
-      value: String(kpis.totalPatients),
-      tone: "sky" as const,
-      delta: `${kpis.newPatientsToday} новых`,
-      deltaDir: "up" as const,
-    },
-    {
-      label: "Рейтинг",
-      value: overview.clinicRating.toFixed(1),
-      tone: "amber" as const,
-      delta: `${kpis.reviewsThisMonth} отз.`,
-      deltaDir: "flat" as const,
-    },
-    {
-      label: "Загрузка",
-      value: `${kpis.clinicLoad}%`,
-      tone: "red" as const,
-      delta: `ср. чек ${money(kpis.avgCheck)}`,
-      deltaDir: "flat" as const,
-    },
-  ];
-}
 
 export default function DashboardPage() {
   const { data, isLoading } = useDashboard();
 
   if (isLoading || !data) return <DashboardSkeleton />;
 
-  const { kpis, executive, revenueSeries, appointmentsSeries, recentAppointments, latestReviews } = data;
-  const kpisList = DASHBOARD_KPIS(data);
-  const [hero, ...rest] = kpisList;
+  const {
+    kpis,
+    executive,
+    overview,
+    revenueSeries,
+    appointmentsSeries,
+    recentAppointments,
+    latestReviews,
+  } = data;
+
+  const summary = [
+    `${kpis.appointmentsToday} ${pluralRecords(kpis.appointmentsToday)} сегодня`,
+    `${kpis.totalPatients} ${pluralPatients(kpis.totalPatients)}`,
+    `рейтинг ${overview.clinicRating.toFixed(1)}`,
+  ].join(" · ");
 
   return (
     <MotionPage className="oa-dash-v3">
       <PageHeader
         title="Обзор клиники"
-        sub={`${kpis.appointmentsToday} записей сегодня · загрузка ${kpis.clinicLoad}%`}
+        sub={summary}
         action={
           <Link href="/admin/analytics" className="oa-btn oa-btn-ghost oa-btn-sm" style={{ textDecoration: "none" }}>
-            Аналитика <IChevronRight style={{ width: 12, height: 12 }} />
+            Подробнее <IChevronRight style={{ width: 12, height: 12 }} />
           </Link>
         }
       />
 
-      <section className="oa-dash-v3-kpi">
-        <StaggerGrid className="oa-kpi-grid oa-kpi-grid--compact">
-          <StaggerItem key={hero.label} className="oa-kpi-hero-slot">
-            <KpiCard
-              label={hero.label}
-              value={hero.value}
-              tone={hero.tone}
-              delta={hero.delta}
-              deltaDir={hero.deltaDir}
-              hero
-            />
-          </StaggerItem>
-          {rest.map((k) => (
-            <StaggerItem key={k.label}>
-              <KpiCard
-                label={k.label}
-                value={k.value}
-                tone={k.tone}
-                delta={k.delta}
-                deltaDir={k.deltaDir}
-              />
-            </StaggerItem>
-          ))}
-        </StaggerGrid>
+      <section className="oa-dash-v3-kpi oa-dash-v3-kpi--solo">
+        <StaggerItem>
+          <KpiCard
+            label="Доход за месяц"
+            value={money(kpis.revenueMonth)}
+            tone="green"
+            delta={`сегодня ${money(kpis.revenueToday)}`}
+            deltaDir="up"
+            hero
+          />
+        </StaggerItem>
       </section>
 
-      <section className="oa-dash-v3-body">
+      <section className="oa-dash-v3-body oa-dash-v3-body--simple">
         <div className="oa-dash-v3-main">
           <div className="oa-dash-v3-charts">
             <div className="oa-panel oa-panel-chart">
@@ -109,29 +65,25 @@ export default function DashboardPage() {
                 <span className="oa-panel-title">Доход</span>
                 <span className="oa-panel-meta">14 дней</span>
               </div>
-              <AreaChart data={revenueSeries} color="#30a46c" height={72} />
+              <AreaChart data={revenueSeries} color="#30a46c" height={80} />
             </div>
             <div className="oa-panel oa-panel-chart">
               <div className="oa-panel-head">
                 <span className="oa-panel-title">Записи</span>
                 <span className="oa-panel-meta">14 дней</span>
               </div>
-              <BarChart data={appointmentsSeries} height={72} />
+              <BarChart data={appointmentsSeries} height={80} />
             </div>
           </div>
         </div>
 
         <aside className="oa-dash-v3-rail">
-          <div className="oa-panel oa-panel-rail">
+          <div className="oa-panel oa-panel-rail oa-panel-rail--solo">
             <div className="oa-panel-head">
-              <span className="oa-panel-title">Здоровье</span>
+              <span className="oa-panel-title">Состояние</span>
             </div>
             <div className="oa-rail-gauge">
-              <Gauge value={executive.clinicHealthScore} size={58} label="Клиника" captionBelow />
-            </div>
-            <div className="oa-rail-stats">
-              <RailStat label="Доход сегодня" value={money(kpis.revenueToday)} tone="green" />
-              <RailStat label="Приёмов всего" value={String(executive.totalCompletedAppointments)} tone="violet" />
+              <Gauge value={executive.clinicHealthScore} size={64} label="Клиника" captionBelow />
             </div>
           </div>
         </aside>
@@ -140,7 +92,7 @@ export default function DashboardPage() {
       <section className="oa-dash-v3-split">
         <div className="oa-panel oa-panel-table">
           <div className="oa-panel-head oa-panel-head--row">
-            <span className="oa-panel-title">Последние записи</span>
+            <span className="oa-panel-title">Ближайшие записи</span>
             <Link href="/admin/appointments" className="oa-link-sm">
               Все <IChevronRight style={{ width: 11, height: 11 }} />
             </Link>
@@ -158,7 +110,7 @@ export default function DashboardPage() {
                 {recentAppointments.map((a) => (
                   <tr key={a.id}>
                     <td>
-                      <div className="oa-cell-user oa-appointment-user" title={`${a.patientName} · ${a.patientPhone} · ${a.serviceName}`}>
+                      <div className="oa-cell-user oa-appointment-user" title={`${a.patientName} · ${a.serviceName}`}>
                         <Avatar name={a.patientName} size={22} />
                         <div className="oa-appointment-line">
                           {a.patientId ? (
@@ -184,7 +136,7 @@ export default function DashboardPage() {
 
         <div className="oa-panel oa-panel-table">
           <div className="oa-panel-head oa-panel-head--row">
-            <span className="oa-panel-title">Последние отзывы</span>
+            <span className="oa-panel-title">Новые отзывы</span>
             <Link href="/admin/reviews" className="oa-link-sm">
               Все <IChevronRight style={{ width: 11, height: 11 }} />
             </Link>
@@ -212,24 +164,27 @@ export default function DashboardPage() {
   );
 }
 
-function RailStat({ label, value, tone }: { label: string; value: string; tone: string }) {
-  return (
-    <div className="oa-rail-stat">
-      <span className="oa-rail-stat-label">{label}</span>
-      <span className={`oa-rail-stat-value oa-rail-stat-value--${tone}`}>{value}</span>
-    </div>
-  );
+function pluralRecords(n: number) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return "запись";
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return "записи";
+  return "записей";
+}
+
+function pluralPatients(n: number) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return "пациент";
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return "пациента";
+  return "пациентов";
 }
 
 function DashboardSkeleton() {
   return (
     <div className="oa-dash-v3">
       <SkeletonCard height={36} />
-      <div className="oa-dash-v3-kpi">
-        <div className="oa-kpi-grid oa-kpi-grid--compact">
-          {Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} height={76} />)}
-        </div>
-      </div>
+      <SkeletonCard height={88} />
       <div className="oa-dash-v3-body">
         <SkeletonCard height={180} />
         <SkeletonCard height={180} />

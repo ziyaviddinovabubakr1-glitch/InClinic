@@ -609,6 +609,23 @@
   font-size: 24px !important;
 }
 
+.owner-admin .oa-dash-v3-kpi--solo {
+  display: block;
+}
+
+.owner-admin .oa-dash-v3-kpi--solo .oa-kpi-v3--hero {
+  width: 100%;
+  min-height: 84px !important;
+}
+
+.owner-admin .oa-dash-v3-body--simple {
+  align-items: stretch;
+}
+
+.owner-admin .oa-panel-rail--solo .oa-rail-gauge {
+  padding: 8px 0 12px;
+}
+
 .owner-admin .oa-kpi-grid .oa-kpi-v3:nth-child(n + 7) {
   opacity: 0.98;
 }

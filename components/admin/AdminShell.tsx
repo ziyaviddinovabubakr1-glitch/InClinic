@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,7 +9,7 @@ import OwnerSessionGuard from "./OwnerSessionGuard";
 import AdminBrandLogo from "./AdminBrandLogo";
 import {
   IDashboard, IAnalytics, IDoctors, IPatients, IAppointments, IServices,
-  IReviews, IReports, IExports, IContent, INotifications, ISettings,
+  IReviews, IReports, IContent, INotifications, ISettings,
   ILogout, IMenu, IClose, IPlus,
 } from "./icons";
 import { OWNER_NAME, OWNER_TITLE } from "@/lib/admin/owner";
@@ -26,34 +26,64 @@ interface NavItem {
   Icon: (p: React.SVGProps<SVGSVGElement>) => JSX.Element;
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { href: "/admin/dashboard", label: "Дашборд", Icon: IDashboard },
-  { href: "/admin/analytics", label: "Аналитика", Icon: IAnalytics },
-  { href: "/admin/doctors", label: "Врачи", Icon: IDoctors },
-  { href: "/admin/patients", label: "Пациенты", Icon: IPatients },
-  { href: "/admin/appointments", label: "Записи", Icon: IAppointments },
-  { href: "/admin/services", label: "Услуги", Icon: IServices },
-  { href: "/admin/reviews", label: "Отзывы", Icon: IReviews },
-  { href: "/admin/reports", label: "Отчёты", Icon: IReports },
-  { href: "/admin/exports", label: "Экспорт", Icon: IExports },
-  { href: "/admin/content", label: "Контент", Icon: IContent },
-  { href: "/admin/notifications", label: "Уведомления", Icon: INotifications },
-  { href: "/admin/settings", label: "Настройки", Icon: ISettings },
+interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    label: "Главная",
+    items: [{ href: "/admin/dashboard", label: "Обзор", Icon: IDashboard }],
+  },
+  {
+    label: "Записи",
+    items: [
+      { href: "/admin/appointments", label: "Расписание", Icon: IAppointments },
+      { href: "/admin/patients", label: "Пациенты", Icon: IPatients },
+    ],
+  },
+  {
+    label: "Клиника",
+    items: [
+      { href: "/admin/doctors", label: "Врачи", Icon: IDoctors },
+      { href: "/admin/services", label: "Услуги", Icon: IServices },
+      { href: "/admin/reviews", label: "Отзывы", Icon: IReviews },
+    ],
+  },
+  {
+    label: "Цифры",
+    items: [
+      { href: "/admin/analytics", label: "Аналитика", Icon: IAnalytics },
+      { href: "/admin/reports", label: "Отчёты", Icon: IReports },
+    ],
+  },
+  {
+    label: "Сайт",
+    items: [{ href: "/admin/content", label: "Страницы", Icon: IContent }],
+  },
+  {
+    label: "Система",
+    items: [
+      { href: "/admin/notifications", label: "Уведомления", Icon: INotifications },
+      { href: "/admin/settings", label: "Настройки", Icon: ISettings },
+    ],
+  },
 ];
 
 const PAGE_TITLES: Record<string, string> = {
-  "/admin/dashboard": "Дашборд",
+  "/admin/dashboard": "Обзор",
   "/admin/analytics": "Аналитика",
   "/admin/doctors": "Врачи",
   "/admin/patients": "Пациенты",
-  "/admin/appointments": "Записи",
+  "/admin/appointments": "Расписание",
   "/admin/services": "Услуги",
   "/admin/reviews": "Отзывы",
   "/admin/activity": "Журнал активности",
   "/admin/archive": "Архив",
   "/admin/reports": "Отчёты",
   "/admin/exports": "Экспорт",
-  "/admin/content": "Контент",
+  "/admin/content": "Страницы",
   "/admin/notifications": "Уведомления",
   "/admin/settings": "Настройки",
 };
@@ -83,11 +113,16 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const title = pageTitle(pathname);
   const { can: canAction, loading: permLoading } = useAdminPermissions();
 
-  const visibleNav = NAV_ITEMS.filter((item) => {
+  function isItemVisible(href: string) {
     if (permLoading) return true;
-    const perm = permissionForAdminPage(item.href);
+    const perm = permissionForAdminPage(href);
     return !perm || canAction(perm);
-  });
+  }
+
+  const visibleGroups = NAV_GROUPS.map((group) => ({
+    ...group,
+    items: group.items.filter((item) => isItemVisible(item.href)),
+  })).filter((group) => group.items.length > 0);
 
   return (
     <div className="oa-shell">
@@ -115,25 +150,27 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </button>
         </Link>
 
-        <nav
-          className="oa-nav oa-nav-flat oa-nav-fill"
-          style={{ "--oa-nav-rows": visibleNav.length } as CSSProperties}
-        >
-          {visibleNav.map(({ href, label, Icon }) => {
-            const active = pathname === href || pathname.startsWith(`${href}/`);
-            return (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => setOpen(false)}
-                className={`oa-nav-item ${active ? "oa-nav-item-active" : ""}`}
-              >
-                {active && <NavIndicator />}
-                <Icon className="oa-nav-icon-plain" style={{ width: 16, height: 16 }} />
-                <span className="oa-nav-label">{label}</span>
-              </Link>
-            );
-          })}
+        <nav className="oa-nav oa-nav-flat oa-nav-fill oa-nav-grouped">
+          {visibleGroups.map((group) => (
+            <div key={group.label} className="oa-nav-group">
+              <div className="oa-nav-group-label">{group.label}</div>
+              {group.items.map(({ href, label, Icon }) => {
+                const active = pathname === href || pathname.startsWith(`${href}/`);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setOpen(false)}
+                    className={`oa-nav-item ${active ? "oa-nav-item-active" : ""}`}
+                  >
+                    {active && <NavIndicator />}
+                    <Icon className="oa-nav-icon-plain" style={{ width: 16, height: 16 }} />
+                    <span className="oa-nav-label">{label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
 
         <div className="oa-sidebar-footer">
