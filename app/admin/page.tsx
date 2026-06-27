@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { UserCircle, Lock, Shield } from "lucide-react";
 import { MotionPage } from "@/components/admin/motion";
 import AdminBrandLogo from "@/components/admin/AdminBrandLogo";
+import LoginGlassCard from "@/components/admin/LoginGlassCard";
 import RunawayLoginButton from "@/components/admin/RunawayLoginButton";
 import "./admin-login.css";
 
@@ -63,27 +64,22 @@ export default function OwnerLoginPage() {
   return (
     <main className="oa-login-shell">
       <MotionPage className="oa-login-motion" style={{ width: "100%", maxWidth: 390 }}>
-        <div className="oa-login-glass-wrap">
-          <div className="oa-login-glass-aura" aria-hidden />
-          <div className="oa-login-glass-neon" aria-hidden>
-            <div className="oa-login-glass-neon-beam" />
-          </div>
-
-          <div className="oa-login-glass-panel">
-            <div className="oa-login-logo-crest">
-              <div className="oa-login-logo-glow-top" aria-hidden>
-                <div className="oa-login-logo-glow-spin" />
-              </div>
-              <div className="oa-login-logo-mask">
-                <AdminBrandLogo
-                  variant="icon"
-                  size="hero"
-                  animate
-                  className="oa-login-logo-img"
-                />
-              </div>
+        <LoginGlassCard
+          logo={
+            <AdminBrandLogo
+              variant="icon"
+              size="hero"
+              animate
+              className="oa-login-logo-img"
+            />
+          }
+          footer={
+            <div className="oa-login-footer">
+              <Shield size={14} aria-hidden />
+              <span>Защищённый доступ · только роль OWNER</span>
             </div>
-
+          }
+        >
             <form onSubmit={handleLogin} className="oa-login-form">
               <div className="oa-login-input-wrap">
                 <input
@@ -95,7 +91,7 @@ export default function OwnerLoginPage() {
                   aria-label="Имя пользователя"
                   autoFocus
                 />
-                <UserCircle className="oa-login-input-icon" size={20} aria-hidden />
+                <UserCircle className="oa-login-input-icon" size={15} strokeWidth={1.75} aria-hidden />
               </div>
 
               <div className="oa-login-input-wrap">
@@ -108,7 +104,7 @@ export default function OwnerLoginPage() {
                   autoComplete="current-password"
                   aria-label="Пароль"
                 />
-                <Lock className="oa-login-input-icon" size={20} aria-hidden />
+                <Lock className="oa-login-input-icon" size={15} strokeWidth={1.75} aria-hidden />
               </div>
 
               {error && (
@@ -127,13 +123,7 @@ export default function OwnerLoginPage() {
                 }}
               />
             </form>
-
-            <div className="oa-login-footer">
-              <Shield size={14} aria-hidden />
-              <span>Защищённый доступ · только роль OWNER</span>
-            </div>
-          </div>
-        </div>
+        </LoginGlassCard>
       </MotionPage>
     </main>
   );
