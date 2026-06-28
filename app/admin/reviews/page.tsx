@@ -185,7 +185,7 @@ export default function ReviewsPage() {
           <tbody>
             {rows?.map((r) => (
               <tr key={r.id}>
-                <td data-label="Пациент">
+                <td className="oa-mob-card-head" data-label="Пациент">
                   <div className="oa-review-patient">
                     <Avatar name={r.patientName} size={22} tone="violet" />
                     <Link href={`/admin/patients/${r.patientId}`} className="oa-cell-link oa-review-patient-name" title={r.patientName}>

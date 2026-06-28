@@ -1,0 +1,347 @@
+/* ═══ ADMIN — mobile-only polish (desktop unchanged) ═══ */
+
+@media (max-width: 768px) {
+  .owner-admin .oa-content {
+    padding: 12px 12px 32px !important;
+    overflow-x: hidden;
+  }
+
+  .owner-admin .oa-page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .owner-admin .oa-page-header-action {
+    width: 100%;
+  }
+
+  .owner-admin .oa-page-header-action .oa-segmented-gold {
+    width: 100%;
+    flex-wrap: wrap;
+    border-radius: 12px !important;
+    padding: 5px !important;
+  }
+
+  .owner-admin .oa-page-header-action .oa-segmented-item {
+    flex: 1 1 calc(50% - 4px);
+    min-width: 0;
+    padding: 6px 8px !important;
+    font-size: 11px !important;
+  }
+
+  .owner-admin .oa-topbar {
+    padding: 10px 12px !important;
+    gap: 8px !important;
+  }
+
+  .owner-admin .oa-topbar-page-title {
+    font-size: 15px !important;
+  }
+
+  /* Patient segment filters — balanced 2-col grid */
+  .owner-admin .oa-segment-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .owner-admin .oa-segment-stat {
+    min-height: 52px !important;
+    padding: 8px 6px !important;
+  }
+
+  .owner-admin .oa-segment-stat-value {
+    font-size: 16px !important;
+  }
+
+  .owner-admin .oa-segment-stat-label {
+    font-size: 10px !important;
+  }
+
+  .owner-admin .oa-segment-stats .oa-segment-stat:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    width: calc(50% - 4px);
+    justify-self: center;
+  }
+
+  /* Dashboard — stack gauge + charts */
+  .owner-admin .oa-dash-v3-body,
+  .owner-admin .oa-dash-v3-body--simple {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .owner-admin .oa-dash-v3-charts {
+    grid-template-columns: 1fr !important;
+  }
+
+  .owner-admin .oa-dash-v3-rail {
+    width: 100%;
+  }
+
+  .owner-admin .oa-panel-rail--solo .oa-rail-gauge {
+    display: flex;
+    justify-content: center;
+    padding: 4px 0 8px !important;
+  }
+
+  /* Segmented controls — 2×2 grid instead of ragged wrap */
+  .owner-admin .oa-segmented-fluid,
+  .owner-admin .oa-segmented-multi {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    flex-wrap: unset !important;
+    gap: 4px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 14px !important;
+    padding: 5px !important;
+  }
+
+  .owner-admin .oa-segmented-fluid .oa-segmented-item,
+  .owner-admin .oa-segmented-multi .oa-segmented-item {
+    flex: unset !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 8px 6px !important;
+    font-size: 11px !important;
+    white-space: normal !important;
+    line-height: 1.25 !important;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .owner-admin .oa-segmented-block {
+    display: grid !important;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  /* Search bars */
+  .owner-admin .oa-search,
+  .owner-admin .oa-search-gold,
+  .owner-admin .oa-reviews-search {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .owner-admin .oa-search-gold {
+    border-radius: 12px !important;
+    padding: 3px !important;
+  }
+
+  .owner-admin .oa-search-gold > svg:first-of-type {
+    left: 12px !important;
+  }
+
+  .owner-admin .oa-search-gold .oa-input {
+    padding-left: 36px !important;
+    padding-right: 6px !important;
+    min-height: 36px !important;
+    height: 36px !important;
+    font-size: 13px !important;
+  }
+
+  .owner-admin .oa-search-submit {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    flex-shrink: 0;
+  }
+
+  .owner-admin .oa-search .oa-input {
+    min-height: 40px;
+  }
+
+  .owner-admin .oa-table-toolbar-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .owner-admin .oa-reviews-toolbar {
+    gap: 8px !important;
+  }
+
+  .owner-admin .oa-reviews-doctor-tabs,
+  .owner-admin .oa-reviews-status-tabs,
+  .owner-admin .oa-reviews-rating-tabs {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .owner-admin .oa-reviews-doctor-tabs::-webkit-scrollbar,
+  .owner-admin .oa-reviews-status-tabs::-webkit-scrollbar,
+  .owner-admin .oa-reviews-rating-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .owner-admin .oa-reviews-page .oa-profile-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  /* Sidebar drawer — even padding */
+  .owner-admin .oa-sidebar-fill .oa-nav-fill,
+  .owner-admin .oa-sidebar-fill .oa-nav {
+    padding: 0 6px !important;
+  }
+
+  .owner-admin .oa-sidebar-fill .oa-nav-item {
+    padding: 0 10px !important;
+    gap: 10px !important;
+  }
+
+  .owner-admin .oa-sidebar-fill .oa-nav-group-label {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .owner-admin .oa-sidebar-fill .oa-nav-group:first-child .oa-nav-group-label {
+    padding-top: 10px !important;
+  }
+
+  /* Analytics — single column */
+  .owner-admin .oa-analytics-v3-charts,
+  .owner-admin .oa-analytics-v3-row,
+  .owner-admin .oa-analytics-v3-summary {
+    grid-template-columns: 1fr !important;
+  }
+
+  .owner-admin .oa-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Modals on small screens */
+  .owner-admin .oa-modal-premium {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+    margin: 12px !important;
+  }
+}
+
+/* Tables → cards on phone (including no-scroll tables) */
+@media (max-width: 960px) {
+  .owner-admin .oa-table-no-scroll .oa-table {
+    display: block;
+    width: 100% !important;
+    table-layout: auto !important;
+    min-width: 0 !important;
+  }
+
+  .owner-admin .oa-table-no-scroll .oa-table thead {
+    display: none;
+  }
+
+  .owner-admin .oa-table-no-scroll .oa-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 10px 12px;
+  }
+
+  .owner-admin .oa-table-no-scroll .oa-table tbody tr {
+    display: block;
+    padding: 12px 14px;
+    border: 1px solid var(--oa-border);
+    border-radius: var(--oa-radius-md);
+    background: var(--oa-surface-solid);
+  }
+
+  .owner-admin .oa-table-no-scroll .oa-table tbody td {
+    display: grid;
+    grid-template-columns: minmax(72px, 36%) 1fr;
+    gap: 6px 10px;
+    align-items: center;
+    padding: 5px 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    font-size: 13px !important;
+    white-space: normal !important;
+    text-overflow: unset !important;
+  }
+
+  .owner-admin .oa-table-no-scroll .oa-table tbody td:last-child {
+    border-bottom: none;
+    padding-bottom: 0 !important;
+  }
+
+  .owner-admin .oa-table-no-scroll .oa-table tbody td::before {
+    content: attr(data-label);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--oa-text-faint);
+  }
+
+  .owner-admin .oa-table-no-scroll .oa-table tbody td:not([data-label])::before,
+  .owner-admin .oa-table-no-scroll .oa-table tbody td[data-label=""]::before {
+    display: none;
+  }
+
+  .owner-admin .oa-table-no-scroll .oa-table tbody td.oa-mob-card-head,
+  .owner-admin .oa-table-no-scroll .oa-table tbody td:first-child {
+    display: block;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 8px !important;
+    margin-bottom: 4px;
+  }
+
+  .owner-admin .oa-table-no-scroll .oa-table tbody td.oa-mob-card-head::before,
+  .owner-admin .oa-table-no-scroll .oa-table tbody td:first-child::before {
+    display: none;
+  }
+
+  .owner-admin .oa-table-wrap.oa-table-no-scroll {
+    overflow-x: hidden !important;
+    max-height: none !important;
+  }
+
+  .owner-admin .oa-table-no-scroll .oa-badge,
+  .owner-admin .oa-table-responsive .oa-badge {
+    width: fit-content;
+    max-width: 100%;
+    display: inline-flex;
+  }
+
+  .owner-admin .oa-table-no-scroll .oa-review-actions,
+  .owner-admin .oa-table-no-scroll .oa-booking-actions,
+  .owner-admin .oa-table-no-scroll .oa-table-actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .owner-admin .oa-table-responsive .oa-table tbody {
+    gap: 8px;
+    padding: 8px 10px 12px;
+  }
+
+  .owner-admin .oa-table-responsive .oa-table tbody tr {
+    padding: 12px 14px;
+  }
+
+  .owner-admin .oa-table-responsive .oa-table tbody td {
+    padding: 5px 0;
+    align-items: center;
+    grid-template-columns: minmax(72px, 36%) 1fr;
+    gap: 6px 10px;
+  }
+
+  .owner-admin .oa-table-responsive .oa-badge {
+    width: fit-content;
+  }
+
+  .owner-admin .oa-table-no-scroll .oa-review-comment,
+  .owner-admin .oa-table-no-scroll .oa-booking-service,
+  .owner-admin .oa-table-no-scroll .oa-booking-doctor {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+}

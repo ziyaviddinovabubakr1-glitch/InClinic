@@ -132,7 +132,7 @@ export default function AppointmentsPage() {
                 const transitions = allowedTransitions(a.status);
                 return (
                   <tr key={a.id}>
-                    <td data-label="Пациент">
+                    <td className="oa-mob-card-head" data-label="Пациент">
                       <div className="oa-doctor-cell" title={`${a.patientName}${a.patientPhone ? ` · ${a.patientPhone}` : ""}`}>
                         <Avatar name={a.patientName} size={26} />
                         <div className="oa-doctor-cell-text">

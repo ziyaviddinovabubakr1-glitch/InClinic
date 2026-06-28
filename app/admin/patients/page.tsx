@@ -136,7 +136,7 @@ export default function PatientsPage() {
           <tbody>
             {rows?.map((p) => (
               <tr key={p.id} className="oa-table-row-clickable">
-                <td>
+                <td className="oa-mob-card-head">
                   <Link href={`/admin/patients/${p.id}`} className="oa-cell-user oa-cell-link">
                     <Avatar name={p.fullName} size={28} tone="violet" />
                     <div>
@@ -147,19 +147,19 @@ export default function PatientsPage() {
                     </div>
                   </Link>
                 </td>
-                <td className="oa-cell-soft">
+                <td className="oa-cell-soft" data-label="Контакты">
                   <div>{p.phone}</div>
                   {p.email && <div className="oa-cell-soft">{p.email}</div>}
                 </td>
-                <td><SegmentBadge segment={p.segment} /></td>
-                <td className="oa-cell-strong">{p.visitsCount}</td>
-                <td className="oa-cell-strong">{money(p.totalPaid)}</td>
-                <td className="oa-cell-soft">
+                <td data-label="Сегмент"><SegmentBadge segment={p.segment} /></td>
+                <td className="oa-cell-strong" data-label="Визиты">{p.visitsCount}</td>
+                <td className="oa-cell-strong" data-label="Сумма">{money(p.totalPaid)}</td>
+                <td className="oa-cell-soft" data-label="Последний визит">
                   {p.lastVisitAt
                     ? new Date(p.lastVisitAt).toLocaleDateString("ru-RU")
                     : "—"}
                 </td>
-                <td>
+                <td data-label="Профиль">
                   <Link href={`/admin/patients/${p.id}`} className="oa-link-sm">
                     Профиль <IChevronRight style={{ width: 11, height: 11 }} />
                   </Link>
