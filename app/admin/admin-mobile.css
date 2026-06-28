@@ -161,7 +161,55 @@
   }
 
   .owner-admin .oa-reviews-toolbar {
-    gap: 8px !important;
+    gap: 6px !important;
+  }
+
+  .owner-admin .oa-reviews-page .oa-table-toolbar {
+    padding: 8px 10px !important;
+  }
+
+  .owner-admin .oa-reviews-search {
+    flex: 0 0 auto !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .owner-admin .oa-reviews-page .oa-search-gold {
+    padding: 2px 2px 2px 0 !important;
+    border-radius: 10px !important;
+    gap: 4px !important;
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
+  .owner-admin .oa-reviews-page .oa-search-gold .oa-input {
+    min-height: 32px !important;
+    height: 32px !important;
+    padding: 0 6px 0 32px !important;
+    font-size: 12px !important;
+  }
+
+  .owner-admin .oa-reviews-page .oa-search-gold > svg:first-of-type {
+    left: 10px !important;
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  .owner-admin .oa-reviews-page .oa-search-submit {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+  }
+
+  .owner-admin .oa-reviews-toolbar .oa-segmented-gold {
+    padding: 3px !important;
+    border-radius: 10px !important;
+  }
+
+  .owner-admin .oa-reviews-toolbar .oa-segmented-item {
+    padding: 5px 8px !important;
+    font-size: 10px !important;
   }
 
   .owner-admin .oa-reviews-doctor-tabs,
@@ -181,6 +229,11 @@
 
   .owner-admin .oa-reviews-page .oa-profile-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .owner-admin .oa-reviews-page .oa-profile-stats .oa-stat-tile {
+    min-height: 48px !important;
+    padding: 8px 10px !important;
   }
 
   /* Sidebar drawer — even padding */
@@ -219,6 +272,15 @@
     width: calc(100vw - 24px) !important;
     max-width: calc(100vw - 24px) !important;
     margin: 12px !important;
+  }
+}
+
+/* Reviews toolbar stacks below 900px — flex-basis 220px must not become height */
+@media (max-width: 900px) {
+  .owner-admin .oa-reviews-search {
+    flex: 0 0 auto !important;
+    min-width: 0 !important;
+    width: 100% !important;
   }
 }
 
