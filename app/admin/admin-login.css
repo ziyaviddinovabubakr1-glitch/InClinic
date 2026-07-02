@@ -1,4 +1,4 @@
-/* Admin login — 3D glass card, static gold halo, crest arch */
+/* Admin login — light medical glass card, blue neon */
 
 .oa-login-shell {
   padding-bottom: 64px;
@@ -10,7 +10,6 @@
   overflow: visible;
 }
 
-/* ── 3D tilt stage ── */
 .oa-login-tilt-root {
   width: 100%;
   margin-top: 28px;
@@ -28,23 +27,21 @@
   will-change: transform;
 }
 
-/* Single unified card + crest via shared clip-path surface */
 .oa-login-card-glow {
   filter:
-    drop-shadow(0 0 4px rgba(252, 229, 136, 0.72))
-    drop-shadow(0 0 8px rgba(252, 229, 136, 0.52))
-    drop-shadow(0 0 14px rgba(228, 184, 74, 0.38))
-    drop-shadow(0 24px 48px rgba(0, 0, 0, 0.62));
+    drop-shadow(0 0 6px rgba(56, 189, 248, 0.55))
+    drop-shadow(0 0 14px rgba(37, 99, 235, 0.28))
+    drop-shadow(0 16px 40px rgba(15, 41, 64, 0.12));
 }
 
 .oa-login-card-shell {
   --oa-card-fill: linear-gradient(
     168deg,
-    rgba(34, 30, 26, 0.97) 0%,
-    rgba(22, 20, 17, 0.98) 42%,
-    rgba(14, 13, 11, 0.99) 100%
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(240, 249, 255, 0.97) 42%,
+    rgba(232, 246, 252, 0.98) 100%
   );
-  --oa-card-edge: rgba(252, 229, 136, 0.34);
+  --oa-card-edge: rgba(56, 189, 248, 0.42);
   --oa-crest-w: 136px;
   --oa-crest-h: 68px;
   --oa-card-clip: url(#oa-login-card-clip);
@@ -56,7 +53,6 @@
   padding: 58px 24px 22px;
 }
 
-/* One painted surface — crest + body share fill, border, glass */
 .oa-login-card-surface {
   position: absolute;
   top: calc(var(--oa-crest-h) * -1);
@@ -66,12 +62,12 @@
   z-index: 0;
   clip-path: var(--oa-card-clip);
   background: var(--oa-card-fill);
-  backdrop-filter: blur(34px) saturate(1.18);
-  -webkit-backdrop-filter: blur(34px) saturate(1.18);
+  backdrop-filter: blur(24px) saturate(1.12);
+  -webkit-backdrop-filter: blur(24px) saturate(1.12);
   box-shadow:
     inset 0 0 0 1px var(--oa-card-edge),
-    inset 0 1px 0 rgba(255, 248, 220, 0.1),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(14, 116, 178, 0.06);
   pointer-events: none;
 }
 
@@ -88,7 +84,6 @@
   content: none !important;
 }
 
-/* Cursor glare — small, gold, clipped to card+crest only */
 .oa-login-panel-glare {
   position: absolute;
   top: calc(var(--oa-crest-h) * -1);
@@ -102,8 +97,8 @@
   transition: opacity 0.2s ease;
   background: radial-gradient(
     circle 72px at var(--oa-glare-x, 50%) var(--oa-glare-y, 40%),
-    rgba(252, 229, 136, 0.22) 0%,
-    rgba(228, 184, 74, 0.1) 38%,
+    rgba(56, 189, 248, 0.28) 0%,
+    rgba(37, 99, 235, 0.12) 38%,
     transparent 68%
   );
 }
@@ -112,7 +107,6 @@
   opacity: 1;
 }
 
-/* Logo — half in crest, half on card */
 .oa-login-logo-crest {
   position: absolute;
   top: 0;
@@ -131,11 +125,11 @@
   height: 102px !important;
   transform: none;
   filter:
-    brightness(1.75)
-    saturate(1.45)
-    drop-shadow(0 0 16px rgba(130, 235, 255, 0.6))
-    drop-shadow(0 0 30px rgba(90, 210, 245, 0.28))
-    drop-shadow(0 8px 18px rgba(0, 0, 0, 0.45));
+    brightness(1.15)
+    saturate(1.2)
+    drop-shadow(0 0 18px rgba(56, 189, 248, 0.65))
+    drop-shadow(0 0 32px rgba(37, 99, 235, 0.35))
+    drop-shadow(0 8px 18px rgba(15, 41, 64, 0.12));
 }
 
 .oa-login-form {
@@ -146,29 +140,28 @@
   gap: 14px;
 }
 
-/* Black inputs + gold neon border + small icon right */
 .oa-login-input-wrap {
   position: relative;
   display: flex;
   align-items: center;
   border-radius: 12px;
-  background: #080807;
-  border: 1px solid rgba(228, 184, 74, 0.32);
+  background: #ffffff;
+  border: 1px solid rgba(8, 145, 178, 0.28);
   box-shadow:
-    0 0 14px rgba(228, 184, 74, 0.1),
-    inset 0 0 0 1px rgba(252, 229, 136, 0.05),
-    inset 0 1px 0 rgba(255, 248, 220, 0.03);
+    0 0 12px rgba(56, 189, 248, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
 }
 
 .oa-login-input-wrap:focus-within {
-  border-color: rgba(252, 229, 136, 0.55);
+  border-color: rgba(37, 99, 235, 0.45);
   box-shadow:
-    0 0 22px rgba(228, 184, 74, 0.22),
-    0 0 8px rgba(252, 229, 136, 0.15),
-    inset 0 0 0 1px rgba(252, 229, 136, 0.1);
+    0 0 20px rgba(56, 189, 248, 0.18),
+    0 0 8px rgba(37, 99, 235, 0.1),
+    inset 0 0 0 1px rgba(56, 189, 248, 0.12);
 }
 
 .oa-login-input {
@@ -183,9 +176,9 @@
   border: none;
   border-radius: 12px;
   background: transparent !important;
-  color: #f0ebe3 !important;
-  -webkit-text-fill-color: #f0ebe3 !important;
-  caret-color: #fce588;
+  color: #0f2940 !important;
+  -webkit-text-fill-color: #0f2940 !important;
+  caret-color: #0891b2;
   outline: none;
 }
 
@@ -197,24 +190,24 @@
   flex-shrink: 0;
   width: 15px;
   height: 15px;
-  color: rgba(228, 184, 74, 0.58);
-  filter: drop-shadow(0 0 4px rgba(252, 229, 136, 0.25));
+  color: rgba(8, 145, 178, 0.65);
+  filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.25));
   pointer-events: none;
 }
 
 .oa-login-input-wrap:focus-within .oa-login-input-icon {
-  color: rgba(252, 229, 136, 0.88);
-  filter: drop-shadow(0 0 7px rgba(252, 229, 136, 0.45));
+  color: rgba(37, 99, 235, 0.85);
+  filter: drop-shadow(0 0 7px rgba(56, 189, 248, 0.4));
 }
 
 .oa-login-input:-webkit-autofill,
 .oa-login-input:-webkit-autofill:hover,
 .oa-login-input:-webkit-autofill:focus,
 .oa-login-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px #080807 inset !important;
-  box-shadow: 0 0 0 1000px #080807 inset !important;
-  -webkit-text-fill-color: #f0ebe3 !important;
-  caret-color: #fce588;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #0f2940 !important;
+  caret-color: #0891b2;
   transition: background-color 99999s ease-out 0s;
 }
 
@@ -224,9 +217,9 @@
   font-size: 12px;
   font-weight: 500;
   line-height: 1.4;
-  color: #fecaca;
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(248, 113, 113, 0.35);
+  color: #b91c1c;
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.22);
   animation: oaLoginErrorIn 0.35s ease-out;
 }
 
@@ -275,19 +268,19 @@
 
 .oa-login-btn--ready:hover:not(:disabled) {
   transform: translate(0, -2px) scale(1.03) !important;
-  filter: brightness(1.06);
+  filter: brightness(1.04);
 }
 
 .oa-login-btn--flee {
   cursor: not-allowed !important;
   pointer-events: auto;
   box-shadow:
-    0 4px 18px rgba(228, 184, 74, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+    0 4px 18px rgba(8, 145, 178, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
 }
 
 .oa-login-btn--tease.oa-login-btn--flee {
-  filter: brightness(1.08) saturate(1.05);
+  filter: brightness(1.04) saturate(1.05);
 }
 
 .oa-login-btn--shake {
@@ -312,12 +305,12 @@
   justify-content: center;
   gap: 7px;
   margin-top: 16px;
-  color: rgba(254, 243, 199, 0.36);
+  color: #7a96aa;
   font-size: 11px;
 }
 
 .oa-login-footer svg {
-  color: rgba(228, 184, 74, 0.45);
+  color: rgba(8, 145, 178, 0.65);
 }
 
 @keyframes oaLoginErrorIn {
@@ -336,13 +329,13 @@
 @keyframes oaLoginBtnReady {
   0%, 100% {
     box-shadow:
-      0 4px 16px rgba(228, 184, 74, 0.22),
-      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      0 4px 16px rgba(8, 145, 178, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.45);
   }
   50% {
     box-shadow:
-      0 6px 22px rgba(228, 184, 74, 0.38),
-      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      0 6px 22px rgba(37, 99, 235, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55);
   }
 }
 

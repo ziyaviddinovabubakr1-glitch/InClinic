@@ -9,43 +9,43 @@ body.admin-route {
   overflow: hidden !important;
   height: 100%;
   overscroll-behavior: none;
-  background: #09090b !important;
+  background: #eef6fb !important;
 }
 
 .owner-admin {
-  /* ── Premium dark palette ── */
-  --oa-gold: #d4af37;
-  --oa-gold-light: #e8c96a;
-  --oa-gold-soft: rgba(212, 175, 55, 0.14);
-  --oa-gold-ring: rgba(212, 175, 55, 0.55);
-  --oa-primary: #60a5fa;
-  --oa-primary-deep: #0f172a;
-  --oa-primary-mid: #1e3a5f;
-  --oa-bg: #070b14;
-  --oa-bg-2: #0c1220;
-  --oa-bg-3: #111827;
-  --oa-surface: rgba(17, 24, 39, 0.88);
-  --oa-surface-2: rgba(15, 23, 42, 0.72);
-  --oa-surface-solid: #111827;
-  --oa-border: rgba(148, 163, 184, 0.12);
-  --oa-border-strong: rgba(148, 163, 184, 0.22);
-  --oa-text: #f1f5f9;
-  --oa-text-soft: #94a3b8;
-  --oa-text-faint: #64748b;
-  --oa-accent: #60a5fa;
-  --oa-accent-soft: rgba(96, 165, 250, 0.12);
-  --oa-accent-glow: rgba(96, 165, 250, 0.28);
-  --oa-accent-2: #93c5fd;
-  --oa-success: #34d399;
-  --oa-success-soft: rgba(52, 211, 153, 0.12);
-  --oa-warning: #fbbf24;
-  --oa-warning-soft: rgba(251, 191, 36, 0.12);
-  --oa-danger: #f87171;
-  --oa-danger-soft: rgba(248, 113, 113, 0.1);
-  --oa-violet: #a78bfa;
-  --oa-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24), 0 8px 24px rgba(0, 0, 0, 0.28);
-  --oa-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.28), 0 16px 40px rgba(0, 0, 0, 0.36);
-  --oa-shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.32), 0 32px 64px rgba(0, 0, 0, 0.42);
+  /* ── Light medical palette (tokens.css extends) ── */
+  --oa-gold: #0891b2;
+  --oa-gold-light: #22d3ee;
+  --oa-gold-soft: rgba(8, 145, 178, 0.1);
+  --oa-gold-ring: rgba(8, 145, 178, 0.35);
+  --oa-primary: #0891b2;
+  --oa-primary-deep: #0f2940;
+  --oa-primary-mid: #0e7490;
+  --oa-bg: #eef6fb;
+  --oa-bg-2: #ffffff;
+  --oa-bg-3: #e3f0f8;
+  --oa-surface: #ffffff;
+  --oa-surface-2: #f5fafd;
+  --oa-surface-solid: #ffffff;
+  --oa-border: rgba(14, 116, 178, 0.14);
+  --oa-border-strong: rgba(14, 116, 178, 0.24);
+  --oa-text: #0f2940;
+  --oa-text-soft: #4a667c;
+  --oa-text-faint: #7a96aa;
+  --oa-accent: #2563eb;
+  --oa-accent-soft: rgba(37, 99, 235, 0.1);
+  --oa-accent-glow: rgba(37, 99, 235, 0.18);
+  --oa-accent-2: #38bdf8;
+  --oa-success: #059669;
+  --oa-success-soft: rgba(5, 150, 105, 0.1);
+  --oa-warning: #d97706;
+  --oa-warning-soft: rgba(217, 119, 6, 0.1);
+  --oa-danger: #dc2626;
+  --oa-danger-soft: rgba(220, 38, 38, 0.08);
+  --oa-violet: #6366f1;
+  --oa-shadow-sm: 0 1px 2px rgba(15, 41, 64, 0.06);
+  --oa-shadow-md: 0 4px 16px rgba(15, 41, 64, 0.08);
+  --oa-shadow-lg: 0 8px 28px rgba(15, 41, 64, 0.1);
   --oa-radius: 12px;
   --oa-radius-sm: 6px;
   --oa-radius-md: 8px;
@@ -62,7 +62,7 @@ body.admin-route {
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  scrollbar-color: rgba(148, 163, 184, 0.22) transparent;
+  scrollbar-color: rgba(14, 116, 178, 0.22) transparent;
   background: var(--oa-bg);
   color: var(--oa-text);
   font-family: var(--font-inter), system-ui, sans-serif;
@@ -111,8 +111,8 @@ body.admin-route {
 }
 
 .owner-admin ::selection {
-  background: rgba(96, 165, 250, 0.25);
-  color: #fff;
+  background: rgba(8, 145, 178, 0.2);
+  color: var(--oa-text);
 }
 
 .owner-admin::-webkit-scrollbar {
@@ -303,7 +303,7 @@ body.admin-route {
   align-items: center;
   gap: 8px;
   padding: 8px 10px 7px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--oa-border, rgba(14, 116, 178, 0.12));
   flex-shrink: 0;
 }
 .oa-sidebar-brand-text {
@@ -335,7 +335,7 @@ body.admin-route {
   line-height: 1.1;
   color: #f8fafc;
 }
-.oa-brand-title-gold { color: var(--oa-gold-light); }
+.oa-brand-title-gold { color: var(--oa-primary, #0891b2); }
 .oa-brand-sub {
   display: none;
 }
@@ -1382,9 +1382,9 @@ body.admin-route {
 .oa-btn-primary:hover { filter: brightness(1.08); box-shadow: 0 6px 20px var(--oa-accent-glow); }
 
 .oa-btn-gold {
-  background: linear-gradient(135deg, #c9a227 0%, var(--oa-gold) 50%, #e8c96a 100%);
-  color: #1a1508;
-  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.35);
+  background: linear-gradient(135deg, #22d3ee 0%, #0891b2 50%, #0e7490 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(8, 145, 178, 0.25);
   font-weight: 700;
 }
 .oa-btn-gold:hover { filter: brightness(1.06); }
@@ -1518,20 +1518,19 @@ body.admin-route {
   background: var(--oa-surface-solid, #141416);
 }
 
-/* Premium glass-gold modal (portal on body) */
+/* Premium medical modal (portal on body) */
 .oa-modal-backdrop {
-  background: rgba(0, 0, 0, 0.88) !important;
+  background: rgba(15, 41, 64, 0.35) !important;
 }
 
 .oa-modal-premium {
   position: relative;
-  background: linear-gradient(168deg, #1c1914 0%, #111010 55%, #0d0c0b 100%) !important;
-  border: 1px solid rgba(228, 184, 74, 0.42) !important;
+  background: linear-gradient(168deg, #ffffff 0%, #f5fafd 55%, #eef6fb 100%) !important;
+  border: 1px solid rgba(8, 145, 178, 0.22) !important;
   box-shadow:
-    0 28px 80px rgba(0, 0, 0, 0.72),
-    0 0 0 1px rgba(255, 248, 220, 0.06),
-    inset 0 1px 0 rgba(255, 248, 220, 0.12),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.45) !important;
+    0 28px 60px rgba(15, 41, 64, 0.14),
+    0 0 0 1px rgba(255, 255, 255, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
   animation: oaModalPremiumIn 0.38s cubic-bezier(0.22, 1, 0.36, 1);
   transform-origin: center center;
 }
@@ -1541,7 +1540,7 @@ body.admin-route {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(125deg, rgba(255, 248, 220, 0.07) 0%, transparent 42%, rgba(228, 184, 74, 0.05) 100%);
+  background: linear-gradient(125deg, rgba(224, 247, 250, 0.5) 0%, transparent 42%, rgba(37, 99, 235, 0.04) 100%);
   pointer-events: none;
 }
 
@@ -1552,7 +1551,7 @@ body.admin-route {
   left: 10%;
   right: 10%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(228, 184, 74, 0.65), transparent);
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.45), transparent);
   pointer-events: none;
 }
 
@@ -1565,11 +1564,11 @@ body.admin-route {
 }
 
 .oa-modal-premium .oa-modal-title {
-  color: #fef3c7;
+  color: var(--oa-text);
 }
 
 .oa-modal-premium .oa-modal-sub {
-  color: rgba(254, 243, 199, 0.55);
+  color: var(--oa-text-soft);
 }
 
 .oa-modal-close {
@@ -1578,17 +1577,17 @@ body.admin-route {
   height: 34px !important;
   min-width: 34px !important;
   padding: 0 !important;
-  color: #3d2a0a !important;
-  background: linear-gradient(165deg, #fff8dc, #e4b84a, #9a6b14) !important;
-  border: 1px solid rgba(255, 220, 140, 0.45) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
+  color: #ffffff !important;
+  background: linear-gradient(165deg, #22d3ee, #0891b2, #0e7490) !important;
+  border: 1px solid rgba(8, 145, 178, 0.35) !important;
+  box-shadow: 0 2px 8px rgba(8, 145, 178, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
 }
 
 .oa-modal-premium .oa-modal-foot .oa-btn-ghost {
   border-radius: 999px !important;
-  border: 1px solid rgba(228, 184, 74, 0.35) !important;
-  color: #fef3c7 !important;
-  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(8, 145, 178, 0.22) !important;
+  color: var(--oa-text-soft) !important;
+  background: #ffffff !important;
 }
 
 .oa-modal-premium .oa-modal-foot .oa-btn-primary {
@@ -1817,7 +1816,7 @@ body.admin-route {
   position: fixed;
   inset: 0;
   z-index: 49;
-  background: rgba(15, 23, 42, 0.4);
+  background: rgba(15, 41, 64, 0.25);
   backdrop-filter: blur(4px);
 }
 

@@ -1,4 +1,4 @@
-/* InClinic Admin — Design Tokens (8px grid · dense) */
+/* InClinic Admin — Light Medical Design Tokens */
 
 .owner-admin {
   --oa-space-0: 0;
@@ -21,24 +21,26 @@
   --oa-sidebar-w: 252px;
   --oa-topbar-h: 52px;
   --oa-nav-item-h: 40px;
-  --oa-input-h: 30px;
+  --oa-input-h: 36px;
   --oa-table-row-h: 36px;
   --oa-kpi-min-h: 44px;
   --oa-card-gap: 12px;
   --oa-card-radius: 12px;
   --oa-kpi-row-h: 76px;
 
-  /* Premium gold palette */
-  --oa-gold: #e4b84a;
-  --oa-gold-hi: #fff8dc;
-  --oa-gold-mid: #e4b84a;
-  --oa-gold-lo: #9a6b14;
-  --oa-gold-border: rgba(228, 184, 74, 0.22);
-  --oa-gold-border-strong: rgba(228, 184, 74, 0.42);
-  --oa-gold-glow: rgba(228, 184, 74, 0.12);
-  --oa-gold-text: #fef3c7;
-  --oa-gold-text-soft: rgba(254, 243, 199, 0.55);
-  --oa-gold-text-faint: rgba(254, 243, 199, 0.38);
+  /* Medical accent (replaces legacy gold token names) */
+  --oa-gold: #0891b2;
+  --oa-gold-hi: #e0f7fa;
+  --oa-gold-mid: #0891b2;
+  --oa-gold-lo: #0e7490;
+  --oa-gold-border: rgba(8, 145, 178, 0.18);
+  --oa-gold-border-strong: rgba(8, 145, 178, 0.34);
+  --oa-gold-glow: rgba(37, 99, 235, 0.12);
+  --oa-gold-text: #0f2940;
+  --oa-gold-text-soft: #4a667c;
+  --oa-gold-text-faint: #7a96aa;
+  --oa-gold-light: #0891b2;
+  --oa-gold-soft: rgba(8, 145, 178, 0.1);
 
   --oa-radius-xs: 4px;
   --oa-radius-sm: 5px;
@@ -47,40 +49,38 @@
   --oa-radius-xl: 10px;
   --oa-radius-full: 9999px;
 
-  --oa-bg: #09090b;
-  --oa-bg-2: #0c0c0e;
-  --oa-bg-3: #131316;
-  --oa-surface: rgba(18, 18, 20, 0.92);
-  --oa-surface-2: rgba(24, 24, 27, 0.88);
-  --oa-surface-solid: #141416;
-  --oa-surface-hover: rgba(228, 184, 74, 0.06);
-  --oa-border: rgba(228, 184, 74, 0.18);
-  --oa-border-strong: rgba(228, 184, 74, 0.32);
-  --oa-text: #fafafa;
-  --oa-text-soft: rgba(254, 243, 199, 0.62);
-  --oa-text-faint: rgba(254, 243, 199, 0.38);
+  /* Light medical surfaces */
+  --oa-bg: #eef6fb;
+  --oa-bg-2: #ffffff;
+  --oa-bg-3: #e3f0f8;
+  --oa-surface: #ffffff;
+  --oa-surface-2: #f5fafd;
+  --oa-surface-solid: #ffffff;
+  --oa-surface-hover: rgba(8, 145, 178, 0.06);
+  --oa-border: rgba(14, 116, 178, 0.14);
+  --oa-border-strong: rgba(14, 116, 178, 0.24);
+  --oa-text: #0f2940;
+  --oa-text-soft: #4a667c;
+  --oa-text-faint: #7a96aa;
 
-  --oa-primary: #e4b84a;
-  --oa-primary-hover: #f5d078;
-  --oa-accent: #e4b84a;
-  --oa-accent-soft: rgba(228, 184, 74, 0.14);
-  --oa-accent-glow: rgba(228, 184, 74, 0.22);
-  --oa-accent-2: #fff8dc;
+  --oa-primary: #0891b2;
+  --oa-primary-hover: #0e7490;
+  --oa-accent: #2563eb;
+  --oa-accent-soft: rgba(37, 99, 235, 0.1);
+  --oa-accent-glow: rgba(37, 99, 235, 0.2);
+  --oa-accent-2: #38bdf8;
 
-  --oa-gold-light: #fce588;
-  --oa-gold-soft: rgba(228, 184, 74, 0.1);
+  --oa-success: #059669;
+  --oa-success-soft: rgba(5, 150, 105, 0.1);
+  --oa-warning: #d97706;
+  --oa-warning-soft: rgba(217, 119, 6, 0.1);
+  --oa-danger: #dc2626;
+  --oa-danger-soft: rgba(220, 38, 38, 0.08);
+  --oa-violet: #6366f1;
 
-  --oa-success: #30a46c;
-  --oa-success-soft: rgba(48, 164, 108, 0.12);
-  --oa-warning: #f5a623;
-  --oa-warning-soft: rgba(245, 166, 35, 0.12);
-  --oa-danger: #e5484d;
-  --oa-danger-soft: rgba(229, 72, 77, 0.1);
-  --oa-violet: #8b5cf6;
-
-  --oa-shadow-sm: 0 0 0 1px var(--oa-border);
-  --oa-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.24);
-  --oa-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.28);
+  --oa-shadow-sm: 0 1px 2px rgba(15, 41, 64, 0.06);
+  --oa-shadow-md: 0 4px 16px rgba(15, 41, 64, 0.08);
+  --oa-shadow-lg: 0 8px 28px rgba(15, 41, 64, 0.1);
 
   --oa-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --oa-duration-fast: 0.12s;
