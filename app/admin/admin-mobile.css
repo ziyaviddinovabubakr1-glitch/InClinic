@@ -248,12 +248,12 @@
   }
 
   .owner-admin .oa-sidebar-fill .oa-nav-group-label {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
+    margin-left: 6px !important;
+    margin-right: 6px !important;
   }
 
   .owner-admin .oa-sidebar-fill .oa-nav-group:first-child .oa-nav-group-label {
-    padding-top: 10px !important;
+    margin-top: 8px !important;
   }
 
   /* Analytics — single column */
